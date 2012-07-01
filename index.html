@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>iArcherTarget</title>
+
+    <script src="http://code.jquery.com/jquery.min.js" language="javascript"></script>
+
+    <script src="autoloader.js" language="javascript"></script>
+    
+<script type="application/javascript">
+    
+
+jQuery(document).ready(function ($) {
+
+    var arrowArray = [
+        {
+            target: 1,
+            active: 1,
+            draggable: {
+                
+                width: 4
+            },
+            radius: 16,
+            style: {
+                initial: {
+                    opacity: 0.9,
+                    color: '#ffff00',
+                    stroke: false
+                },
+                hover: {
+                    opacity: 1
+                    
+                },
+                selected: {
+                    opacity: 1,
+                    color: '#ccc'
+                }
+            },
+            data: [
+                [0, 0, 0, 1], // X, Y, Ring, Scheibe
+                [50, 50, 0, 1],
+                [100, 100, 0, 1]
+            ]
+        },
+        [
+            [0, 0],
+            [50, 50],
+            [100, 100]
+        ],
+        {
+            radius: 20,
+            target: 1,
+            style: {
+                initial: {
+                    opacity: 0.8,
+                    color: '#00ffff',
+                    stroke: false
+                },
+                hover: {
+                    opacity: 1,
+                    color: '#ddd'
+                }
+            },
+            data: [
+                [50, 50],
+                [32, 90]
+            ]
+        },
+        {
+            data: [
+                [70, 50],
+                [52, 90]
+            ],
+            target: 2,
+            radius: 12,
+            style: {
+                initial: {
+                    opacity: 1,
+                    color: '#ff0000',
+                    stroke: false
+                },
+                hover: {
+                    opacity: 1,
+                    color: '#00ff00'
+                },
+                selected: {
+                    opacity: 1,
+                    color: '#0000ff'
+                }
+            }
+        }
+    ],
+    
+        targetArray = [
+            {
+                name: 'wa_x',
+                center: [25, 26],
+                diameter: 44,
+                style: {
+                    initial: {
+                        opacity: 1
+                    },
+                    hover: {
+                        opacity: 0.95
+                    },
+                    arrowOn: {
+                        opacity: 1
+                    },
+                    arrowOff: {
+                        opacity: 0.9
+                    }
+                }
+            },
+            {
+                name: 'wa_x',
+                center: [75, 26],
+                diameter: 44
+            },
+            {
+                name: 'wa_x',
+                center: [50, 73],
+                diameter: 44
+            }
+        ];
+
+
+
+    $("#target").archerTarget({
+        
+        target: targetArray,
+        targetDefaults: {
+            center: [50, 50],
+            diameter: 90,
+            style: {
+                initial: {
+                    opacity: 1
+                },
+                hover: {
+                    opacity: 0.95
+                },
+                arrowOn: {
+                    opacity: 1
+                },
+                arrowOff: {
+                    opacity: 0.9
+                }
+            }
+        },
+        backgroundColor: '#fff',
+        draggable: 1,
+        arrows: arrowArray,
+        arrowDefaults: {
+            active: 1,
+            draggable: 1,
+            radius: 5,
+            style: {
+                initial: {
+                    opacity: 0.9,
+                    color: '#00ff00',
+                    stroke: false
+                },
+                hover: {
+                    opacity: 1
+                },
+                selected: {
+                    opacity: 1,
+                    color: '#ccc'
+                }
+            },
+            target: 0
+        },
+        zoom: 1,
+        maxZoom: 6,
+        minZoom: 1,
+        zoomStep: 0.2,
+        
+        onTargetClick: function (e, index) {
+            //console.log("click Target" + index);
+        },
+        onTargetOver: function (e, index) {
+            //console.log("over Target: " + index);
+        },
+        onTargetOut: function (e, index) {
+            //console.log("out Target: " + index);
+        },
+        onTargetMove: function (e) {
+            //console.log("Moving Targets");
+        },
+        
+        
+        onArrowOver: function (e, arrowSetID, arrowID) {
+            //console.log("over Arrow: " + arrowSetID + " " + arrowID);
+        },
+        onArrowOut: function (e, arrowSetID, arrowID) {
+            //console.log("out Arrow: " + arrowSetID + " " + arrowID);
+        },
+        onArrowMove: function (e, arrowSetID, arrowID, arrows) {
+            //console.log("move Arrow: " + arrowSetID + " " + arrowID + " " + arrows[arrowSetID].data[arrowID][2]);
+        },
+        onArrowClick: function (e, arrowSetID, arrowID) {
+            //console.log("click Arrow: " + arrowSetID + " " + arrowID);
+        },
+        onArrowSelect: function (e, arrowSetID, arrowID) {
+            //console.log("select Arrow: " + arrowSetID + " " + arrowID);
+        },
+        onArrowDeselect: function (e, arrowSetID, arrowID) {
+            //console.log("deselect Arrow: " + arrowSetID + " " + arrowID);
+        },
+        
+        
+        onZoom: function (e, newZoom, oldZoom) {
+            //console.log("Zoom new: " + newZoom + "  Zoom old: " + oldZoom);
+        }
+        
+        
+    });
+    
+    arrowArray = $("#target").archerTarget("get", "ring");
+    
+});
+</script>
+</head>
+
+<body>
+
+    <div id="target" style="width:500px; height:500px;" width="500" height="500"></div>
+
+</body>
+</html>
