@@ -176,10 +176,12 @@ var jat = {};
             pc: {
                 x: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
+                    
                     return ((arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvas.x(self.target[targetID].diameter)) * 100;
                 },
                 y: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
+                    
                     return ((arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.y(self.target[targetID].diameter)) * 100;
                 }
             },
@@ -188,11 +190,14 @@ var jat = {};
 
                 x: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
+                    
                     return (((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg) + self.gap[targetID].left + self.transX) * self.zoom;
                 },
                 y: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
-                    return (((self.convertTo.canvas.y(self.target[targetID].diameter) / 100) * arg) + self.gap[targetID].top + self.transY) * self.zoom;
+                    
+					/* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
+                    return (((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg) + self.gap[targetID].top + self.transY) * self.zoom;
                 }
             },
 
