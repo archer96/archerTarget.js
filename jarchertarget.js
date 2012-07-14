@@ -183,7 +183,7 @@ var jat = {};
                 y: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
                     
-                    return ((arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.y(self.target[targetID].diameter)) * 100;
+                    return ((arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.x(self.target[targetID].diameter)) * 100;
                 }
             },
 
