@@ -16,6 +16,7 @@ java -jar ../../../../closure-compiler/compiler.jar \
 --js=lib/calculateRing.js \
 --js=lib/getRing.js \
 --js=lib/removeArrowDrag.js \
+--js=lib/setActive.js \
 --js=lib/setArrowDrag.js \
 --js=lib/setArrows.js \
 --js=lib/setBackgroundColor.js \

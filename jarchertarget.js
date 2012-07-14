@@ -32,7 +32,8 @@ var jat = {};
             },
             set: {
                 backgroundColor: 1,
-                zoom: 1
+                zoom: 1,
+                active: 1
             }
         };
         
@@ -234,12 +235,12 @@ var jat = {};
         
         this.arrow = this.createArrows(params.arrows);
         
+        this.bindArrowEvents(params.touch);
+        
         this.bindContainerEvents(params.touch);
 
         this.bindTargetEvents(params.touch);
 
-        this.bindArrowEvents(params.touch);
-        
         
         $('<div/>').addClass('archerTarget-zoomin').text('+').appendTo(params.container);
         $('<div/>').addClass('archerTarget-zoomout').html('&#x2212;').appendTo(params.container);
