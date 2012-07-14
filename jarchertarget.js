@@ -178,12 +178,12 @@ var jat = {};
                 x: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
                     
-                    return ((arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvas.x(self.target[targetID].diameter)) * 100;
+                    return (arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
                 },
                 y: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
                     
-                    return ((arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.x(self.target[targetID].diameter)) * 100;
+                    return (arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
                 }
             },
 
@@ -192,13 +192,13 @@ var jat = {};
                 x: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
                     
-                    return (((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg) + self.gap[targetID].left + self.transX) * self.zoom;
+                    return ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].left + self.transX) * self.zoom;
                 },
                 y: function (arg, targetID) {
                     if (!targetID) { targetID = 0; }
                     
 					/* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
-                    return (((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg) + self.gap[targetID].top + self.transY) * self.zoom;
+                    return ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].top + self.transY) * self.zoom;
                 }
             },
 
@@ -206,12 +206,12 @@ var jat = {};
                 x: function (arg, targetDiameter) {
                     if (!targetDiameter) { targetDiameter = 100; }
                     
-                    return (((self.width / 100) * targetDiameter) / 100) * arg;
+                    return self.width / 100 * targetDiameter / 100 * arg;
                 },
                 y: function (arg, targetDiameter) {
                     if (!targetDiameter) { targetDiameter = 100; }
                 
-                    return (((self.height / 100) * targetDiameter) / 100) * arg;
+                    return self.height / 100 * targetDiameter / 100 * arg;
                 }
             }
             
