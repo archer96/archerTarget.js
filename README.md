@@ -9,7 +9,7 @@ Source avaiable on [GitHub](https://github.com/archer96/jarchertarget).
 Well, my name is Andre Meyering, I'm 16 years old and come from Germany. Of course some of my hobbies are archery and and programming. I love archery and currently I am learning JavaScript heavily because m javascript knowledge isn't that large.
 
 ### About the script
-jArcherTarget is a simple [jQuery](http://jquery.com) plugin and it's really easy to use. It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on website, too.
+jArcherTarget is a simple [jQuery](http://jquery.com) plugin and it's really easy to use. It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on websites, too.
 
 
 ##License
@@ -46,11 +46,13 @@ It will create two files:
 * Fixed bug #1, #2
 * added VERSION file
 * edited README
-* deleted autoloader.js and added <script> tags in index.html
+* deleted autoloader.js and added script tags in index.html
 * changed the .data parameter. Now arrowset[i].data[j] is no more an array. Instead it is an object now.
  * { x: 50, y: 50, ring: X, target: 1, element: node}
 
+
 ###0.1
+
 * First version
 
 
