@@ -5,9 +5,35 @@
     
     <title>iArcherTarget</title>
 
+    <link type="text/css" rel="stylesheet" href="jarchertarget.css">
+
     <script src="http://code.jquery.com/jquery.min.js" language="javascript"></script>
 
-    <script src="autoloader.js" language="javascript"></script>
+    <script src="jarchertarget.js" language="javascript"></script>
+    <script src="lib/applyTransform.js" language="javascript"></script>
+    <script src="lib/bindArrowEvents.js" language="javascript"></script>
+    <script src="lib/bindContainerEvents.js" language="javascript"></script>
+    <script src="lib/bindTargetEvents.js" language="javascript"></script>
+    <script src="lib/bindZoomEvents.js" language="javascript"></script>
+    <script src="lib/checkClosestTarget.js" language="javascript"></script>
+    <script src="lib/checkOnTarget.js" language="javascript"></script>
+    <script src="lib/createArrowDrag.js" language="javascript"></script>
+    <script src="lib/createArrows.js" language="javascript"></script>
+    <script src="lib/createTargets.js" language="javascript"></script>
+    <script src="lib/calculateRing.js" language="javascript"></script>
+    <script src="lib/getRing.js" language="javascript"></script>
+    <script src="lib/removeArrowDrag.js" language="javascript"></script>
+    <script src="lib/setArrowDrag.js" language="javascript"></script>
+    <script src="lib/setArrows.js" language="javascript"></script>
+    <script src="lib/setBackgroundColor.js" language="javascript"></script>
+    <script src="lib/setGap.js" language="javascript"></script>
+    <script src="lib/setSize.js" language="javascript"></script>
+    <script src="lib/setTargetStyle.js" language="javascript"></script>
+    <script src="lib/setZoom.js" language="javascript"></script>
+    <script src="lib/vectorCanvas.js" language="javascript"></script>
+
+    <script src="targets/targets.js" language="javascript"></script>
+
     
 <script type="application/javascript">
     
@@ -39,15 +65,36 @@ jQuery(document).ready(function ($) {
                 }
             },
             data: [
-                [0, 0, 0, 1], // X, Y, Ring, Scheibe
-                [50, 50, 0, 1],
-                [100, 100, 0, 1]
+                {
+                    x: 0,
+                    y: 0,
+                    target: 1
+                },
+                {
+                    x: 50,
+                    y: 50,
+                    target: 1
+                },
+                {
+                    x: 100,
+                    y: 100,
+                    target: 1
+                }
             ]
         },
         [
-            [0, 0],
-            [50, 50],
-            [100, 100]
+            {
+                x: 0,
+                y: 0
+            },
+            {
+                x: 50,
+                y: 50
+            },
+            {
+                x: 100,
+                y: 100
+            }
         ],
         {
             radius: 20,
@@ -64,15 +111,17 @@ jQuery(document).ready(function ($) {
                 }
             },
             data: [
-                [50, 50],
-                [32, 90]
+                {
+                    x: 50,
+                    y: 50
+                },
+                {
+                    x: 32,
+                    y: 90
+                }
             ]
         },
         {
-            data: [
-                [70, 50],
-                [52, 90]
-            ],
             target: 2,
             radius: 12,
             style: {
@@ -89,7 +138,18 @@ jQuery(document).ready(function ($) {
                     opacity: 1,
                     color: '#0000ff'
                 }
-            }
+            },
+            data: [
+                {
+                    x: 70,
+                    y: 50,
+                    active: 0
+                },
+                {
+                    x: 52,
+                    y: 90
+                }
+            ]
         }
     ],
     
@@ -225,7 +285,7 @@ jQuery(document).ready(function ($) {
 
 <body>
 
-    <div id="target" style="width:400px; height:800px;" width="500" height="500"></div>
+    <div id="target" style="width:400px; height:600px;"></div>
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 # Using Google Closure Compiler (https://developers.google.com/closure/compiler/)
 
 # Compile jarchertarget scripts to a minified version
-java -jar ../../../../closure-compiler/compiler.jar \
+java -jar ./closure-compiler.jar \
 --js=jarchertarget.js \
 --js=lib/applyTransform.js \
 --js=lib/bindArrowEvents.js \
@@ -29,6 +29,6 @@ java -jar ../../../../closure-compiler/compiler.jar \
 
 
 # Compile JS-file with all targets to a minified version
-java -jar ../../../../closure-compiler/compiler.jar \
+java -jar ./closure-compiler.jar \
 --js=targets/targets.js \
 --js_output_file=targets/targets.min.js

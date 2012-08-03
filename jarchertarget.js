@@ -125,11 +125,6 @@ var jat = {};
             defaultParams.container = this;
             
             
-            this.addClass('archerTargetContainer').css({
-                position: 'relative',
-                overflow: 'hidden'
-            });
-            
             targetObj = new jat.Target(defaultParams);
             
             this.data('targetObject', targetObj);
@@ -154,7 +149,10 @@ var jat = {};
         
         this.params = params;
         
-        this.container = params.container;
+        this.container = params.container.addClass('archerTargetContainer').css({
+            position: 'relative',
+            overflow: 'hidden'
+        });
 
         this.arrowClass = 'arrow';
         
