@@ -15,6 +15,7 @@ java -jar ./closure-compiler.jar \
 --js=lib/createTargets.js \
 --js=lib/calculateRing.js \
 --js=lib/getRing.js \
+--js=lib/getTargetParams.js \
 --js=lib/removeArrowDrag.js \
 --js=lib/setActive.js \
 --js=lib/setArrowDrag.js \

@@ -28,7 +28,8 @@ var jat = {};
         },
         apiParams = {
             get: {
-                ring: 1
+                ring: 1,
+                targetParams: 1
             },
             set: {
                 backgroundColor: 1,
@@ -40,7 +41,7 @@ var jat = {};
     $.fn.archerTarget = function (options) {
     
         var defaultParams = {
-                target: 'WA_X_voll',
+                target: 'wa_x',
                 targetDefaults: {
                     center: [50, 50],
                     diameter: 90,

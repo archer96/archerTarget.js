@@ -49,6 +49,7 @@ It will create two files:
 * deleted autoloader.js and added script tags in index.html
 * changed the .data parameter. Now arrowset[i].data[j] is no more an array. Instead it is an object now.
  * { x: 50, y: 50, ring: X, target: 1, element: node}
+* added getTargetParams
 
 
 ###0.1
