@@ -34,7 +34,9 @@ var jat = {};
             set: {
                 backgroundColor: 1,
                 zoom: 1,
-                active: 1
+                arrowActive: 1,
+                arrowStyle: 1,
+                arrowOptions: 1
             }
         };
         
@@ -256,4 +258,4 @@ var jat = {};
     jat.Target.targets = {};
     
     
-})(jQuery);
+}(jQuery));

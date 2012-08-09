@@ -50,6 +50,11 @@ It will create two files:
 * changed the .data parameter. Now arrowset[i].data[j] is no more an array. Instead it is an object now.
  * { x: 50, y: 50, ring: X, target: 1, element: node}
 * added getTargetParams
+* added setArrowStyle
+* renamed setArrows to setArrowPosition
+* renamed setActive to setArrowActive
+* added setArrowOptions
+* removed an bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
 
 
 ###0.1

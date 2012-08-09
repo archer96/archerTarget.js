@@ -17,12 +17,14 @@ java -jar ./closure-compiler.jar \
 --js=lib/getRing.js \
 --js=lib/getTargetParams.js \
 --js=lib/removeArrowDrag.js \
---js=lib/setActive.js \
+--js=lib/setArrowActive.js \
 --js=lib/setArrowDrag.js \
---js=lib/setArrows.js \
+--js=lib/setArrowPosition.js \
+--js=lib/setArrowOptions.js \
 --js=lib/setBackgroundColor.js \
 --js=lib/setGap.js \
 --js=lib/setSize.js \
+--js=lib/setArrowStyle.js \
 --js=lib/setTargetStyle.js \
 --js=lib/setZoom.js \
 --js=lib/vectorCanvas.js \
