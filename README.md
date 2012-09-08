@@ -4,16 +4,11 @@ Source avaiable on [GitHub](https://github.com/archer96/jarchertarget).
 
 
 ## About
-
-### About the programmer
-Well, my name is Andre Meyering, I'm 16 years old and come from Germany. Of course some of my hobbies are archery and and programming. I love archery and currently I am learning JavaScript heavily because m javascript knowledge isn't that large.
-
-### About the script
-jArcherTarget is a simple [jQuery](http://jquery.com) plugin and it's really easy to use. It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on websites, too.
+jArcherTarget is a simple and easy to use [jQuery](http://jquery.com) plugin create by [Andre Meyering](http://andremeyering.de). It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on websites, too.
 
 
 ##License
-jArcherTarget is licensed unter the of MIT MIT license (see LICENSE).
+jArcherTarget is licensed unter the of MIT license (see LICENSE).
 
 
 ## Issues
@@ -27,16 +22,19 @@ When [submitting issues on github](https://github.com/archer96/jarchertarget/iss
 Also please check your grammar and spelling and don't use shortened forms, because that could be hard to understand for other people (like me).
 
 ## Build
-It's simple to build a minified version of jArcherTarget. First you need to download the [closure compiler](https://developers.google.com/closure/compiler/) because it's not included in the project. Save the file into the project folder and rename the file to 'closure-compiler.jar'. Then run the following command in your terminal (note that you have to be in the project directory)
+It's simple to build a minified version of jArcherTarget. First you need to install [UglifyJS](https://github.com/mishoo/UglifyJS) and run the following command to create the minified jArcherTarget file:
 
 (Mac & Linux)
 
 > ./build.sh
 
-It will create two files:
+It will create the minified file.
 
-* jarchertarget.min.js
-* targets/targets.min.js
+If you want a new minified version of the targets, go into the 'targets' folder and run this command:
+
+(Mac & Linux)
+
+> ./build.sh
 
 
 ##Changelog
@@ -45,7 +43,6 @@ It will create two files:
 
 * Fixed bug #1, #2
 * added VERSION file
-* edited README
 * deleted autoloader.js and added script tags in index.html
 * changed the .data parameter. Now arrowset[i].data[j] is no more an array. Instead it is an object now.
  * { x: 50, y: 50, ring: X, target: 1, element: node}
