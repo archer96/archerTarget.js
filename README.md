@@ -54,8 +54,8 @@ It will create two files:
 * renamed setArrows to setArrowPosition
 * renamed setActive to setArrowActive
 * added setArrowOptions
-* removed an bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
-
+* removed a bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
+* changed from Google Closure Compiler to UglifyJS
 
 ###0.1
 

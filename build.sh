@@ -1,37 +1,54 @@
-# Using Google Closure Compiler (https://developers.google.com/closure/compiler/)
+#!/bin/bash
 
-# Compile jarchertarget scripts to a minified version
-java -jar ./closure-compiler.jar \
---js=jarchertarget.js \
---js=lib/applyTransform.js \
---js=lib/bindArrowEvents.js \
---js=lib/bindContainerEvents.js \
---js=lib/bindTargetEvents.js \
---js=lib/bindZoomEvents.js \
---js=lib/checkClosestTarget.js \
---js=lib/checkOnTarget.js \
---js=lib/createArrowDrag.js \
---js=lib/createArrows.js \
---js=lib/createTargets.js \
---js=lib/calculateRing.js \
---js=lib/getRing.js \
---js=lib/getTargetParams.js \
---js=lib/removeArrowDrag.js \
---js=lib/setArrowActive.js \
---js=lib/setArrowDrag.js \
---js=lib/setArrowPosition.js \
---js=lib/setArrowOptions.js \
---js=lib/setBackgroundColor.js \
---js=lib/setGap.js \
---js=lib/setSize.js \
---js=lib/setArrowStyle.js \
---js=lib/setTargetStyle.js \
---js=lib/setZoom.js \
---js=lib/vectorCanvas.js \
---js_output_file=jarchertarget.min.js
+files=( \
+  jarchertarget.js \
+  lib/applyTransform.js \
+  lib/bindArrowEvents.js \
+  lib/bindContainerEvents.js \
+  lib/bindTargetEvents.js \
+  lib/bindZoomEvents.js \
+  lib/checkClosestTarget.js \
+  lib/checkOnTarget.js \
+  lib/createArrowDrag.js \
+  lib/createArrows.js \
+  lib/createTargets.js \
+  lib/calculateRing.js \
+  lib/getRing.js \
+  lib/getTargetParams.js \
+  lib/removeArrowDrag.js \
+  lib/setArrowActive.js \
+  lib/setArrowDrag.js \
+  lib/setArrowPosition.js \
+  lib/setArrowOptions.js \
+  lib/setBackgroundColor.js \
+  lib/setGap.js \
+  lib/setSize.js \
+  lib/setArrowStyle.js \
+  lib/setTargetStyle.js \
+  lib/setZoom.js \
+  lib/vectorCanvas.js \
+)
 
+baseDir=`dirname $0`
 
-# Compile JS-file with all targets to a minified version
-java -jar ./closure-compiler.jar \
---js=targets/targets.js \
---js_output_file=targets/targets.min.js
+counter=0
+while [ $counter -lt ${#files[@]} ]; do
+files[$counter]="$baseDir/${files[$counter]}"
+  let counter=counter+1
+done
+
+if [ -z "$1" ]
+  then
+minified=jarchertarget.min.js
+  else
+minified=$1
+fi
+
+if [ -a $minified ]
+  then
+rm $minified
+fi
+
+cat ${files[*]} >> $minified
+
+uglifyjs --overwrite $minified

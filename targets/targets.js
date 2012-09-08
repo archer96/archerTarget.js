@@ -1,10 +1,8 @@
 /*
- * jArcherTarget version 0.1.0
+ * jArcherTarget version 0.2.0
  * 
- *
  * Copyright 2012, Andre Meyering
  * Licensed under the MIT license.
- *
  */
 (function ($) {
     
