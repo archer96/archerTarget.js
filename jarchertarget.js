@@ -23,7 +23,9 @@ var jat = {};
             onArrowSelect: 'arrowSelect',
             onArrowDeselect: 'arrowDeselect',
     
-            onZoom: 'zoom'
+            onZoom: 'zoom',
+
+            onTap: 'tap'
         },
         apiParams = {
             get: {

@@ -63,6 +63,8 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * changed from Google Closure Compiler to UglifyJS
 * renamed "removeArrowDrag" to "removeArrowPointer"
 * renamed "createArrowDrag" to "createArrowPointer"
+* added tap event
+* fixed "checkClosestTarget"
 
 ###0.1
 
