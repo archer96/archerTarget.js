@@ -9,13 +9,13 @@ files=( \
   lib/bindZoomEvents.js \
   lib/checkClosestTarget.js \
   lib/checkOnTarget.js \
-  lib/createArrowDrag.js \
+  lib/createArrowPointer.js \
   lib/createArrows.js \
   lib/createTargets.js \
   lib/calculateRing.js \
   lib/getRing.js \
   lib/getTargetParams.js \
-  lib/removeArrowDrag.js \
+  lib/removeArrowPointer.js \
   lib/setArrowActive.js \
   lib/setArrowDrag.js \
   lib/setArrowPosition.js \

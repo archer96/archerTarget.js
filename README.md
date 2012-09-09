@@ -62,6 +62,7 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * removed a bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
 * changed from Google Closure Compiler to UglifyJS
 * renamed "removeArrowDrag" to "removeArrowPointer"
+* renamed "createArrowDrag" to "createArrowPointer"
 
 ###0.1
 
@@ -71,4 +72,3 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 ## Notes
 
 This project uses the vector script from [jvectormap.com](http://jvectormap.com) to create SVG nodes.
-
