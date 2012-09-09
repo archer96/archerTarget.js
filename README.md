@@ -2,6 +2,14 @@
 jArcherTarget is a jQuery plugin to display archery targets and arrows on an easy way on websites.
 Source avaiable on [GitHub](https://github.com/archer96/jarchertarget).
 
+#Contents
+1. [About](#about)
+2. [License](#license)
+3. [Issues](#issues)
+4. [Build](#build)
+5. [Changelog](#changelog)
+6. [Notes](#notes)
+
 
 ## About
 jArcherTarget is a simple and easy to use [jQuery](http://jquery.com) plugin create by [Andre Meyering](http://andremeyering.de). It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on websites, too.
@@ -34,7 +42,7 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 
 (Mac & Linux)
 
-> ./build.sh
+> ./buildTargets.sh
 
 
 ##Changelog
@@ -53,12 +61,14 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * added setArrowOptions
 * removed a bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
 * changed from Google Closure Compiler to UglifyJS
+* renamed "removeArrowDrag" to "removeArrowPointer"
 
 ###0.1
 
 * First version
 
 
-## Other Notes
+## Notes
 
 This project uses the vector script from [jvectormap.com](http://jvectormap.com) to create SVG nodes.
+
