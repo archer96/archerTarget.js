@@ -12,6 +12,7 @@ files=( \
   lib/createArrows.js \
   lib/createTargets.js \
   lib/calculateRing.js \
+  lib/getArrows.js \
   lib/getRing.js \
   lib/getTargetParams.js \
   lib/getTransform.js \

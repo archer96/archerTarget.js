@@ -68,6 +68,7 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * renamed "setArrowDrag" to "setArrowPointer"
 * added "getTransform"
 * renamed "applyTransform" to "setTransform"
+* added "getArrows"
 
 ###0.1
 

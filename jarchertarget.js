@@ -31,7 +31,8 @@ var jat = {};
             get: {
                 ring: 1,
                 targetParams: 1,
-                transform: 1
+                transform: 1,
+                arrows: 1
             },
             set: {
                 backgroundColor: 1,
