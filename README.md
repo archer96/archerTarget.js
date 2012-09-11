@@ -65,6 +65,9 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * renamed "createArrowDrag" to "createArrowPointer"
 * added tap event
 * fixed "checkClosestTarget"
+* renamed "setArrowDrag" to "setArrowPointer"
+* added "getTransform"
+* renamed "applyTransform" to "setTransform"
 
 ###0.1
 

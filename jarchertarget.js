@@ -25,19 +25,21 @@ var jat = {};
     
             onZoom: 'zoom',
 
-            onTap: 'tap'
+            onContainerTap: 'containerTap'
         },
         apiParams = {
             get: {
                 ring: 1,
-                targetParams: 1
+                targetParams: 1,
+                transform: 1
             },
             set: {
                 backgroundColor: 1,
                 zoom: 1,
                 arrowActive: 1,
                 arrowStyle: 1,
-                arrowOptions: 1
+                arrowOptions: 1,
+                transform: 1
             }
         };
         
@@ -88,7 +90,10 @@ var jat = {};
                 maxZoom: 6,
                 minZoom: 0.6,
                 zoomStep: 0.2,
-                touch: false
+                zoomable: 1,
+                touch: false,
+                transX: 0,
+                transY: 0
             },
             targetObj,
             methodName,
@@ -140,7 +145,10 @@ var jat = {};
                     }
                 }
             }
+
         }
+
+        return this;
     };
     
     
@@ -169,6 +177,12 @@ var jat = {};
         this.zoomStep = params.zoomStep;
         
         this.draggable = params.draggable;
+        
+        this.zoomable = params.zoomable;
+
+        this.transX = params.transX;
+
+        this.transY = params.transY;
         
         this.arrowDrag = false;
 
@@ -243,14 +257,15 @@ var jat = {};
 
         this.bindTargetEvents(params.touch);
 
-        
-        $('<div/>').addClass('archerTarget-zoomin').text('+').appendTo(params.container);
-        $('<div/>').addClass('archerTarget-zoomout').html('&#x2212;').appendTo(params.container);
+        if (this.zoomable) {
+            $('<div/>').addClass('archerTarget-zoomin').text('+').appendTo(params.container);
+            $('<div/>').addClass('archerTarget-zoomout').html('&#x2212;').appendTo(params.container);
+        }
         
         this.bindZoomEvents(params.touch);
         
         /* Apply possible zoom */
-        this.applyTransform();
+        this.setTransform();
 
         
     };

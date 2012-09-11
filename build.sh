@@ -2,7 +2,6 @@
 
 files=( \
   jarchertarget.js \
-  lib/applyTransform.js \
   lib/bindArrowEvents.js \
   lib/bindContainerEvents.js \
   lib/bindTargetEvents.js \
@@ -15,16 +14,18 @@ files=( \
   lib/calculateRing.js \
   lib/getRing.js \
   lib/getTargetParams.js \
+  lib/getTransform.js \
   lib/removeArrowPointer.js \
   lib/setArrowActive.js \
-  lib/setArrowDrag.js \
-  lib/setArrowPosition.js \
   lib/setArrowOptions.js \
+  lib/setArrowPointer.js \
+  lib/setArrowPosition.js \
+  lib/setArrowStyle.js \
   lib/setBackgroundColor.js \
   lib/setGap.js \
   lib/setSize.js \
-  lib/setArrowStyle.js \
   lib/setTargetStyle.js \
+  lib/setTransform.js \
   lib/setZoom.js \
   lib/vectorCanvas.js \
 )
