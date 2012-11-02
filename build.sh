@@ -63,4 +63,8 @@ dev=false
 dev=$2
 fi
 
-uglifyjs --define DEVMODE=$2 --overwrite $minified
+if [ -z "$3" ]
+  then
+uglifyjs --define DEVMODE=$dev --overwrite $minified
+fi
+
