@@ -27,7 +27,6 @@ When [submitting issues on github](https://github.com/archer96/jarchertarget/iss
 3. jArcherTarget version
 4. Browsers/platforms tested
 
-Also please check your grammar and spelling and don't use shortened forms, because that could be hard to understand for other people (like me).
 
 ## Build
 It's simple to build a minified version of jArcherTarget. First you need to install [UglifyJS](https://github.com/mishoo/UglifyJS) and run the following command to create the minified jArcherTarget file:
@@ -51,15 +50,15 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 
 * Fixed bug #1, #2
 * added VERSION file
-* deleted autoloader.js and added script tags in index.html
-* changed the .data parameter. Now arrowset[i].data[j] is no more an array. Instead it is an object now.
+* deleted autoloader.js and added script tag in index.html
+* changed the .data parameter. Now arrowset[i].data[j] is an object instead of an array.
  * { x: 50, y: 50, ring: X, target: 1, element: node}
 * added getTargetParams
 * added setArrowStyle
 * renamed setArrows to setArrowPosition
 * renamed setActive to setArrowActive
 * added setArrowOptions
-* removed a bug (arrow position was changed wrong, everytime the user only clicked on an arrow; only appeard if 'draggable' was an object)
+* removed a bug (arrow position was changed wrong, everytime the user clicked on an arrow; only appeard if 'draggable' was an object)
 * changed from Google Closure Compiler to UglifyJS
 * renamed "removeArrowDrag" to "removeArrowPointer"
 * renamed "createArrowDrag" to "createArrowPointer"
@@ -69,6 +68,7 @@ If you want a new minified version of the targets, go into the 'targets' folder 
 * added "getTransform"
 * renamed "applyTransform" to "setTransform"
 * added "getArrows"
+* added touch events
 
 ###0.1
 

@@ -9,6 +9,14 @@ var jat = {};
 
 (function ($) {
 
+if (typeof DEVMODE === 'undefined') {
+
+    DEVMODE = true;
+
+}
+
+DEVMODE && DEVNAME = '';
+
     var apiEvents = {
         
             onTargetOver: 'targetOver',
@@ -25,7 +33,8 @@ var jat = {};
     
             onZoom: 'zoom',
 
-            onContainerTap: 'containerTap'
+            onContainerTap: 'containerTap',
+            onContainerMousedown: 'containerMousedown'
         },
         apiParams = {
             get: {
@@ -35,11 +44,12 @@ var jat = {};
                 arrows: 1
             },
             set: {
-                backgroundColor: 1,
-                zoom: 1,
+                arrowOptions: 1,
                 arrowActive: 1,
                 arrowStyle: 1,
-                arrowOptions: 1,
+
+                backgroundColor: 1,
+                zoom: 1,
                 transform: 1
             }
         };
@@ -92,9 +102,9 @@ var jat = {};
                 minZoom: 0.6,
                 zoomStep: 0.2,
                 zoomable: 1,
-                touch: false,
                 transX: 0,
-                transY: 0
+                transY: 0,
+                plugins: {}
             },
             targetObj,
             methodName,
@@ -105,6 +115,14 @@ var jat = {};
         if (options === 'addTarget') {
             
             jat.Target.targets[arguments[1]] = arguments[2];
+
+            DEVMODE && console.log('jAT ' + DEVNAME + ':: added target ' + arguments[1]);
+             
+        } else if (options === 'addPlugin') {
+            
+            jat.Target.plugins[arguments[1]] = arguments[2];
+
+            DEVMODE && console.log('jAT ' + DEVNAME + ':: added plugin ' + arguments[1]);
              
         } else if ((options === 'set' || options === 'get') && apiParams[options][arguments[1]]) {
             
@@ -115,6 +133,10 @@ var jat = {};
             return this.data('targetObject')[methodName].apply(this.data('targetObject'), Array.prototype.slice.call(arguments, 2));
             
         } else {
+
+            DEVMODE && DEVNAME = ':: ' + $(this).attr('id') + ' ';
+
+            DEVMODE && console.log('jAT ' + DEVNAME + ':: initializing jAT');
 
             $.extend(true, defaultParams, options);
             
@@ -131,9 +153,7 @@ var jat = {};
                 }
             }
             
-            
             defaultParams.container = this;
-            
             
             targetObj = new jat.Target(defaultParams);
             
@@ -156,8 +176,9 @@ var jat = {};
     
     jat.Target = function (params) {
         
-        var self = this;
-        
+        var self = this,
+            plugin;
+
         params = params || {};
         
         this.params = params;
@@ -167,12 +188,14 @@ var jat = {};
             overflow: 'hidden'
         });
 
+        this.plugins = params.plugins;
+
         this.arrowClass = 'arrow';
         
         this.zoom = params.zoom;
-        
+
         this.maxZoom = params.maxZoom;
-        
+
         this.minZoom = params.minZoom;
         
         this.zoomStep = params.zoomStep;
@@ -188,7 +211,7 @@ var jat = {};
         this.arrowDrag = false;
 
         this.setSize();
-                        
+
         this.convertTo = {
 
             pc: {
@@ -252,27 +275,52 @@ var jat = {};
         
         this.arrow = this.createArrows(params.arrows);
         
-        this.bindArrowEvents(params.touch);
-        
-        this.bindContainerEvents(params.touch);
 
-        this.bindTargetEvents(params.touch);
+        if (('ontouchstart' in window) || (window.DocumentTouch && document instanceof DocumentTouch) || this.params.touch === true) {
+
+            DEVMODE && console.log('jAT ' + DEVNAME + ':: using a touch device');
+            
+            this.bindContainerTouchEvents();
+            this.bindArrowTouchEvents();
+            this.bindTargetTouchEvents();
+
+        } else {
+
+            DEVMODE && console.log('jAT ' + DEVNAME + ':: using a non-touch device');
+
+            this.bindContainerEvents();
+            this.bindArrowEvents();
+            this.bindTargetEvents();
+
+        }
+
 
         if (this.zoomable) {
             $('<div/>').addClass('archerTarget-zoomin').text('+').appendTo(params.container);
             $('<div/>').addClass('archerTarget-zoomout').html('&#x2212;').appendTo(params.container);
         }
         
-        this.bindZoomEvents(params.touch);
+        this.bindZoomEvents();
         
         /* Apply possible zoom */
         this.setTransform();
+
+
+        for (plugin in this.plugins) {
+
+            if (this.plugins.hasOwnProperty(plugin) && jat.Target.plugins[plugin]) {
+
+                jat.Target.plugins[plugin].initialize(this, this.plugins[plugin]);
+
+            }
+
+        }
 
         
     };
     
     
     jat.Target.targets = {};
-    
+    jat.Target.plugins = {};
     
 }(jQuery));

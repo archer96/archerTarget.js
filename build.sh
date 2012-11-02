@@ -4,6 +4,9 @@ files=( \
   jarchertarget.js \
   lib/bindArrowEvents.js \
   lib/bindContainerEvents.js \
+  lib/bindTargetTouchEvents.js \
+  lib/bindArrowTouchEvents.js \
+  lib/bindContainerTouchEvents.js \
   lib/bindTargetEvents.js \
   lib/bindZoomEvents.js \
   lib/checkClosestTarget.js \
@@ -53,4 +56,11 @@ fi
 
 cat ${files[*]} >> $minified
 
-uglifyjs --overwrite $minified
+if [ -z "$2" ]
+  then
+dev=false
+  else
+dev=$2
+fi
+
+uglifyjs --define DEVMODE=$2 --overwrite $minified
