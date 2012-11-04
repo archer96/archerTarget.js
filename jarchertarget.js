@@ -226,7 +226,20 @@ DEVMODE && (DEVNAME = '');
 
         this.setSize();
 
+        this.clearConverterCache = function () {
 
+            converterCache.px = {
+                x: {},
+                y: {}
+            };
+
+            converterCache.pc = {
+                x: {},
+                y: {}
+            };
+
+        };
+    
         this.convertTo = {
 
             pc: {
@@ -240,14 +253,14 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: x-axe :: NOT using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: x-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
                         tmpCache[arg] = (arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
 
                     } else {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: x-axe :: using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: x-axe :: using cache', targetID, arg);
   
                     }
 
@@ -265,14 +278,14 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: y-axe :: NOT using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: y-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
                         tmpCache[arg] = (arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
 
                     } else {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: y-axe :: using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: y-axe :: using cache', targetID, arg);
   
                     }
 
@@ -293,13 +306,13 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: x-axe :: NOT using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: x-axe :: NOT using cache', targetID, arg);
                         
                         tmpCache[arg] = ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].left + self.transX) * self.zoom;
 
                     } else {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: x-axe :: using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: x-axe :: using cache', targetID, arg);
   
                     }
 
@@ -317,14 +330,14 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: y-axe :: NOT using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: y-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
                         tmpCache[arg] = ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].top + self.transY) * self.zoom;
 
                     } else {
 
-                        DEVMODE > 11 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: y-axe :: using cache', targetID, arg);
+                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: y-axe :: using cache', targetID, arg);
   
                     }
 
@@ -345,13 +358,13 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: NOT using cache', targetDiameter, arg);
+                        DEVMODE > 12 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: NOT using cache', targetDiameter, arg);
                         
                         tmpCache[arg] = self.width / 100 * targetDiameter / 100 * arg
 
                     } else {
 
-                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: using cache', targetDiameter, arg);
+                        DEVMODE > 12 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: using cache', targetDiameter, arg);
   
                     }
 
@@ -370,13 +383,13 @@ DEVMODE && (DEVNAME = '');
 
                     if (!tmpCache[arg]) {
 
-                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: NOT using cache', targetDiameter, arg);
+                        DEVMODE > 12 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: NOT using cache', targetDiameter, arg);
                         
                         tmpCache[arg] = self.height / 100 * targetDiameter / 100 * arg;
 
                     } else {
 
-                        DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: using cache', targetDiameter, arg);
+                        DEVMODE > 12 && console.log('jAT ' + DEVNAME + ':: converter :: canvas :: y-axe :: using cache', targetDiameter, arg);
                         
                     }
 
