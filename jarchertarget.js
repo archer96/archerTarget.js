@@ -178,19 +178,18 @@ DEVMODE && (DEVNAME = '');
         
         var self = this,
             plugin,
-            converterCache = {
-                canvas: {
-                    x: {},
-                    y: {}
-                },
-                px: {
-                    x: {},
-                    y: {}
-                },
-                pc: {
-                    x: {},
-                    y: {}
-                }
+
+            converterCacheCanvas = {
+                x: {},
+                y: {}
+            },
+            converterCachePx = {
+                x: {},
+                y: {}
+            },
+            converterCachePc = {
+                x: {},
+                y: {}
             };
 
         params = params || {};
@@ -228,12 +227,12 @@ DEVMODE && (DEVNAME = '');
 
         this.clearConverterCache = function () {
 
-            converterCache.px = {
+            converterCachePx = {
                 x: {},
                 y: {}
             };
 
-            converterCache.pc = {
+            converterCachePc = {
                 x: {},
                 y: {}
             };
@@ -242,21 +241,20 @@ DEVMODE && (DEVNAME = '');
     
         this.convertTo = {
 
-            pc: {
-                x: function (arg, targetID) {
+            pcX: function (arg, targetID) {
 
                     if (!targetID) { targetID = 0; }
                     
-                    if (!converterCache.pc.x[targetID]) { converterCache.pc.x[targetID] = {}; }
+                    if (!converterCachePc.x[targetID]) { converterCachePc.x[targetID] = {}; }
 
-                    var tmpCache = converterCache.pc.x[targetID];
+                    var tmpCache = converterCachePc.x[targetID];
 
                     if (!tmpCache[arg]) {
 
                         DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: x-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
-                        tmpCache[arg] = (arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
+                        tmpCache[arg] = (arg / self.zoom - self.gap[targetID].left - self.transX) / self.convertTo.canvasX(self.target[targetID].diameter) * 100;
 
                     } else {
 
@@ -266,22 +264,22 @@ DEVMODE && (DEVNAME = '');
 
                     return tmpCache[arg];
 
-                },
+            },
 
-                y: function (arg, targetID) {
+            pcY: function (arg, targetID) {
 
                     if (!targetID) { targetID = 0; }
 
-                    if (!converterCache.pc.y[targetID]) { converterCache.pc.y[targetID] = {}; }
+                    if (!converterCachePc.y[targetID]) { converterCachePc.y[targetID] = {}; }
 
-                    var tmpCache = converterCache.pc.y[targetID];
+                    var tmpCache = converterCachePc.y[targetID];
 
                     if (!tmpCache[arg]) {
 
                         DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: pc     :: y-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
-                        tmpCache[arg] = (arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvas.x(self.target[targetID].diameter) * 100;
+                        tmpCache[arg] = (arg / self.zoom - self.gap[targetID].top - self.transY) / self.convertTo.canvasX(self.target[targetID].diameter) * 100;
 
                     } else {
 
@@ -291,24 +289,21 @@ DEVMODE && (DEVNAME = '');
 
                     return tmpCache[arg];
 
-                }
             },
 
-            px: {
-
-                x: function (arg, targetID) {
+            pxX: function (arg, targetID) {
 
                     if (!targetID) { targetID = 0; }
 
-                    if (!converterCache.px.x[targetID]) { converterCache.px.x[targetID] = {}; }
+                    if (!converterCachePx.x[targetID]) { converterCachePx.x[targetID] = {}; }
 
-                    var tmpCache = converterCache.px.x[targetID];
+                    var tmpCache = converterCachePx.x[targetID];
 
                     if (!tmpCache[arg]) {
 
                         DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: x-axe :: NOT using cache', targetID, arg);
                         
-                        tmpCache[arg] = ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].left + self.transX) * self.zoom;
+                        tmpCache[arg] = ((self.convertTo.canvasX(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].left + self.transX) * self.zoom;
 
                     } else {
 
@@ -318,22 +313,22 @@ DEVMODE && (DEVNAME = '');
 
                     return tmpCache[arg];
                         
-                },
+            },
 
-                y: function (arg, targetID) {
+            pxY: function (arg, targetID) {
 
                     if (!targetID) { targetID = 0; }
 
-                    if (!converterCache.px.y[targetID]) { converterCache.px.y[targetID] = {}; }
+                    if (!converterCachePx.y[targetID]) { converterCachePx.y[targetID] = {}; }
 
-                    var tmpCache = converterCache.px.y[targetID];
+                    var tmpCache = converterCachePx.y[targetID];
 
                     if (!tmpCache[arg]) {
 
                         DEVMODE > 10 && console.log('jAT ' + DEVNAME + ':: converter :: px     :: y-axe :: NOT using cache', targetID, arg);
                         
                         /* Attention: converting the target diameter using the x-axe; otherwise an error will occur */
-                        tmpCache[arg] = ((self.convertTo.canvas.x(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].top + self.transY) * self.zoom;
+                        tmpCache[arg] = ((self.convertTo.canvasX(self.target[targetID].diameter) / 100) * arg + self.gap[targetID].top + self.transY) * self.zoom;
 
                     } else {
 
@@ -342,19 +337,16 @@ DEVMODE && (DEVNAME = '');
                     }
 
                     return tmpCache[arg];
-                    
-                }
+                   
             },
 
-            canvas: {
-
-                x: function (arg, targetDiameter) {
+            canvasX: function (arg, targetDiameter) {
 
                     if (!targetDiameter) { targetDiameter = 100; }
 
-                    if (!converterCache.canvas.x[targetDiameter]) { converterCache.canvas.x[targetDiameter] = {}; }
+                    if (!converterCacheCanvas.x[targetDiameter]) { converterCacheCanvas.x[targetDiameter] = {}; }
 
-                    var tmpCache = converterCache.canvas.x[targetDiameter];
+                    var tmpCache = converterCacheCanvas.x[targetDiameter];
 
                     if (!tmpCache[arg]) {
 
@@ -370,16 +362,16 @@ DEVMODE && (DEVNAME = '');
 
                     return tmpCache[arg];
 
-                },
+            },
 
-                y: function (arg, targetDiameter) {
+            canvasY: function (arg, targetDiameter) {
 
                     if (!targetDiameter) { targetDiameter = 100; }
 
 
-                    if (!converterCache.canvas.y[targetDiameter]) { converterCache.canvas.y[targetDiameter] = {}; }
+                    if (!converterCacheCanvas.y[targetDiameter]) { converterCacheCanvas.y[targetDiameter] = {}; }
 
-                    var tmpCache = converterCache.canvas.y[targetDiameter];
+                    var tmpCache = converterCacheCanvas.y[targetDiameter];
 
                     if (!tmpCache[arg]) {
 
@@ -395,7 +387,6 @@ DEVMODE && (DEVNAME = '');
 
                     return tmpCache[arg];
 
-                }
             }
             
         };
