@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <title>Events - Example - jArcherTarget</title>
+
+    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+
+    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
+    <script language="javascript" src="../jarchertarget.min.js"></script>
+    <script language="javascript" src="../targets/targets.min.js"></script>
+
+  </head>
+  <body>
+    
+    <p>Have a look into your console.</p>
+
+    <div id="target" style="width:230px; height:230px;"></div>
+
+    <script language="javascript">
+        $(document).ready(function () {
+
+            $("#target").archerTarget({
+
+                target: 'wa_x',
+
+                arrows: [     
+                    {
+                        radius: 10,
+                        data: [
+                            { x: 18, y: 50 },
+                            { x: 19, y: 22 },
+                            { x: 45, y: 75 }
+                        ]
+                    }
+                ],
+                onTargetClick: function (e, index) {
+                    console.log("click Target: " + index);
+                },
+                onTargetOver: function (e, index) {
+                    console.log("over Target: " + index);
+                },
+                onTargetOut: function (e, index) {
+                    console.log("out Target: " + index);
+                },
+                onTargetMove: function (e) {
+                    console.log("Moving Targets");
+                },
+                                
+                                
+                onArrowOver: function (e, arrowSetID, arrowID) {
+                    console.log("over Arrow: " + arrowSetID + " " + arrowID);
+                },
+                onArrowOut: function (e, arrowSetID, arrowID) {
+                    console.log("out Arrow: " + arrowSetID + " " + arrowID);
+                },
+                onArrowMove: function (e, arrowSetID, arrowID, arrows) {
+                    console.log("move Arrow: " + arrowSetID + " " + arrowID + " Ring:" + arrows[arrowSetID].data[arrowID].ring);
+                },
+                onArrowClick: function (e, arrowSetID, arrowID, arrows) {
+                    console.log("click Arrow: " + arrowSetID + " " + arrowID);
+                },
+                onArrowSelect: function (e, arrowSetID, arrowID, arrows) {
+                    console.log("select Arrow: " + arrowSetID + " " + arrowID);
+                },
+                onArrowDeselect: function (e, arrowSetID, arrowID) {
+                    console.log("deselect Arrow: " + arrowSetID + " " + arrowID);
+                },
+                                
+                                
+                onZoom: function (e, newZoom, oldZoom) {
+                    console.log("Zoom new: " + newZoom + "  Zoom old: " + oldZoom);
+                },
+
+                onContainerTap: function (e, canvasCoordinates, targetCoordinates) {
+                    console.log("Made a tap on the container: X: " + canvasCoordinates.x + " Y: " + canvasCoordinates.y + "; Target: " + targetCoordinates.target + " X: " + targetCoordinates.x + " Y: " + targetCoordinates.y);
+                }
+            });
+
+        });
+    </script>
+
+  </body>
+</html>
+

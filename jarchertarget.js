@@ -27,7 +27,6 @@ DEVMODE && (DEVNAME = '');
             onArrowOver: 'arrowOver',
             onArrowOut: 'arrowOut',
             onArrowMove: 'arrowMove',
-            onArrowClick: 'arrowClick',
             onArrowSelect: 'arrowSelect',
             onArrowDeselect: 'arrowDeselect',
     

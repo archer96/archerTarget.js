@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <title>Complex 1 - Example - jArcherTarget</title>
+
+    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+
+    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
+    <script language="javascript" src="../jarchertarget.min.js"></script>
+    <script language="javascript" src="../targets/targets.min.js"></script>
+
+    <style type="text/css">
+
+        #target {
+            width: 2000px;
+            height: 24000px;
+        }
+
+    </style>
+
+  </head>
+  <body>
+    
+    <div id="target"></div>
+
+    <script language="javascript">
+
+        $(document).ready(function () {
+
+            var self = this,
+                i, j,
+                targetNumber = 800,
+                columns = 8,
+                stepY = 100 / (targetNumber / columns),
+                posX = 5,
+                posY = stepY - stepY * .5,
+                min = 0,
+                targetArray = [];
+
+            for (i = 0; i < targetNumber; i++) {
+
+                targetArray[i] = {
+                    name: 'wa_x',
+                    center: [posX, posY],
+                    diameter: 9.5
+                };
+
+                
+                if ((i + 1) % 100 == 0) {
+                    
+                    posX += 10;
+                    posY = stepY - stepY * .5;
+
+                } else {
+
+                    posY += stepY;
+
+                }
+
+            }
+                
+            $("#target").archerTarget({
+
+                target: targetArray,
+
+
+            });
+
+
+        });
+
+    </script>
+
+  </body>
+</html>
+
