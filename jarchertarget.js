@@ -152,8 +152,9 @@ DEVMODE && (DEVNAME = '');
                 }
             }
             
-            defaultParams.container = this;
-            
+            defaultParams.container = $(this);
+            defaultParams.containerId = $(this).attr('id');
+
             targetObj = new jat.Target(defaultParams);
             
             this.data('targetObject', targetObj);
