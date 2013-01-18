@@ -1,13 +1,13 @@
 /*
- * jArcherTarget plugin "appZoom" - version 0.2 [2012-09-23]
- * This plugin shows a zoom target if an arrow is moving. Created for use in smartphone applications.
+ * jArcherTarget plugin "appZoom2" - version 0.2 [2012-01-14]
+ * This plugin shows a zoomed target if an arrow is moving. Created for use in smartphone applications.
  *
  * Copyright 2012, Andre Meyering
  * Licensed under the MIT license.
  */
 (function ($) {
 
-    $.fn.archerTarget('addPlugin', 'appZoom', {
+    $.fn.archerTarget('addPlugin', 'appZoom2', {
 
         /*
          * Initializing function
@@ -52,13 +52,16 @@
             self.scaledTarget.width = mainWidth * self.options.scaledZoom;
             self.scaledTarget.height = mainHeight * self.options.scaledZoom;
             self.scaledTarget.wrapperWidth = mainWidth / 100 * self.options.width;
-            self.scaledTarget.wrapperHeight = mainHeight / 100 * self.options.height;
+            self.scaledTarget.wrapperHeight = !self.options.useHeightPx ? mainHeight / 100 * self.options.height : self.options.height;
             /*
              * Set the default transX and transY of the scaled target target. If we use these variables, it will center the target.
              */
             self.scaledTarget.defaultTransX = -(self.scaledTarget.width / 2 - self.scaledTarget.wrapperWidth / (2 * self.mainTarget.defaultZoom));
             self.scaledTarget.defaultTransY = -(self.scaledTarget.height / 2 - self.scaledTarget.wrapperHeight / (2 * self.mainTarget.defaultZoom));
             
+
+            self.resetCrossPosition();
+
             /*
              * Create the (hidden) scaled target.
              */
@@ -151,6 +154,11 @@
             }
 
             /*
+             * Create the cross.
+             */
+            self.createCross();
+
+            /*
              * Create the scaled target with the target options...
              */
             self.scaledTarget.container = $('<div/>').attr('id', self.mainTarget.container[0].id + 'ScaledTarget').css({
@@ -168,7 +176,7 @@
                     overflow: 'hidden',
                     'margin-bottom': self.options.margin.bottom * (-1) + 'px'
 
-                }).append(self.createCross()).append(self.scaledTarget.container).hide();
+                }).append(self.cross).append(self.scaledTarget.container).hide();
 
 
             /*
@@ -180,41 +188,38 @@
 
         /**
          * Creates the cross for the scaled target
-         * @return {Object} Cross DOM element
          */
         createCross: function () {
 
             var self = this;
-                cross = $('<div/>').attr('id', self.mainTarget.container[0].id + 'Cross').append(
 
-                    $('<div class="crossY"></div>').css({
+            self.crossXEl = $('<div class="crossX"></div>').css({
 
-                        'border-bottom': self.options.crossWidth + 'px solid ' + self.options.crossColor,
-                        width: self.scaledTarget.wrapperWidth,
-                        height: (self.scaledTarget.wrapperHeight - self.options.crossWidth / 2) / 2,
-                        position: 'absolute'
+                'border-bottom': self.options.crossWidth + 'px solid ' + self.options.crossColor,
+                width: self.scaledTarget.wrapperWidth,
+                height: self.crossY,
+                position: 'absolute'
 
-                    })
+            });
 
-                ).append(
+            self.crossYEl = $('<div class="crossY"></div>').css({
 
-                    $('<div class="crossX"></div>').css({
+                'border-right': self.options.crossWidth + 'px solid ' + self.options.crossColor,
+                width: self.crossY,
+                height: self.scaledTarget.wrapperHeight,
+                position: 'absolute'
 
-                        'border-right': self.options.crossWidth + 'px solid ' + self.options.crossColor,
-                        width: (self.scaledTarget.wrapperWidth - self.options.crossWidth / 2) / 2,
-                        height: self.scaledTarget.wrapperHeight,
-                        position: 'absolute'
+            });
 
-                    })
-
-                ).css({
+            self.cross = $('<div/>').attr('id', self.mainTarget.container[0].id + 'Cross')
+                .append(self.crossYEl)
+                .append(self.crossXEl)
+                .css({
                     'z-index': 990,
                     position: 'relative',
                     top: 0,
                     left: 0
                 });
-
-            return cross;
         },
 
         /**
@@ -233,15 +238,11 @@
             this.arrows = arrows;
 
             var self = this,
-                arrowElement = arrows[arrowSetID].data[arrowID].element,
                 /**
                  * Position of the arrow in pixel
                  * @type {Object}
                  */
-                arrow = {
-                    x: parseInt(arrowElement.getAttribute('cx'), 10),
-                    y: parseInt(arrowElement.getAttribute('cy'), 10)
-                },
+                arrow = self.getArrowPosition(arrowSetID, arrowID),
                 /**
                  * Distance of the arrow to the center in pixel
                  * @type {Object}
@@ -251,10 +252,10 @@
                     y: self.mainTarget.height / 2 - arrow.y
                 };
 
-
             self.movingArrow = true;
+            self.activeArrowID = arrowID;
+            self.activeArrowSetID = arrowSetID;
 
-            
             /*
              * Show the scaled target
              */
@@ -268,11 +269,14 @@
                 self.mainTarget.scaledTransY + fromCenter.y / self.mainTarget.defaultZoom - fromCenter.y / self.options.tapZoom,
                 self.options.tapZoom
             );
+
+            self.arrowOldX = arrow.x;
+            self.arrowOldY = arrow.y;
+
+            self.movingController(arrowSetID, arrowID, true);
+
             
-            self.setScaledTarget(arrowSetID, arrowID, self.arrows);
-
         },
-
 
         /**
          * Called if an arrow was dropped/deselect. Will hide the scaled target and the cross, etc.
@@ -293,6 +297,8 @@
                 self.mainTarget.defaultZoom
             );
 
+            self.resetCrossPosition();
+
             self.arrows = arrows;
 
             self.movingArrow = false;
@@ -305,115 +311,185 @@
 
         },
 
+        movingController: function (arrowSetID, arrowID, setScaledTargetPos) {
+
+            if (!this.movingArrow) {
+                return;
+            }
+
+
+            var self = this,
+                main = self.mainTarget,
+                arrow = self.getArrowPosition(arrowSetID, arrowID),
+                fromCenter = {
+                    x: (main.width / 2 - arrow.x) - (main.scaledTransX - main.transX) * self.mainTarget.zoom,
+                    y: (main.height / 2 - arrow.y) - (main.scaledTransY - main.transY) * self.mainTarget.zoom
+                };
+                
+
+            if (setScaledTargetPos) self.setScaledTarget(fromCenter);
+
+            self.setCrossPosition(arrow.x, arrow.y);
+
+            self.checkMoving(arrowSetID, arrowID);
+            
+                
+            requestAnimationFrame(function () {
+                self.movingController(arrowSetID, arrowID, false);
+            });
+
+        },
+
         /**
-         * Will set the position of the scaled target
-         * @param  {Integer} arrowSetID Id of the arrowset the arrow is in
-         * @param  {Integer} arrowID    Id of the arrow in the arrowset
-         * @param  {Object}  arrows     Object containing all arrowset objects
+         * Sets the position of the cross
+         * @param {Integer} x Position of the arrow on the x-axe
+         * @param {Integer} y Position of the arrow on the y-axe
          */
-        setScaledTarget: function (arrowSetID, arrowID, arrows) {
+        setCrossPosition: function (x, y) {
+
+            var self = this,
+                cx = self.scaledTarget.wrapperWidth / 2  - (self.arrowOldX - x) / (self.mainTarget.zoom / self.options.scaledZoom),
+                cy = self.scaledTarget.wrapperHeight / 2 - (self.arrowOldY - y) / (self.mainTarget.zoom / self.options.scaledZoom);
+
+            self.crossX = (cx - self.options.crossWidth / 2);
+            self.crossY = (cy - self.options.crossWidth / 2);
+
+            self.crossXEl.css({
+
+                height: self.crossY
+                
+            });
+
+            self.crossYEl.css({
+
+                width: self.crossX
+                
+            });
+
+        },
+
+
+        /**
+         * Set the position of the scaled target
+         * @param {Object} fromCenter Distance to the center of the target (x and y coordinate)
+         */
+        setScaledTarget: function (fromCenter) {
+
+            var self = this,
+                transX = self.scaledTarget.defaultTransX + fromCenter.x / (self.mainTarget.zoom / self.options.scaledZoom),
+                transY = self.scaledTarget.defaultTransY + fromCenter.y / (self.mainTarget.zoom / self.options.scaledZoom);
+
+            transX += self.crossX - self.crossOrgX
+            transY += self.crossY - self.crossOrgY
+
+            self.scaledTarget.container.archerTarget('set', 'transform', transX, transY);
+
+        },
+
+        /**
+         * Get the actual position of an arrow.
+         * 
+         * @param  {Integer} arrowSetID Id of the arrowset containing the arrow
+         * @param  {Integer} arrowID    Id of the arrow in the arrowset
+         * @return {Object}  Position of the arrow
+         */
+        getArrowPosition: function (arrowSetID, arrowID) {
+
+            var arrowElement = this.arrows[arrowSetID].data[arrowID].element;
+
+            return {
+                x: parseInt(arrowElement.getAttribute('cx'), 10),
+                y: parseInt(arrowElement.getAttribute('cy'), 10)
+            };
+
+        },
+
+        /**
+         * Sets the position of the cross to the center
+         */
+         resetCrossPosition: function () {
 
             var self = this;
 
-            if (self.movingArrow) {
-                
+            /**
+             * Position of the cross on the x-axe
+             * @type {Number}
+             */
+            self.crossX = self.crossOrgX = (self.scaledTarget.wrapperWidth - self.options.crossWidth / 2) / 2;
+            /**
+             * Position of the cross on the y-axe
+             * @type {Number}
+             */
+            self.crossY = self.crossOrgY = (self.scaledTarget.wrapperHeight - self.options.crossWidth / 2) / 2;
+
+
+        },
+
+
+        /**
+         * Checks, if we have to move the main (and scaled) target.
+         */
+        checkMoving: function (arrowSetID, arrowID) {
+
+            var self = this
                 /**
                  * The position of the current arrow in pixel
                  * @type {Object}
                  */
-                var arrowElement = arrows[arrowSetID].data[arrowID].element,
-                    arrow = {
-                        x: parseInt(arrowElement.getAttribute('cx'), 10),
-                        y: parseInt(arrowElement.getAttribute('cy'), 10)
-                    },
-                    main = self.mainTarget,
-                    mainZoom = self.mainTarget.zoom,
-                    mainWidth = main.width,
-                    mainHeight = main.height,
-                    mainTransX = main.transX,
-                    mainTransY = main.transY,
-                    mainScaledTransX = main.scaledTransX,
-                    mainScaledTransY = main.scaledTransY,
-                    /**
-                     * Distance of the arrow to the center in pixel
-                     * @type {Object}
-                     */
-                    fromCenter = {
-                        x: (mainWidth / 2 - arrow.x) - (mainScaledTransX - mainTransX) * mainZoom,
-                        y: (mainHeight / 2 - arrow.y) - (mainScaledTransY - mainTransY) * mainZoom
-                    },
-                    /**
-                     * Called to move the target if needed
-                     * @param {Boolean} arrowMove If false, the function is called by the moving interval
-                     */
-                    moveTarget = function (arrowMove) {
-
-                        /*
-                         * Check if the arrow is on the top/right/left/bottom, so we've to position the target.
-                         */
-                        if (arrow.y < self.options.margin.bottom + 20 && mainTransY < (mainScaledTransY + mainHeight / 2 / mainZoom + self.options.margin.bottom)) {
-
-                            mainTransY += 2;
-
-                            self.mainTarget.setTransform(
-                                false,
-                                mainTransY
-                            );
-                                    
-                        } else if (arrow.y > mainHeight - 20 && mainTransY > (mainScaledTransY + mainHeight / -2 / mainZoom)) {
-
-                            mainTransY -= 2;
-
-                            self.mainTarget.setTransform(
-                                false,
-                                mainTransY
-                            );
-
-                        }
-
-                        
-                        if (arrow.x < 20 && mainTransX < (mainScaledTransX + mainWidth / 2 / mainZoom)) {
-
-                            mainTransX += 2;
-
-                            self.mainTarget.setTransform(
-                                mainTransX
-                            );
-                                    
-                        } else if (arrow.x > mainWidth - 20 && mainTransX > (mainScaledTransX + mainWidth / -2 / mainZoom)) {
-
-                            mainTransX -= 2;
-
-                            self.mainTarget.setTransform(
-                                mainTransX
-                            );
-
-                        }
-
-                        /*
-                         * The position of the scaled target
-                         */
-                        self.scaledTarget.container.archerTarget('set', 'transform',
-                            self.scaledTarget.defaultTransX + fromCenter.x / (mainZoom / self.options.scaledZoom),
-                            self.scaledTarget.defaultTransY + fromCenter.y / (mainZoom / self.options.scaledZoom)
-                        );
-
-                    };
-
-                /*
-                 * Move the target
+                arrow            = self.getArrowPosition(arrowSetID, arrowID),
+                /**
+                 * If true, the main target was moved
+                 * @type {Boolean}
                  */
-                moveTarget();
+                hasMoved         = false,
 
-                requestAnimationFrame(function () {
-                    self.setScaledTarget(arrowSetID, arrowID, self.arrows);
-                });
+                main             = self.mainTarget,
+                mainZoom         = self.mainTarget.zoom,
+                mainWidth        = main.width,
+                mainHeight       = main.height,
+                mainTransX       = main.transX,
+                mainTransY       = main.transY,
+                mainScaledTransX = main.scaledTransX,
+                mainScaledTransY = main.scaledTransY;
+
+            /*
+             * Check if the arrow is on the top/right/left/bottom, so we've to position the target.
+             */
+            if (arrow.y < self.options.margin.bottom + 20) {
+                mainTransY += 1;
+                hasMoved = true;
+                                    
+            } else if (arrow.y > mainHeight - 20) {
+                mainTransY -= 1;
+                hasMoved = true;
+            }
+                        
+            if (arrow.x < 20) {
+                mainTransX += 1;
+                hasMoved = true;
+            } else if (arrow.x > mainWidth - 20) {
+                mainTransX -= 1;
+                hasMoved = true;
+            }
 
 
+            if (hasMoved) {
+
+                self.mainTarget.setTransform(
+                    mainTransX,
+                    mainTransY
+                );
+
+                var fromCenter = {
+                    x: (main.width / 2 - arrow.x) - (main.scaledTransX - main.transX) * main.zoom,
+                    y: (main.height / 2 - arrow.y) - (main.scaledTransY - main.transY) * main.zoom
+                };
+
+                    
+                self.setScaledTarget(fromCenter, true);
             }
 
         }
-
 
     });
 
