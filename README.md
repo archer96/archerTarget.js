@@ -1,80 +1,45 @@
-# jArcherTarget
-jArcherTarget is a jQuery plugin to display archery targets and arrows on an easy way on websites.
-Source avaiable on [GitHub](https://github.com/archer96/jarchertarget).
+# jQuery.archerTarget
 
-#Contents
-1. [About](#about)
-2. [License](#license)
-3. [Issues](#issues)
-4. [Build](#build)
-5. [Changelog](#changelog)
-6. [Notes](#notes)
-
-
-## About
-jArcherTarget is a simple and easy to use [jQuery](http://jquery.com) plugin create by [Andre Meyering](http://andremeyering.de). It was created for use in [Archer'sTargetFriend](http://archery.andremeyering.de) but can be used on websites, too.
-
+jQuery and Zepto plugin for archers.
 
 ##License
-jArcherTarget is licensed unter the of MIT license (see LICENSE).
+jQuery.archerTarget is licensed unter the of MIT license (see LICENSE-MIT).
 
+## Getting Started
+Download the [production version][min] or the [development version][max].
 
-## Issues
-When [submitting issues on github](https://github.com/archer96/jarchertarget/issues) please include following:
+[min]: https://raw.github.com/archer96/jQuery.archerTarget/master/dist/jquery.archerTarget.min.js
+[max]: https://raw.github.com/archer96/jQuery.archerTarget/master/dist/jquery.archerTarget.js
 
-1. Issue description
-2. If necessary create an example page using [JSFiddle](http://jsfiddle.net/) or [JSBin](http://jsbin.com)
-3. jArcherTarget version
-4. Browsers/platforms tested
+In your web page:
 
-
+```html
+<script src="jquery.js"></script>
+<!--
+    We support Zepto, too!
+    <script src="jquery.js"></script>
+-->
+<script src="dist/jquery.archerTarget.min.js"></script>
+<script src="dist/targets/jquery.archerTarget.targets.min.js"></script>
+<script>
+(function($) {
+    $('#myTarget').archerTarget();
+}(window.jQuery || window.Zepto));
+</script>
+```
 ## Build
-It's simple to build a minified version of jArcherTarget. First you need to install [UglifyJS](https://github.com/mishoo/UglifyJS) and run the following command to create the minified jArcherTarget file:
+requires latest grunt:
+`npm install grunt@master`
+More information in the [CONTRIBUTING](https://github.com/archer96/jQuery.archerTarget/master/CONTRIBUTING.md) file.
 
-(Mac & Linux)
+## Documentation
+_(Coming soon)_
 
-> ./build.sh
+## Examples
+Example are available in the `example` directory.
+Please note that jQuery.archerTargets requires the latest Zepto or jQuery version.
 
-It will create the minified file.
+## Release History ##
 
-If you want a new minified version of the targets, go into the 'targets' folder and run this command:
+ - 2013/01/31 - v0.3pre - Rewritten. jQuery.archerTarget now uses nodejs and grunt. Some other bugfixes.
 
-(Mac & Linux)
-
-> ./buildTargets.sh
-
-
-##Changelog
-
-###0.2
-
-* Fixed bug #1, #2
-* added VERSION file
-* deleted autoloader.js and added script tag in index.html
-* changed the .data parameter. Now arrowset[i].data[j] is an object instead of an array.
- * { x: 50, y: 50, ring: X, target: 1, element: node}
-* added getTargetParams
-* added setArrowStyle
-* renamed setArrows to setArrowPosition
-* renamed setActive to setArrowActive
-* added setArrowOptions
-* removed a bug (arrow position was changed wrong, everytime the user clicked on an arrow; only appeard if 'draggable' was an object)
-* changed from Google Closure Compiler to UglifyJS
-* renamed "removeArrowDrag" to "removeArrowPointer"
-* renamed "createArrowDrag" to "createArrowPointer"
-* added tap event
-* fixed "checkClosestTarget"
-* renamed "setArrowDrag" to "setArrowPointer"
-* added "getTransform"
-* renamed "applyTransform" to "setTransform"
-* added "getArrows"
-* added touch events
-
-###0.1
-
-* First version
-
-
-## Notes
-
-This project uses the vector script from [jvectormap.com](http://jvectormap.com) to create SVG nodes.

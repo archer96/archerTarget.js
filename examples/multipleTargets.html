@@ -1,54 +1,54 @@
 <!doctype html>
 <html>
-  <head>
+<head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
-    <title>Multiple Targets - Example - jArcherTarget</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+	<title>Multiple Targets - Example - jQuery.archerTarget</title>
 
-    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
-    <script language="javascript" src="../jarchertarget.min.js"></script>
-    <script language="javascript" src="../targets/targets.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
 
-  </head>
-  <body>
-    
-    <div id="target" style="width:230px; height:230px;"></div>
+	<script src="../libs/jquery-loader.js"></script>
+	<script src="../dist/jquery.archerTarget.js"></script>
+	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
 
-    <script language="javascript">        
-        $(document).ready(function () {
-            
-            /*
-             * Array containing the target objects
-             */
-            var targetArray = [
-                {
-                    name: 'wa_x',
-                    center: [25, 26],
-                    diameter: 44
-                },
-                {
-                    name: 'wa_x',
-                    center: [75, 26],
-                    diameter: 44
-                },
-                {
-                    name: 'wa_x',
-                    center: [50, 73],
-                    diameter: 44
-                }
-            ];
-        
-            $("#target").archerTarget({
-                
-                target: targetArray
-                
-            });
+</head>
+<body>
 
-        });
-    </script>
+	<div id="target" style="width:230px; height:230px;"></div>
 
-  </body>
+	<script>
+		$(document).ready(function () {
+
+			/*
+			 * Array containing the target objects
+			 */
+			var targetArray = [
+				{
+					name: 'wa_x',
+					center: [25, 26],
+					diameter: 44
+				},
+				{
+					name: 'wa_x',
+					center: [75, 26],
+					diameter: 44
+				},
+				{
+					name: 'wa_x',
+					center: [50, 73],
+					diameter: 44
+				}
+			];
+
+			$("#target").archerTarget({
+
+				target: targetArray
+
+			});
+
+		});
+	</script>
+
+</body>
 </html>

@@ -1,75 +1,75 @@
 <!doctype html>
 <html>
-  <head>
+<head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
-    <title>Complex 1 - Example - jArcherTarget</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+	<title>Complex 1 - Example - jQuery.archerTarget</title>
 
-    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
-    <script language="javascript" src="../jarchertarget.min.js"></script>
-    <script language="javascript" src="../targets/targets.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
 
-    <style type="text/css">
+	<script src="../libs/jquery-loader.js"></script>
+	<script src="../dist/jquery.archerTarget.js"></script>
+	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
 
-        #target {
-            width: 500px;
-            height: 500px;
-        }
+	<style type="text/css">
 
-    </style>
+		#target {
+			width: 500px;
+			height: 500px;
+		}
 
-  </head>
-  <body>
-    
-    <div id="target"></div>
+	</style>
 
-    <script language="javascript">
+</head>
+<body>
 
-        $(document).ready(function () {
+	<div id="target"></div>
 
-            var self = this,
-                i, j,
-                max = 100,
-                min = 0,
-                arrowArray = [];
+	<script>
 
-            for (i = 0; i < 20; i++) {
+		$(document).ready(function () {
 
-                arrowArray[i] = {
-                    data: []
-                };
+			var self = this,
+				i, j,
+				max = 100,
+				min = 0,
+				arrowArray = [];
 
-                for (j = 0; j < 150; j++) {
+			for (i = 0; i < 20; i++) {
 
-                    arrowArray[i].data[j] = {
-                        x: Math.floor(Math.random() * (max - min + 1)) + min,
-                        y: Math.floor(Math.random() * (max - min + 1)) + min
-                    }
+				arrowArray[i] = {
+					data: []
+				};
 
-                }
+				for (j = 0; j < 150; j++) {
 
-            }
-                
-            $("#target").archerTarget({
+					arrowArray[i].data[j] = {
+						x: Math.floor(Math.random() * (max - min + 1)) + min,
+						y: Math.floor(Math.random() * (max - min + 1)) + min
+					}
 
-                target: 'wa_x',
+				}
 
-                arrows: arrowArray,
+			}
 
-                arrowDefaults: {
-                    radius: 1
-                }
+			$("#target").archerTarget({
 
-            });
+				target: 'wa_x',
+
+				arrows: arrowArray,
+
+				arrowDefaults: {
+					radius: 1
+				}
+
+			});
 
 
-        });
+		});
 
-    </script>
+	</script>
 
-  </body>
+</body>
 </html>
 

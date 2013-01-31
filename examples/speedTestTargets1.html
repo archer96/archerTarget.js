@@ -1,79 +1,79 @@
 <!doctype html>
 <html>
-  <head>
+<head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
-    <title>Complex 1 - Example - jArcherTarget</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+	<title>Complex 1 - Example - jQuery.archerTarget</title>
 
-    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
-    <script language="javascript" src="../jarchertarget.min.js"></script>
-    <script language="javascript" src="../targets/targets.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
 
-    <style type="text/css">
+	<script src="../libs/jquery-loader.js"></script>
+	<script src="../dist/jquery.archerTarget.js"></script>
+	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
 
-        #target {
-            width: 2000px;
-            height: 24000px;
-        }
+	<style type="text/css">
 
-    </style>
+		#target {
+			width: 2000px;
+			height: 24000px;
+		}
 
-  </head>
-  <body>
-    
-    <div id="target"></div>
+	</style>
 
-    <script language="javascript">
+</head>
+<body>
 
-        $(document).ready(function () {
+	<div id="target"></div>
 
-            var self = this,
-                i, j,
-                targetNumber = 800,
-                columns = 8,
-                stepY = 100 / (targetNumber / columns),
-                posX = 5,
-                posY = stepY - stepY * .5,
-                min = 0,
-                targetArray = [];
+	<script>
 
-            for (i = 0; i < targetNumber; i++) {
+		$(document).ready(function () {
 
-                targetArray[i] = {
-                    name: 'wa_x',
-                    center: [posX, posY],
-                    diameter: 9.5
-                };
+			var self = this,
+				i, j,
+				targetNumber = 800,
+				columns = 8,
+				stepY = 100 / (targetNumber / columns),
+				posX = 5,
+				posY = stepY - stepY * .5,
+				min = 0,
+				targetArray = [];
 
-                
-                if ((i + 1) % 100 == 0) {
-                    
-                    posX += 10;
-                    posY = stepY - stepY * .5;
+			for (i = 0; i < targetNumber; i++) {
 
-                } else {
-
-                    posY += stepY;
-
-                }
-
-            }
-                
-            $("#target").archerTarget({
-
-                target: targetArray,
+				targetArray[i] = {
+					name: 'wa_x',
+					center: [posX, posY],
+					diameter: 9.5
+				};
 
 
-            });
+				if ((i + 1) % 100 == 0) {
+
+					posX += 10;
+					posY = stepY - stepY * .5;
+
+				} else {
+
+					posY += stepY;
+
+				}
+
+			}
+
+			$("#target").archerTarget({
+
+				target: targetArray,
 
 
-        });
+			});
 
-    </script>
 
-  </body>
+		});
+
+	</script>
+
+</body>
 </html>
 

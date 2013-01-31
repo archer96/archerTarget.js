@@ -1,93 +1,96 @@
 <!doctype html>
 <html>
-  <head>
+<head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
-    <title>Arrows - set options - Example - jArcherTarget</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link rel="stylesheet" type="text/css" href="../jarchertarget.css">
+	<title>Arrows - set options - Example - jQuery.archerTarget</title>
 
-    <script language="javascript" src="assets/jquery-1.8.1.min.js"></script>
-    <script language="javascript" src="../jarchertarget.min.js"></script>
-    <script language="javascript" src="../targets/targets.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
 
-  </head>
-  <body>
-    
-    <div id="target" style="width:350px; height:350px;"></div>
+	<script src="../libs/jquery-loader.js"></script>
+	<script src="../dist/jquery.archerTarget.js"></script>
+	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
 
-    <script language="javascript">
+</head>
+<body>
 
-        $(document).ready(function () {
+	<div id="target" style="width:350px; height:350px;"></div>
 
-            var arrowArray = [     
-                {
-                    radius: 12,
-                    style: {
-                        initial: {
-                            opacity: 0.8,
-                            color: '#ff00ff',
-                            stroke: false
-                        },
-                        hover: {
-                            opacity: 1,
-                            color: '#00ff00'
-                        },
-                        selected: {
-                            opacity: 0.7,
-                            color: '#00ffff'
-                        }
-                    },
-                    data: [
-                        { x: 29, y: 70 },
-                        { x: 46, y: 32 },
-                        { x: 25, y: 65 }
-                    ]
-                },
-                {
-                    radius: 8,
-                    style: {
-                        initial: {
-                            opacity: 0.9,
-                            color: '#0000ff',
-                            stroke: false
-                        },
-                        hover: {
-                            opacity: 1,
-                            color: '#ff0000'
-                        },
-                        selected: {
-                            opacity: 0.8,
-                            color: '#ffff00'
-                        }
-                    },
-                    data: [
-                        { x: 57, y: 49 },
-                        { x: 80, y: 40 },
-                        { x: 28, y: 43 }
-                    ]
-                }
-            ];
+	<script>
+
+		$(document).ready(function () {
+
+			var $target = $('#target'),
+				arrowArray;
+
+			arrowArray = [
+				{
+					radius: 12,
+					style: {
+						initial: {
+							opacity: 0.8,
+							color: '#ff00ff',
+							stroke: false
+						},
+						hover: {
+							opacity: 1,
+							color: '#00ff00'
+						},
+						selected: {
+							opacity: 0.7,
+							color: '#00ffff'
+						}
+					},
+					data: [
+						{ x: 29, y: 70 },
+						{ x: 46, y: 32 },
+						{ x: 25, y: 65 }
+					]
+				},
+				{
+					radius: 8,
+					style: {
+						initial: {
+							opacity: 0.9,
+							color: '#0000ff',
+							stroke: false
+						},
+						hover: {
+							opacity: 1,
+							color: '#ff0000'
+						},
+						selected: {
+							opacity: 0.8,
+							color: '#ffff00'
+						}
+					},
+					data: [
+						{ x: 57, y: 49 },
+						{ x: 80, y: 40 },
+						{ x: 28, y: 43 }
+					]
+				}
+			];
 
 
-            $("#target").archerTarget({
+			$target.archerTarget({
 
-                target: 'wa_x',
-                arrows: arrowArray
+				target: 'wa_x',
+				arrows: arrowArray
 
-            });
+			});
 
-            $("#target").archerTarget('set', 'arrowOptions', {
-                arrowsetID: 0,
-                options: {
-                    active: 0
-                }
-            })
+			$target.archerTarget('set', 'arrowOptions', {
+				arrowsetID: 0,
+				options: {
+					active: false
+				}
+			})
 
-        });
-    </script>
+		});
+	</script>
 
-  </body>
+</body>
 </html>
 

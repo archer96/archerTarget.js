@@ -1,0 +1,31 @@
+{
+	"curly": true,
+	"eqeqeq": "off",
+	"forin": true,
+	"immed": true,
+	"latedef": true,
+	"newcap": false,
+	"noarg": true,
+	"noempty": true,
+	"plusplus": false,
+	"quotmark": "single",
+	"regexdash": true,
+	"undef": true,
+	"unused": false,
+	"strict": true,
+	"trailing": true,
+	"maxparams": 5,
+	"maxdepth": 4,
+	"maxlen": 100,
+	"es5": true,
+	"onecase": true,
+
+	"browser": true,
+	"devel": true,
+	"expr": true,
+	"sub": false,
+
+	"onevar": false,
+
+	"maxerr": 100
+}
