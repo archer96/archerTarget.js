@@ -1,4 +1,4 @@
-$.fn.archerTarget('addTarget', 'wa_10_compound', {
+ArcherTarget.addTarget('wa_10_compound', {
 	numberRings: 10,
 	colors: ['#fff', '#fff', '#535154', '#535154', '#3aa3d9', '#3aa3d9',
 		'#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e'],

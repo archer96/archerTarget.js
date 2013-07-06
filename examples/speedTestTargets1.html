@@ -6,11 +6,10 @@
 
 	<title>Complex 1 - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 	<style type="text/css">
 
@@ -28,47 +27,41 @@
 
 	<script>
 
-		$(document).ready(function () {
+		var self = this,
+			i, j,
+			targetNumber = 800,
+			columns = 8,
+			stepY = 100 / (targetNumber / columns),
+			posX = 5,
+			posY = stepY - stepY * .5,
+			min = 0,
+			targetArray = [];
 
-			var self = this,
-				i, j,
-				targetNumber = 800,
-				columns = 8,
-				stepY = 100 / (targetNumber / columns),
-				posX = 5,
-				posY = stepY - stepY * .5,
-				min = 0,
-				targetArray = [];
+		for (i = 0; i < targetNumber; i++) {
 
-			for (i = 0; i < targetNumber; i++) {
-
-				targetArray[i] = {
-					name: 'wa_x',
-					center: [posX, posY],
-					diameter: 9.5
-				};
+			targetArray[i] = {
+				name: 'wa_x',
+				center: [posX, posY],
+				diameter: 9.5
+			};
 
 
-				if ((i + 1) % 100 == 0) {
+			if ((i + 1) % 100 == 0) {
 
-					posX += 10;
-					posY = stepY - stepY * .5;
+				posX += 10;
+				posY = stepY - stepY * .5;
 
-				} else {
+			} else {
 
-					posY += stepY;
-
-				}
+				posY += stepY;
 
 			}
 
-			$("#target").archerTarget({
+		}
 
-				target: targetArray,
+		new ArcherTarget(document.getElementById('target'), {
 
-
-			});
-
+			target: targetArray,
 
 		});
 

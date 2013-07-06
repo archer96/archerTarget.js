@@ -1,35 +1,32 @@
-ArcherTarget.prototype.setTargetStyle = function (state, config) {
+AT.prototype.setTargetStyle = function (state, config) {
 
 	var i,
-		targets = this.targetList;
+		targets = this.targetList,
+		states;
 
-	switch (state) {
+	states = {
+		initial: function () {
+			for (i = 0; i < targets.length; i++) {
 
-	case 'initial':
+				targets[i].el.style.opacity = targets[i].style.initial.opacity;
 
-		for (i = 0; i < targets.length; i++) {
+			}
+		},
+		arrow: function () {
+			var arrowState;
 
-			targets[i].$el.css({ opacity: targets[i].style.initial.opacity });
+			for (i = 0; i < targets.length; i++) {
 
+				arrowState = (i === config.active) ? 'arrowOn' : 'arrowOff';
+
+				targets[i].el.style.opacity = targets[i].style[arrowState].opacity;
+
+			}
 		}
+	};
 
-		break;
-
-
-	case 'arrow':
-
-		var arrowState;
-
-		for (i = 0; i < targets.length; i++) {
-
-			arrowState = (i === config.active) ? 'arrowOn' : 'arrowOff';
-
-			targets[i].$el.css({ opacity: targets[i].style[arrowState].opacity });
-
-		}
-
-		break;
-
+	if (states[state]) {
+		states[state]();
 	}
-};
 
+};

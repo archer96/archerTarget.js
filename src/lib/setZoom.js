@@ -1,11 +1,10 @@
-ArcherTarget.prototype.setZoom = function (newZoom) {
+AT.prototype.setZoom = function (newScale) {
 
-	this.$container.trigger('zoom.archerTarget', [newZoom, this.scale]);
+	ArcherTarget.fireEvent(this.container, 'zoom.archerTarget',
+		{newScale:newScale, oldScale: this.scale});
 
-	this.scale = newZoom;
+	this.scale = newScale;
 
 	this.setTransform();
-
-	this.clearConverterCache();
 
 };

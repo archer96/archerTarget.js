@@ -1,4 +1,4 @@
-ArcherTarget.prototype.setArrowPointer = function (config) {
+AT.prototype.setArrowPointer = function (config) {
 
 	this.dragMark.rect.setPosition({
 		x: config.x - config.drag.width / 2,

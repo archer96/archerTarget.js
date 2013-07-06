@@ -1,4 +1,4 @@
-ArcherTarget.prototype.setTransform = function (x, y, scale) {
+AT.prototype.setTransform = function (x, y, scale) {
 
 	if (!x && x !== 0) { x = this.transX; } else { this.transX = x; }
 	if (!y && y !== 0) { y = this.transY; } else { this.transY = y; }

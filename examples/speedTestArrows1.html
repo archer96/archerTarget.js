@@ -6,11 +6,10 @@
 
 	<title>Complex 1 - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 	<style type="text/css">
 
@@ -28,43 +27,38 @@
 
 	<script>
 
-		$(document).ready(function () {
+		var self = this,
+			i, j,
+			max = 100,
+			min = 0,
+			arrowArray = [];
 
-			var self = this,
-				i, j,
-				max = 100,
-				min = 0,
-				arrowArray = [];
+		for (i = 0; i < 20; i++) {
 
-			for (i = 0; i < 20; i++) {
+			arrowArray[i] = {
+				data: []
+			};
 
-				arrowArray[i] = {
-					data: []
-				};
+			for (j = 0; j < 150; j++) {
 
-				for (j = 0; j < 150; j++) {
-
-					arrowArray[i].data[j] = {
-						x: Math.floor(Math.random() * (max - min + 1)) + min,
-						y: Math.floor(Math.random() * (max - min + 1)) + min
-					}
-
+				arrowArray[i].data[j] = {
+					x: Math.floor(Math.random() * (max - min + 1)) + min,
+					y: Math.floor(Math.random() * (max - min + 1)) + min
 				}
 
 			}
 
-			$("#target").archerTarget({
+		}
 
-				target: 'wa_x',
+		new ArcherTarget(document.getElementById('target'), {
 
-				arrows: arrowArray,
+			target: 'wa_x',
 
-				arrowDefaults: {
-					radius: 1
-				}
+			arrows: arrowArray,
 
-			});
-
+			arrowDefaults: {
+				radius: 1
+			}
 
 		});
 

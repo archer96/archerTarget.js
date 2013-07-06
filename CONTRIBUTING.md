@@ -16,7 +16,6 @@ First, ensure that you have the latest [Node.js](http://nodejs.org/) and [npm](h
 
 Test that [grunt-cli](https://github.com/gruntjs/grunt-cli) is installed globally.  If grunt-cli isn't installed globally, run `npm install -g grunt-cli` to install the latest version. _You may need to run `sudo npm install -g grunt-cli`._
 
-
 1. Fork and clone the repo.
 1. Run `npm install` to install all dependencies (including grunt).
 1. Run `grunt` to grunt this project.
@@ -29,6 +28,5 @@ Assuming that you don't see any red, you're ready to go. Just be sure to run `gr
 1. Add failing tests for the change you want to make. Run `grunt` to see the tests fail.
 1. Fix stuff.
 1. Run `grunt` to see if the tests pass. Repeat steps 2-4 until done.
-1. Open `test/*.html` unit test file(s) in actual browser to ensure tests pass everywhere.
 1. Update the documentation to reflect any changes.
 1. Push to your fork and submit a pull request.

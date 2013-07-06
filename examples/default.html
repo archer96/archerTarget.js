@@ -6,11 +6,10 @@
 
 	<title>Default - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
@@ -18,12 +17,8 @@
 	<div id="target" style="width:500px; height:500px;"></div>
 
 	<script>
-		$(document).ready(function () {
-
-			$("#target").archerTarget({
-					target: 'wa_x'
-			});
-
+		new ArcherTarget(document.getElementById('target'), {
+			target: 'wa_x'
 		});
 	</script>
 

@@ -1,4 +1,4 @@
-ArcherTarget.prototype.getArrows = function () {
+AT.prototype.getArrows = function () {
 
 	return this.arrowList;
 

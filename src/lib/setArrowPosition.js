@@ -10,7 +10,7 @@
  * @param {Integer|Array} [arrow.arrowID]   ID of the arrow. If given, the arrow.arrowsetID
  *                                          has to be an integer and not an array
  */
- ArcherTarget.prototype.setArrowPosition = function (arrow) {
+AT.prototype.setArrowPosition = function (arrow) {
 
 	var i,
 		j,
@@ -38,7 +38,7 @@
 
 	if (typeof(arrow) === 'undefined') {
 
-		DEVMODE > 8 && console.log('archerTarget :: setArrowPosition :: positioning all arrows');
+		DEVMODE && console.log('archerTarget :: setArrowPosition :: positioning all arrows');
 
 		/*
 		 * Set the position of all arrows
@@ -58,7 +58,7 @@
 		/*
 		 * Merge default and given config
 		 */
-		arrow = $.extend({}, defaultConfig, arrow);
+		arrow = ArcherTarget.extend(true, {}, defaultConfig, arrow);
 
 
 		/*

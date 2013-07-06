@@ -6,11 +6,10 @@
 
 	<title>Default - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
@@ -18,61 +17,58 @@
 	<div id="target" style="width:500px; height:500px;"></div>
 
 	<script>
-		$(document).ready(function () {
-
-			/*
-			 * Target array
-			 */
-			var targetArray = [
-				{
-					name: 'wa_x',
-					center: [25, 26],
-					diameter: 44
-				},
-				{
-					name: 'wa_x',
-					center: [75, 26],
-					diameter: 44
-				},
-				{
-					name: 'wa_x',
-					center: [50, 73],
-					diameter: 44
-				}
-			],
-			arrowArray = [
-				{
-					data: [
-						{ x: 29, y: 70, target: 0 },
-						{ x: 44, y: 22, target: 1 },
-						{ x: 25, y: 65, target: 2 }
-					]
-				},
-				{
-					data: [
-						{ x: 47, y: 20, target: 0 },
-						{ x: 80, y: 40, target: 1 },
-						{ x: 33, y: 53, target: 2 }
-					]
-				},
-				{
-					data: [
-						{ x: 17, y: 50, target: 0 },
-						{ x: 42, y: 20, target: 1 },
-						{ x: 50, y: 33, target: 2 }
-					]
-				}
-			];
+		/*
+		 * Target array
+		 */
+		var targetArray = [
+			{
+				name: 'wa_x',
+				center: [25, 26],
+				diameter: 44
+			},
+			{
+				name: 'wa_x',
+				center: [75, 26],
+				diameter: 44
+			},
+			{
+				name: 'wa_x',
+				center: [50, 73],
+				diameter: 44
+			}
+		],
+		arrowArray = [
+			{
+				data: [
+					{ x: 29, y: 70, target: 0 },
+					{ x: 44, y: 22, target: 1 },
+					{ x: 25, y: 65, target: 2 }
+				]
+			},
+			{
+				data: [
+					{ x: 47, y: 20, target: 0 },
+					{ x: 80, y: 40, target: 1 },
+					{ x: 33, y: 53, target: 2 }
+				]
+			},
+			{
+				data: [
+					{ x: 17, y: 50, target: 0 },
+					{ x: 42, y: 20, target: 1 },
+					{ x: 50, y: 33, target: 2 }
+				]
+			}
+		];
 
 
-			$("#target").archerTarget({
+		new ArcherTarget(document.getElementById('target'), {
 
-				target: targetArray,
-				arrows: arrowArray
-
-			});
+			target: targetArray,
+			arrows: arrowArray
 
 		});
+
 	</script>
 
 </body>

@@ -1,7 +1,7 @@
-ArcherTarget.prototype.mergeStyles = function () {
+AT.prototype.mergeStyles = function () {
 
 	var self = this,
-		options = self.options,
+		options = this.options,
 		style;
 
     /*
@@ -9,7 +9,8 @@ ArcherTarget.prototype.mergeStyles = function () {
      */
     for (style in options.targetDefaults.style) {
         if (options.targetDefaults.style.hasOwnProperty(style)) {
-            options.targetDefaults.style[style] = $.extend(
+            self.options.targetDefaults.style[style] = ArcherTarget.extend(
+                true,
                 {},
                 options.targetDefaults.style.initial,
                 options.targetDefaults.style[style]
@@ -21,7 +22,8 @@ ArcherTarget.prototype.mergeStyles = function () {
      */
     for (style in options.arrowDefaults.style) {
         if (options.arrowDefaults.style.hasOwnProperty(style)) {
-            options.arrowDefaults.style[style] = $.extend(
+            self.options.arrowDefaults.style[style] = ArcherTarget.extend(
+                true,
                 {},
                 options.arrowDefaults.style.initial,
                 options.arrowDefaults.style[style]

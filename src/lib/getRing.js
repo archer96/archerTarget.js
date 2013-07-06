@@ -1,10 +1,12 @@
-ArcherTarget.prototype.getRing = function (arrow) {
+AT.prototype.getRing = function (arrow) {
+
+	var self = this;
 
 	if (arrow) {
 
-		return this.calculateRing({
-			x: this.convertTo.pxX(arrow.x, arrow.target),
-			y: this.convertTo.pxY(arrow.y, arrow.target),
+		return self.calculateRing({
+			x:self.convertTo.pxX(arrow.x, arrow.target),
+			y:self.convertTo.pxY(arrow.y, arrow.target),
 			target: arrow.target
 		});
 
@@ -20,9 +22,9 @@ ArcherTarget.prototype.getRing = function (arrow) {
 
 				data = this.arrow[i].data[j];
 
-				data.ring = this.calculateRing({
-					x: this.convertTo.pxX(data.x, data.target),
-					y: this.convertTo.pxY(data.y, data.target),
+				data.ring = self.calculateRing({
+					x:self.convertTo.pxX(data.x, data.target),
+					y:self.convertTo.pxY(data.y, data.target),
 					target: data.target
 				});
 

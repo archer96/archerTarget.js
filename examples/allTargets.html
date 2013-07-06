@@ -6,131 +6,90 @@
 
 	<title>All targets - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
 
 	<div id="target" style="width:230px; height:230px;"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target").archerTarget({
-				target: 'wa_x'
-			});
-
+		new ArcherTarget(document.getElementById('target'), {
+			target: 'wa_x'
 		});
 	</script>
 
 
 	<div id="target2" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target2").archerTarget({
-				target: 'wa_x_6'
-			});
-
+		new ArcherTarget(document.getElementById('target2'), {
+			target: 'wa_x_6'
 		});
 	</script>
 
 
 	<div id="target3" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target3").archerTarget({
-				target: 'wa_x_5'
-			});
-
+		new ArcherTarget(document.getElementById('target3'), {
+			target: 'wa_x_5'
 		});
 	</script>
 
 
 	<div id="target4" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target4").archerTarget({
-				target: 'wa_10_6_recurve'
-			});
-
+		new ArcherTarget(document.getElementById('target4'), {
+			target: 'wa_10_6_recurve'
 		});
 	</script>
 
 
 	<div id="target5" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target5").archerTarget({
-				target: 'wa_10_6_compound'
-			});
-
+		new ArcherTarget(document.getElementById('target5'), {
+			target: 'wa_10_6_compound'
 		});
 	</script>
 
 
 	<div id="target6" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target6").archerTarget({
-				target: 'wa_10_recurve'
-			});
-
+		new ArcherTarget(document.getElementById('target6'), {
+			target: 'wa_10_recurve'
 		});
 	</script>
 
 
 	<div id="target7" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target7").archerTarget({
-				target: 'wa_10_compound'
-			});
-
+		new ArcherTarget(document.getElementById('target7'), {
+			target: 'wa_10_compound'
 		});
 	</script>
 
 
 	<div id="target8" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target8").archerTarget({
-				target: 'wa_field'
-			});
-
+		new ArcherTarget(document.getElementById('target8'), {
+			target: 'wa_field'
 		});
 	</script>
 
 
 	<div id="target9" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target9").archerTarget({
-				target: 'dfbv_spiegel'
-			});
-
+		new ArcherTarget(document.getElementById('target9'), {
+			target: 'dfbv_spiegel'
 		});
 	</script>
 
 
 	<div id="target10" style="width:230px; height:230px;" class="alignleft"></div>
 	<script>
-		$(document).ready(function () {
-
-			$("#target10").archerTarget({
-				target: 'dfbv_spiegel_spot'
-			});
-
+		new ArcherTarget(document.getElementById('target10'), {
+			target: 'dfbv_spiegel_spot'
 		});
 	</script>
 

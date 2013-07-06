@@ -4,8 +4,8 @@
  * @param  {String} targetName Name of the target
  * @return {Object}            Object containing the parameters of the target
  */
-ArcherTarget.prototype.getTargetParams = function (targetName) {
+function getTargetParams(targetName) {
 
-	return ArcherTarget.Targets[targetName];
+	return AT.Targets[targetName];
 
-};
+}

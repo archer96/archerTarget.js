@@ -6,11 +6,10 @@
 
 	<title>Complex 1 - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 	<script src="../src/plugins/appZoom/appZoom.js"></script>
 
 	<style type="text/css">
@@ -30,112 +29,112 @@
 <body>
 
 	<div style="padding:10px;margin:10px;">
-	<div id="target"></div>
-
+		<div id="target"></div>
+	</div>
 	<script>
 
-		$(document).ready(function ($) {
+		var self = this,
+			maxArrowNumber = 6,
+			arrowNumber = 0,
+			target = document.getElementById('target'),
+			touch = true;
 
-			var self = this,
-				maxArrowNumber = 6,
-				arrowNumber = 0,
-				$target = $('#target'),
-				touch = true;
+		var at = new ArcherTarget(target, {
+			target: [
 
-			$target.archerTarget({
-				target: [
-
-					{
-						name: 'wa_x',
-						center: [25, 27],
-						diameter: 45
-					},
-					{
-						name: 'wa_x',
-						center: [75, 27],
-						diameter: 45
-					},
-					{
-						name: 'wa_x',
-						center: [50, 74],
-						diameter: 45
-					}
-
-				],
-				arrows: [
-					{
-						radius: 8,
-						data: [
-							{ x: 50, y: 50 },
-							{ x: 50, y: 50 },
-							{ x: 50, y: 50 },
-							{ x: 50, y: 50 },
-							{ x: 50, y: 50 },
-							{ x: 50, y: 50 }
-						],
-						active: false
-					}
-				],
-				zoom: 1,
-				zoomable: 0,
-				draggable: 0,
-				plugins: {
-					appZoom: {
-						scaledZoom: 4,
-						tapScale: 1.6,
-						width: 100,
-						height: 20,
-						crossWidth: 2,
-						crossColor: '#000'
-					}
+				{
+					name: 'wa_x',
+					center: [25, 27],
+					diameter: 45
 				},
+				{
+					name: 'wa_x',
+					center: [75, 27],
+					diameter: 45
+				},
+				{
+					name: 'wa_x',
+					center: [50, 74],
+					diameter: 45
+				}
 
-				onContainerMousedown: function (e, containerCoordinates, targetCoordinates, event) {
+			],
+			arrows: [
+				{
+					radius: 8,
+					data: [
+						{ x: 50, y: 50 },
+						{ x: 50, y: 50 },
+						{ x: 50, y: 50 },
+						{ x: 50, y: 50 },
+						{ x: 50, y: 50 },
+						{ x: 50, y: 50 }
+					],
+					active: false
+				}
+			],
+			zoom: 1,
+			scalable: 0,
+			draggable: 0,
+			plugins: {
+				appZoom: {
+					scaledZoom: 1.7,
+					tapScale: 3,
+					width: 100,
+					height: 34,
+					crossWidth: 2,
+					crossColor: '#000'
+				}
+			},
 
-					if (arrowNumber < maxArrowNumber) {
+			onContainerMousedown: function (e) {
 
-						var targetArrows = $target.archerTarget('get', 'arrows'),
-							element = targetArrows[0].data[arrowNumber].el,
-							tempData = [];
-							tempData[arrowNumber] = {
-								x: targetCoordinates.x,
-								y: targetCoordinates.y,
-								target: targetCoordinates.target
-							}
+				var containerCoordinates = e.canvasCoords,
+					targetCoordinates = e.targetCoords;
 
-						$target.archerTarget('set', 'arrowActive', {
-							arrowsetID: 0,
-							arrowID: arrowNumber,
-							active: true
-						});
+				if (arrowNumber < maxArrowNumber) {
 
-						$target.archerTarget('set', 'arrowOptions', {
-							arrowsetID: 0,
-							options: {
-								data: tempData
-							}
-						});
-
-						element.setAttribute('cx', containerCoordinates.xPx);
-						element.setAttribute('cy', containerCoordinates.yPx);
-
-						if (!touch) {
-							$(element).trigger('mousedown', []);
-						} else {
-							$(element).trigger('touchstart', [event]);
+					var targetArrows = at.get('arrows'),
+						element = targetArrows[0].data[arrowNumber].el,
+						tempData = [];
+						tempData[arrowNumber] = {
+							x: targetCoordinates.x,
+							y: targetCoordinates.y,
+							target: targetCoordinates.target
 						}
 
-						arrowNumber++;
+					at.set('arrowActive', {
+						arrowsetID: 0,
+						arrowID: arrowNumber,
+						active: true
+					});
 
-						console.log('added arrow: ' + arrowNumber);
+					at.set('arrowOptions', {
+						arrowsetID: 0,
+						options: {
+							data: tempData
+						}
+					});
 
+					element.setAttribute('cx', containerCoordinates.xPx);
+					element.setAttribute('cy', containerCoordinates.yPx);
+
+					if (!touch) {
+						ArcherTarget.fireEvent(element, 'mousedown');
+					} else {
+						ArcherTarget.fireEvent(element, 'touchstart', {touches:e.touches});
 					}
-				}
-			});
 
+					arrowNumber++;
+
+					console.log('added arrow: ' + arrowNumber);
+
+				}
+			}
 		});
+
 	</script>
-</div>
-  </body>
+
+</body>
 </html>
 

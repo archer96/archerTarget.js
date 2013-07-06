@@ -1,5 +1,5 @@
 /**
- * Sets arrows or arrowsets active or inactive.
+ * Set arrows or arrowsets active or inactive.
  *
  * @param {Object}  arrow
  * @param {Integer} arrow.arrowsetID ID of the arrowset
@@ -7,10 +7,9 @@
  * @param {Boolean} [arrow.active]   Active state of the arrow(set).
  *                                   If not given, we'll use the options from the arrows.
  */
-ArcherTarget.prototype.setArrowActive = function (arrow) {
+AT.prototype.setArrowActive = function (arrow) {
 
 	var self = this,
-		i,
 		/**
 		 * Sets an arrow active or inactive
 		 *
@@ -49,6 +48,8 @@ ArcherTarget.prototype.setArrowActive = function (arrow) {
 		 */
 		setArrowset = function (arrowSetID, active) {
 
+			var i;
+
 			/*
 			 * If no active state is given, we'll use the saved value.
 			 */
@@ -86,4 +87,3 @@ ArcherTarget.prototype.setArrowActive = function (arrow) {
 	}
 
 };
-

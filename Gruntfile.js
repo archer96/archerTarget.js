@@ -29,6 +29,7 @@ module.exports = function (grunt) {
 				],
 
 				dest: 'dist/<%= pkg.name %>.js'
+
 			},
 
 			targets: {
@@ -50,6 +51,7 @@ module.exports = function (grunt) {
 				],
 
 				dest: 'dist/targets/<%= pkg.name %>.targets.js'
+
 			}
 
 		},
@@ -80,6 +82,7 @@ module.exports = function (grunt) {
 					}
 				}
 			},
+
 			targets: {
 				files: {
 					'dist/targets/<%= pkg.name %>.targets.min.js': ['<%= concat.targets.dest %>']
@@ -99,16 +102,23 @@ module.exports = function (grunt) {
 		},
 
 		jshint: {
+
 			dist: {
 				src: ['<%= concat.dist.dest %>'],
 				options: {
-					jshintrc: 'src/.jshintrc'
+					jshintrc: '.jshintrc'
 				}
 			},
 			targets: {
 				src: ['<%= concat.targets.dest %>'],
 				options: {
-					jshintrc: 'src/.jshintrc'
+					jshintrc: '.jshintrc'
+				}
+			},
+			plugins: {
+				src: ['src/plugins/*/*'],
+				options: {
+					jshintrc: '.jshintrc'
 				}
 			},
 			grunt: {
@@ -120,31 +130,21 @@ module.exports = function (grunt) {
 
 		},
 
-		qunit: {
-			all: ['test/**/*.html']
-		},
-
 		watch: {
 			files: '<%= concat.dist.src %>',
 			tasks: 'dev'
 		}
 
-
 	});
 
-
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-qunit');
-	grunt.loadNpmTasks('grunt-compare-size');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	//grunt.loadNpmTasks('grunt-git-authors');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
+	grunt.registerTask('dev', ['concat:dist', 'jshint:dist']);
 
 	// Default task.
-	grunt.registerTask('dev', ['concat:dist', 'jshint:dist']);
-	grunt.registerTask('default', ['concat', 'uglify', 'jshint', 'qunit']);
-
+	grunt.registerTask('default', ['concat', 'uglify', 'jshint']);
 
 };

@@ -1,9 +1,7 @@
-ArcherTarget.prototype.setBackgroundColor = function (color) {
+AT.prototype.setBackgroundColor = function (color) {
 
-	this.backgroundColor = color;
+	this.backgroundColor = this.container.style.backgroundColor = color;
 
-	this.$container.css({
-		backgroundColor: color
-	});
+	DEVMODE && console.log('ArcherTarget :: new backgroundcolor :: ' + color);
 
 };

@@ -6,11 +6,10 @@
 
 	<title>Default - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
@@ -18,66 +17,63 @@
 	<div id="target" style="width:230px; height:230px;"></div>
 
 	<script>
-		$(document).ready(function () {
-
-			var arrowArray = [
-				{
-					radius: 12,
-					style: {
-						initial: {
-							opacity: 0.8,
-							color: '#ff00ff',
-							stroke: false
-						},
-						hover: {
-							opacity: 1,
-							color: '#00ff00'
-						},
-						selected: {
-							opacity: 0.7,
-							color: '#00ffff'
-						}
+		var arrowArray = [
+			{
+				radius: 12,
+				style: {
+					initial: {
+						opacity: 0.8,
+						color: '#ff00ff',
+						stroke: false
 					},
-					data: [
-						{ x: 29, y: 70 },
-						{ x: 46, y: 32 },
-						{ x: 25, y: 65 }
-					]
+					hover: {
+						opacity: 1,
+						color: '#00ff00'
+					},
+					selected: {
+						opacity: 0.7,
+						color: '#00ffff'
+					}
 				},
-				{
-					radius: 8,
-					style: {
-						initial: {
-							opacity: 0.9,
-							color: '#0000ff',
-							stroke: false
-						},
-						hover: {
-							opacity: 1,
-							color: '#ff0000'
-						},
-						selected: {
-							opacity: 0.8,
-							color: '#ffff00'
-						}
+				data: [
+					{ x: 29, y: 70 },
+					{ x: 46, y: 32 },
+					{ x: 25, y: 65 }
+				]
+			},
+			{
+				radius: 8,
+				style: {
+					initial: {
+						opacity: 0.9,
+						color: '#0000ff',
+						stroke: false
 					},
-					data: [
-						{ x: 57, y: 49 },
-						{ x: 80, y: 40 },
-						{ x: 28, y: 43 }
-					]
-				}
-			];
+					hover: {
+						opacity: 1,
+						color: '#ff0000'
+					},
+					selected: {
+						opacity: 0.8,
+						color: '#ffff00'
+					}
+				},
+				data: [
+					{ x: 57, y: 49 },
+					{ x: 80, y: 40 },
+					{ x: 28, y: 43 }
+				]
+			}
+		];
 
 
-			$("#target").archerTarget({
+		new ArcherTarget(document.getElementById('target'),{
 
-				target: 'wa_x',
-				arrows: arrowArray
-
-			});
+			target: 'wa_x',
+			arrows: arrowArray
 
 		});
+
 	</script>
 
 </body>

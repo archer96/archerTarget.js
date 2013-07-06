@@ -1,7 +1,7 @@
 /**
  * Simple check for requestAnimationFrame and cancelAnimationFrame.
  */
-ArcherTarget.prototype.RAF = function () {
+function RAF() {
 
     /*
      * requestAnimationFrame - browser check
@@ -45,4 +45,4 @@ ArcherTarget.prototype.RAF = function () {
 
     }
 
-};
+}

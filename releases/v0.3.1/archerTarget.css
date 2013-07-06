@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+.archerTargetContainer {
+    overflow:hidden;
+    position:relative;
+    margin:0;
+}
+.archerTarget {
+    position:absolute;
+}
+.archerTarget_arrow {
+    position:absolute;
+    cursor:pointer;
+}
+.archerTarget-label {
+    position: absolute;
+    display: none;
+    border: solid 1px #CDCDCD;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #292929;
+    color: white;
+    font-family: sans-serif, Verdana;
+    font-size: smaller;
+    padding: 3px;
+}
+
+.archerTarget-zoomin, .archerTarget-zoomout {
+    position: absolute;
+    left: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #292929;
+    padding: 3px;
+    color: white;
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    line-height: 10px;
+    text-align: center;
+    z-index:99999;
+}
+
+.archerTarget-zoomin {
+    top: 10px;
+}
+
+.archerTarget-zoomout {
+    top: 30px;
+}
+
+.archerTarget-label {
+    position: absolute;
+    display: none;
+    border: solid 1px #CDCDCD;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #292929;
+    color: white;
+    font-family: sans-serif, Verdana;
+    font-size: smaller;
+    padding: 3px;
+}
+
+.archerTargetContainer .hidden {
+    display:none;
+}
+
+

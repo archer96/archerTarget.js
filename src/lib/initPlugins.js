@@ -1,12 +1,12 @@
-ArcherTarget.prototype.initPlugins = function () {
+AT.prototype.initPlugins = function () {
 
     var plugin;
 
     for (plugin in this.pluginList) {
 
-        if (this.pluginList.hasOwnProperty(plugin) && ArcherTarget.Plugins[plugin]) {
+        if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
 
-            ArcherTarget.Plugins[plugin].initialize(this, this.pluginList[plugin]);
+            AT.Plugins[plugin].initialize(this, this.pluginList[plugin]);
 
         }
 

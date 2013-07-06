@@ -5,11 +5,21 @@
  * @param {Integer} arrowset.arrowsetID  ID of the arrowset
  * @param {Object}  [arrowset.options]   Options to merge
  */
-ArcherTarget.prototype.setArrowOptions = function (arrowset) {
+AT.prototype.setArrowOptions = function (arrowset) {
 
 	var self = this,
 		field,
-		methodName;
+		methodName,
+		options;
+
+	options = {
+		active: function (method) {
+			self[method]({
+				arrowsetID: arrowset.arrowsetID,
+				active: arrowset.options.active
+			});
+		}
+	};
 
 
 	for (field in arrowset.options) {
@@ -18,28 +28,10 @@ ArcherTarget.prototype.setArrowOptions = function (arrowset) {
 
 			methodName = 'setArrow' + field.charAt(0).toUpperCase() + field.substr(1);
 
-			if (arrowset.options[field] !== self.arrowList[arrowset.arrowsetID][field]) {
+			if (arrowset.options[field] !== self.arrowList[arrowset.arrowsetID][field] &&
+				options[field]) {
 
-				/*
-				 * TODO: Add more cases than just 'active'
-				 */
-				switch (field) {
-
-					case 'active':
-
-						self[methodName]({
-							arrowsetID: arrowset.arrowsetID,
-							active: arrowset.options[field]
-						});
-
-						break;
-
-					default:
-
-						break;
-
-				}
-
+				options[field](methodName);
 
 			}
 
@@ -47,7 +39,6 @@ ArcherTarget.prototype.setArrowOptions = function (arrowset) {
 
 	}
 
-	$.extend(true, self.arrowList[arrowset.arrowsetID], arrowset.options);
+	ArcherTarget.extend(true, self.arrowList[arrowset.arrowsetID], arrowset.options);
 
 };
-

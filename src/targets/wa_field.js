@@ -1,4 +1,4 @@
-$.fn.archerTarget('addTarget', 'wa_field', {
+ArcherTarget.addTarget('wa_field', {
 	numberRings: 6,
 	colors: ['#404445', '#404445', '#404445', '#404445', '#fce151', '#fce151'],
 	strokeColors: ['#c1c4dc', '#c1c4dc', '#c1c4dc', '#c1c4dc', '#0a0f39', '#0a0f39'],

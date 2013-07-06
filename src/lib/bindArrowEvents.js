@@ -1,4 +1,4 @@
-ArcherTarget.prototype.bindArrowEvents = function () {
+AT.prototype.bindArrowEvents =  function () {
 
 	var self = this,
 		arrowTmp = {},
@@ -6,8 +6,8 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		arrowTarget,
 		curPageX,
 		curPageY,
-		offsetLeft = this.$container.offset().left,
-		offsetTop = this.$container.offset().top,
+		offsetLeft = ArcherTarget.offset(self.container).left,
+		offsetTop = ArcherTarget.offset(self.container).top,
 		pointerHeight = 0,
 		move,
 		onMouseMove,
@@ -71,8 +71,8 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 		window.requestAnimationFrame(move);
 
-		arrowTmp.$el.trigger('arrowMove.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowMove.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 	};
 
@@ -91,10 +91,12 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 	onMouseDown = function (e) {
 
+		var element = e.target;
+
 		if (!self.arrowMoving) {
 
 			var parentNode = this.parentNode,
-				thisClass = $(this).attr('class'),
+				thisClass = element.className.baseVal,
 				id;
 
 			arrowsetTmp.id = parseInt(parentNode.id.substr(parentNode.id.indexOf('_') + 1), 10);
@@ -113,7 +115,6 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 			arrowTmp = arrowsetTmp.data.data[id];
 			arrowTmp.el = this;
-			arrowTmp.$el = $(this);
 			arrowTmp.id = id;
 		}
 
@@ -133,21 +134,15 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 				self.setTargetStyle('arrow', { active: arrowTarget });
 
-				self.$container[0].style.cursor = 'move';
+				self.container.style.cursor = 'move';
 
 			}
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
 
-			arrowTmp.$el
-				.css({
-					opacity: arrowsetTmp.data.style.selected.opacity
-				})
-				.trigger(
-					'arrowSelect.archerTarget',
-					[arrowsetTmp.id, arrowTmp.id, self.arrowList]
-				);
-
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 			if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
@@ -179,11 +174,10 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		} else if (e.type === 'mouseover' && !self.arrowMoving) {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.hover.opacity;
 
-			arrowTmp.$el.css({
-				opacity: arrowsetTmp.data.style.hover.opacity
-			}).trigger('arrowOver.archerTarget', [arrowsetTmp.id, arrowTmp.id]);
-
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowOver.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -201,23 +195,21 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
 
-
 			if (arrowsetTmp.data.draggable instanceof Object) {
 
 				self.removeArrowPointer();
 
 				arrowTmp.el.setPosition({
-					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
+					x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
+					y:self.convertTo.pxY(arrowTmp.y, arrowTarget)
 				});
 
 			}
 
-			self.$container[0].style.cursor = 'default';
+			self.container.style.cursor = 'default';
 
-			$(self.$container).trigger('arrowDeselect.archerTarget',
-				[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
-
+			ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -230,10 +222,10 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		if (!self.arrowMoving || !arrowsetTmp.data.draggable) {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.initial.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.initial.opacity;
 
-			arrowTmp.$el.css({
-				opacity: arrowsetTmp.data.style.initial.opacity
-			}).trigger('arrowOut.archerTarget', [arrowsetTmp.id, arrowTmp.id]);
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowOut.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -241,12 +233,13 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 	};
 
+	this.container.addEventListener('mousemove', onMouseMove);
+	this.container.addEventListener('mouseup', onMouseUp);
+	this.container.addEventListener('click', onMouseUp);
 
-	this.$container
-		.on('mousemove', onMouseMove)
-		.on('mouseup click', onMouseUp)
-		.find('.arrowSetCanvas')
-		.on('mouseout', 'circle', onMouseOut)
-		.on('mousedown mouseover', 'circle', onMouseDown);
+	var c = this.container.querySelectorAll('.arrowSetCanvas circle');
+	addEventListenerList(c, 'mouseout', onMouseOut);
+	addEventListenerList(c, 'mousedown', onMouseDown);
+	addEventListenerList(c, 'mouseover', onMouseDown);
 
 };

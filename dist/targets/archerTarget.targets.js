@@ -1,35 +1,14 @@
 /*!
- * jQuery ArcherTarget - Targets - v0.3.0pre - 2013-01-31
- * http://archertarget.andremeyering.de
+ * archerTarget.js - Targets - v0.3.1 - 2013-07-06
+ * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
  */
-(function (window, document, $, undefined) {
+(function (window, document, undefined) {
 
-/*
-	undefined is used here as the undefined global
-	variable in ECMAScript 3 and is mutable (i.e. it can
-	be changed by someone else). undefined isn't really
-	being passed in so we can ensure that its value is
-	truly undefined. In ES5, undefined can no longer be
-	modified.
-
-	window and document are passed through as local
-	variables rather than as globals, because this (slightly)
-	quickens the resolution process and can be more
-	efficiently minified (especially when both are
-	regularly referenced in your plugin).
-
-	$ (jQuery or Zepto) is passed through as a local
-	variable because it could be overwritten by other
-	libraries or jQuery could be in noConflict mode
-	so $ would not be jQuery or Zepto
-*/
-
-// ECMAScript 5 strict mode
 'use strict';
 
-$.fn.archerTarget('addTarget', 'dfbv_spiegel', {
+ArcherTarget.addTarget('dfbv_spiegel', {
 	numberRings: 6,
 	colors: ['#030727', '#030727', '#030727', '#030727', '#fff', '#fff'],
 	strokeColors: ['#c1c4dc', '#c1c4dc', '#c1c4dc', '#c1c4dc', '#0a0f39', '#0a0f39'],
@@ -37,7 +16,7 @@ $.fn.archerTarget('addTarget', 'dfbv_spiegel', {
 	diameters: [100, 80, 60, 40, 20, 8]
 });
 
-$.fn.archerTarget('addTarget', 'dfbv_spiegel_spot', {
+ArcherTarget.addTarget('dfbv_spiegel_spot', {
 	numberRings: 3,
 	colors: ['#030727', '#fff', '#fff'],
 	strokeColors: ['#c1c4dc', '#c1c4dc', '#0a0f39'],
@@ -45,7 +24,7 @@ $.fn.archerTarget('addTarget', 'dfbv_spiegel_spot', {
 	diameters: [100, 50, 20]
 });
 
-$.fn.archerTarget('addTarget', 'wa_10_6_recurve', {
+ArcherTarget.addTarget('wa_10_6_recurve', {
 	numberRings: 5,
 	colors: ['#3aa3d9', '#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e'],
 	strokeColors: ['#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f'],
@@ -53,7 +32,7 @@ $.fn.archerTarget('addTarget', 'wa_10_6_recurve', {
 	diameters: [100, 80, 60, 40, 20]
 });
 
-$.fn.archerTarget('addTarget', 'wa_10_6_compound', {
+ArcherTarget.addTarget('wa_10_6_compound', {
 	numberRings: 5,
 	colors: ['#3aa3d9', '#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e'],
 	strokeColors: ['#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f'],
@@ -61,7 +40,7 @@ $.fn.archerTarget('addTarget', 'wa_10_6_compound', {
 	diameters: [100, 80, 60, 40, 7]
 });
 
-$.fn.archerTarget('addTarget', 'wa_10_compound', {
+ArcherTarget.addTarget('wa_10_compound', {
 	numberRings: 10,
 	colors: ['#fff', '#fff', '#535154', '#535154', '#3aa3d9', '#3aa3d9',
 		'#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e'],
@@ -71,7 +50,7 @@ $.fn.archerTarget('addTarget', 'wa_10_compound', {
 	diameters: [100, 90, 80, 70, 60, 50, 40, 30, 20, 4]
 });
 
-$.fn.archerTarget('addTarget', 'wa_10_recurve', {
+ArcherTarget.addTarget('wa_10_recurve', {
 	numberRings: 10,
 	colors: ['#fff', '#fff', '#535154', '#535154', '#3aa3d9', '#3aa3d9',
 		'#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e'],
@@ -81,7 +60,7 @@ $.fn.archerTarget('addTarget', 'wa_10_recurve', {
 	diameters: [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 });
 
-$.fn.archerTarget('addTarget', 'wa_field', {
+ArcherTarget.addTarget('wa_field', {
 	numberRings: 6,
 	colors: ['#404445', '#404445', '#404445', '#404445', '#fce151', '#fce151'],
 	strokeColors: ['#c1c4dc', '#c1c4dc', '#c1c4dc', '#c1c4dc', '#0a0f39', '#0a0f39'],
@@ -89,7 +68,7 @@ $.fn.archerTarget('addTarget', 'wa_field', {
 	diameters: [100, 80, 60, 40, 20, 8]
 });
 
-$.fn.archerTarget('addTarget', 'wa_x', {
+ArcherTarget.addTarget('wa_x', {
 	numberRings: 11,
 	colors: ['#fff', '#fff', '#535154', '#535154', '#3aa3d9', '#3aa3d9',
 		'#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e', '#f6e42e'],
@@ -99,7 +78,7 @@ $.fn.archerTarget('addTarget', 'wa_x', {
 	diameters: [100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 4]
 });
 
-$.fn.archerTarget('addTarget', 'wa_x_5', {
+ArcherTarget.addTarget('wa_x_5', {
 	numberRings: 7,
 	colors: ['#3aa3d9', '#3aa3d9', '#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e', '#f6e42e'],
 	strokeColors: ['#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f'],
@@ -107,7 +86,7 @@ $.fn.archerTarget('addTarget', 'wa_x_5', {
 	diameters: [100, 83.4, 66.8, 50.2, 33.6, 17, 7]
 });
 
-$.fn.archerTarget('addTarget', 'wa_x_6', {
+ArcherTarget.addTarget('wa_x_6', {
 	numberRings: 6,
 	colors: ['#3aa3d9', '#f16e7a', '#f16e7a', '#f6e42e', '#f6e42e', '#f6e42e'],
 	strokeColors: ['#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f', '#3f3f3f'],
@@ -116,4 +95,4 @@ $.fn.archerTarget('addTarget', 'wa_x_6', {
 });
 
 
-}(window, document, (window.jQuery || window.Zepto)));
+}(window, document));

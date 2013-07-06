@@ -6,11 +6,10 @@
 
 	<title>Events - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
@@ -20,65 +19,62 @@
 	<div id="target" style="width:230px; height:230px;"></div>
 
 	<script>
-		$(document).ready(function () {
 
-			$("#target").archerTarget({
+		new ArcherTarget(document.getElementById('target'), {
 
-				target: 'wa_x',
+			target: 'wa_x',
 
-				arrows: [
-					{
-						radius: 10,
-						data: [
-							{ x: 18, y: 50 },
-							{ x: 19, y: 22 },
-							{ x: 45, y: 75 }
-						]
-					}
-				],
-				onTargetClick: function (e, index) {
-					console.log("click Target: " + index);
-				},
-				onTargetOver: function (e, index) {
-					console.log("over Target: " + index);
-				},
-				onTargetOut: function (e, index) {
-					console.log("out Target: " + index);
-				},
-				onTargetMove: function (e) {
-					console.log("Moving Targets");
-				},
-
-
-				onArrowOver: function (e, arrowSetID, arrowID) {
-					console.log("over Arrow: " + arrowSetID + " " + arrowID);
-				},
-				onArrowOut: function (e, arrowSetID, arrowID) {
-					console.log("out Arrow: " + arrowSetID + " " + arrowID);
-				},
-				onArrowMove: function (e, arrowSetID, arrowID, arrows) {
-					console.log("move Arrow: " + arrowSetID + " " + arrowID + " Ring:" + arrows[arrowSetID].data[arrowID].ring);
-				},
-				onArrowClick: function (e, arrowSetID, arrowID, arrows) {
-					console.log("click Arrow: " + arrowSetID + " " + arrowID);
-				},
-				onArrowSelect: function (e, arrowSetID, arrowID, arrows) {
-					console.log("select Arrow: " + arrowSetID + " " + arrowID);
-				},
-				onArrowDeselect: function (e, arrowSetID, arrowID) {
-					console.log("deselect Arrow: " + arrowSetID + " " + arrowID);
-				},
-
-
-				onZoom: function (e, newZoom, oldZoom) {
-					console.log("Zoom new: " + newZoom + "  Zoom old: " + oldZoom);
-				},
-
-				onContainerTap: function (e, canvasCoordinates, targetCoordinates) {
-					console.log("Made a tap on the container: X: " + canvasCoordinates.x + " Y: " + canvasCoordinates.y + "; Target: " + targetCoordinates.target + " X: " + targetCoordinates.x + " Y: " + targetCoordinates.y);
+			arrows: [
+				{
+					radius: 10,
+					data: [
+						{ x: 18, y: 50 },
+						{ x: 19, y: 22 },
+						{ x: 45, y: 75 }
+					]
 				}
-			});
+			],
+			onTargetClick: function (e) {
+				console.log('click Target: ' + e.index);
+			},
+			onTargetOver: function (e) {
+				console.log('over Target: ' + e.index);
+			},
+			onTargetOut: function (e) {
+				console.log('out Target: ' + e.index);
+			},
+			onTargetMove: function (e) {
+				console.log('Moving Targets');
+			},
 
+
+			onArrowOver: function (e) {
+				console.log('over Arrow: ' + e.arrowset + ' ' + e.arrow);
+			},
+			onArrowOut: function (e) {
+				console.log('out Arrow: ' + e.arrowset + ' ' + e.arrow);
+			},
+			onArrowMove: function (e) {
+				console.log('move Arrow: ' + e.arrowset + ' ' + e.arrow + ' Ring:' + e.arrows[e.arrowset].data[e.arrow].ring);
+			},
+			onArrowClick: function (e) {
+				console.log('click Arrow: ' + e.arrowset + ' ' + e.arrow);
+			},
+			onArrowSelect: function (e) {
+				console.log('select Arrow: ' + e.arrowset + ' ' + e.arrow);
+			},
+			onArrowDeselect: function (e) {
+				console.log('deselect Arrow: ' + e.arrowset + ' ' + e.arrow);
+			},
+
+
+			onZoom: function (e) {
+				console.log('Zoom new: ' + e.newScale + '  Zoom old: ' + e.oldScale);
+			},
+
+			onContainerTap: function (e) {
+				console.log('Made a tap on the container: X: ' + e.canvasCoords.x + ' Y: ' + e.canvasCoords.y + '; Target: ' + e.targetCoords.target + ' X: ' + e.targetCoords.x + ' Y: ' + e.targetCoords.y);
+			}
 		});
 	</script>
 

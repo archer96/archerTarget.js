@@ -6,11 +6,10 @@
 
 	<title>Default - Example - jQuery.archerTarget</title>
 
-	<link rel="stylesheet" type="text/css" href="../src/jquery.archerTarget.css">
+	<link rel="stylesheet" href="../src/archerTarget.css">
 
-	<script src="../libs/jquery-loader.js"></script>
-	<script src="../dist/jquery.archerTarget.js"></script>
-	<script src="../dist/targets/jquery.archerTarget.targets.js"></script>
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
 
 </head>
 <body>
@@ -18,32 +17,29 @@
 	<div id="target" style="width:230px; height:230px;"></div>
 
 	<script type="text/javascript">
-		$(document).ready(function () {
+		new ArcherTarget(document.getElementById('target'), {
 
-			$("#target").archerTarget({
+			target: 'wa_x',
 
-				target: 'wa_x',
-
-				/*
-				 * Array contains arrowset objects
-				 */
-				arrows: [
-					{
-						data: [ // data of the arrowset
-							{ x: 18, y: 50 }, // one arrow
-							{ x: 19, y: 22 },
-							{ x: 45, y: 75 }
-						]
-					},
-					{
-						data: [
-							{ x: 17, y: 50 },
-							{ x: 42, y: 20 },
-							{ x: 50, y: 33 }
-						]
-					}
-				]
-			});
+			/*
+			 * Array contains arrowset objects
+			 */
+			arrows: [
+				{
+					data: [ // data of the arrowset
+						{ x: 18, y: 50 }, // one arrow
+						{ x: 19, y: 22 },
+						{ x: 45, y: 75 }
+					]
+				},
+				{
+					data: [
+						{ x: 17, y: 50 },
+						{ x: 42, y: 20 },
+						{ x: 50, y: 33 }
+					]
+				}
+			]
 		});
 	</script>
 

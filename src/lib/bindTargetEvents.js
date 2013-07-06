@@ -1,43 +1,51 @@
-ArcherTarget.prototype.bindTargetEvents = function () {
+AT.prototype.bindTargetEvents = function () {
 
 	var self = this;
 
-	$(self.targetList).each(function (index, domEle) {
+	function bindTarget(index, domEle) {
 
-		domEle.$el.parent().on('mouseenter', function () {
+		var p = domEle.el;
 
-			if (self.arrowMoving) {
-				return false;
-			}
+		// There's a problem with mouseover and mouseout.
 
-			domEle.$el.css({
+		//p.addEventListener('mouseover', function () {
 
-				opacity: domEle.style.hover.opacity
+		//	if (self.arrowMoving) {
+		//		return false;
+		//	}
 
-			}).trigger('targetOver.archerTarget', [index]);
+		//	domEle.el.style.opacity = domEle.style.hover.opacity;
 
-			return false;
+		//	ArcherTarget.fireEvent(domEle.el, 'targetOver.archerTarget', {index: index});
 
-		}).on('mouseleave', function () {
+		//	return false;
 
-			if (self.arrowMoving) {
-				return false;
-			}
+		//});
 
-			domEle.$el.css({
+		//p.addEventListener('mouseout', function () {
 
-				opacity: domEle.style.initial.opacity
+		//	if (self.arrowMoving) {
+		//		return false;
+		//	}
 
-			}).trigger('targetOut.archerTarget', [index]);
+		//	domEle.el.style.opacity = domEle.style.initial.opacity;
 
-			return false;
+		//	ArcherTarget.fireEvent(domEle.el, 'targetOut.archerTarget', {index: index});
 
-		}).on('click', function () {
+		//	return false;
 
-			domEle.$el.trigger('targetClick.archerTarget', [index]);
+		//});
+
+		p.addEventListener('click', function () {
+
+			ArcherTarget.fireEvent(domEle.el, 'targetClick.archerTarget', {index: index});
 
 		});
 
-	});
+	}
+
+	for (var i = 0; i < self.targetList.length; i++) {
+		bindTarget(i, self.targetList[i]);
+	}
 
 };

@@ -7,7 +7,7 @@
  * @param  {Object} config.tolerance Tolerance in percent.
  * @return {Boolean}
  */
-ArcherTarget.prototype.checkOnTarget = function (arrow, config) {
+AT.prototype.checkOnTarget = function (arrow, config) {
 
 	/*
 	 * Check if there is more than one target.

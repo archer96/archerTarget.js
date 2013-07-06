@@ -1,40 +1,18 @@
 /*!
- * jQuery ArcherTarget - v0.3.0pre - 2013-01-31
- * http://archertarget.andremeyering.de
+ * archerTarget.js - v0.3.1 - 2013-07-06
+ * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
  */
-(function (window, document, $, undefined) {
+(function (window, document, undefined) {
 
-/*
-	undefined is used here as the undefined global
-	variable in ECMAScript 3 and is mutable (i.e. it can
-	be changed by someone else). undefined isn't really
-	being passed in so we can ensure that its value is
-	truly undefined. In ES5, undefined can no longer be
-	modified.
-
-	window and document are passed through as local
-	variables rather than as globals, because this (slightly)
-	quickens the resolution process and can be more
-	efficiently minified (especially when both are
-	regularly referenced in your plugin).
-
-	$ (jQuery or Zepto) is passed through as a local
-	variable because it could be overwritten by other
-	libraries or jQuery could be in noConflict mode
-	so $ would not be jQuery or Zepto
-*/
-
-// ECMAScript 5 strict mode
 'use strict';
 
 if (typeof window.DEVMODE === 'undefined') {
 	window.DEVMODE = 0;
 }
 
-var
-	/**
+var /**
 	 * Plugin name
 	 * @type {String}
 	 */
@@ -184,6 +162,16 @@ var
 		 */
 		scalable: true,
 		/**
+		 * zoom in button
+		 * @type {String}
+		 */
+		zoomInButton: '+',
+		/**
+		 * zoom out button
+		 * @type {String}
+		 */
+		zoomOutButton: '&#x2212;',
+		/**
 		 * Transition on the x-axe (usefull for positioning;
 		 * see plugin 'appZoom' for example)
 		 * @type {Number}
@@ -204,14 +192,19 @@ var
 		 * Plugins to use.
 		 * @type {Object}
 		 */
-		plugins: {}
+		plugins: {},
+		/**
+		 * true, if using touch device. If don't given by user, archerTarget.js will check
+		 * for touch support.
+		 * @type {Boolean}
+		 */
+		isTouch: null
 	},
 	/**
 	 * All events supported by jQuery.archerTarget
 	 * @type {Object}
 	 */
 	apiEvents = {
-
 		onTargetOver: 'targetOver',
 		onTargetOut: 'targetOut',
 		onTargetMove: 'targetMove',
@@ -248,40 +241,63 @@ var
 			scale: 1,
 			transform: 1
 		}
-	};
+	},
+	_ATinstance = {};
 
 
+window.ArcherTarget = function (element, options) {
+
+	if (typeof this === 'undefined') {
+		throw new Error('"this" is undefined. use "new ArcherTarget(...)"' +
+			'and NOT "ArcherTarget(...)"');
+	}
+
+	var self = this;
+
+	if (!element.id) {
+		element.id = ArcherTarget.GUID();
+	}
+
+	self._id = element.id;
+
+	_ATinstance[self._id] = new AT(element, options);
+
+	return self;
+
+};
+
+ArcherTarget.addTarget = function (name, options) {
+	AT.Targets[name] = options;
+	DEVMODE && console.log('archerTarget :: added target :: ' + name);
+};
+
+ArcherTarget.addPlugin = function (name, options) {
+	AT.Plugins[name] = options;
+	DEVMODE && console.log('archerTarget :: added plugin :: ' + name);
+};
 
 /**
  * @constructor
  */
-var ArcherTarget = function (element, options) {
-
-	DEVMODE && console.log('archerTarget :: initializing jQuery.archerTarget :: constructor');
+var AT = function (element, options) {
 
 	var self = this;
 
-	/*
-	 * jQuery has an extend method that merges the
-	 * contents of two or more objects, storing the
-	 * result in the first object. The first object
-	 * is generally empty because we don't want to alter
-	 * the default options for future instances of the plugin
-	 */
-	this.options = options = $.extend(true, {}, defaults, options) ;
+	self._name = pluginName;
+	self._defaults = defaults;
+	self._id = element.id;
 
-	this._defaults = defaults;
-	this._name = pluginName;
+	self.options = ArcherTarget.extend(true, {}, defaults, options);
 
-	self.$container = $(element);
-	self.$containerId = element.id ? element.id : self.GUID();
+	self.container = element;
+	self.containerId = self._id;
 
 	/*
 	 * Bind every event with the given function
 	 */
 	for (var event in apiEvents) {
 		if (apiEvents.hasOwnProperty(event) && options[event]) {
-			$(element).on(apiEvents[event] + '.archerTarget', options[event]);
+			element.addEventListener(apiEvents[event] + '.archerTarget', options[event], false);
 		}
 	}
 
@@ -289,89 +305,14 @@ var ArcherTarget = function (element, options) {
 
 };
 
-
-ArcherTarget.Targets = {};
-ArcherTarget.Plugins = {};
-
-$.fn.archerTarget = function (method) {
-
-	var args = arguments;
-
-	/*
-	 * Check if we only want to add a target or plugin
-	 */
-	if (method === 'addTarget') {
-		// arguments[1] = target name
-		// arguments[2] = target options/arguments
-		ArcherTarget.Targets[arguments[1]] = arguments[2];
-
-		DEVMODE && console.log('archerTarget :: added target ' + arguments[1]);
-
-		return $(this);
-
-	} else if (method === 'addPlugin') {
-		// arguments[1] = plugin name
-		// arguments[2] = plugin options/arguments
-		ArcherTarget.Plugins[arguments[1]] = arguments[2];
-
-		DEVMODE && console.log('archerTarget :: added plugin ' + arguments[1]);
-
-		return $(this);
-	/*
-	 * Check if we want to set or get something.
-	 */
-	} else if ((method === 'set' || method === 'get')) {
-
-		var methodName;
-
-		if (!apiParams[method][args[1]]) {
-			$.error('Method ' +  method + args[1] + ' does not exist on jQuery.' + pluginName);
-		}
-
-		// Example: ring -> Ring -> get + Ring -> getRing
-		methodName = method + args[1].charAt(0).toUpperCase() + args[1].substr(1);
-
-		// Note that arguments is not an Array, but we want to call the .slice()
-		// method on it. We do this with .call().
-		return $(this).data('plugin_' + pluginName)[methodName].apply(
-			$(this).data('plugin_' + pluginName), Array.prototype.slice.call(args, 2));
-
-	/*
-	 * Otherwise initialize jQuery.archerTarget (only if either options or nothing is given).
-	 */
-	} else if (typeof method === 'object' || ! method) {
-
-		/*
-		 * Go through each passed element.
-		 */
-		return this.each(function () {
-
-			if (!$(this).data('plugin_' + pluginName)) {
-
-				$(this).data(
-					'plugin_' + pluginName,
-					new ArcherTarget(this, method)
-				);
-
-			}
-
-
-		});
-
-	} else {
-
-		$.error('Method ' +  method + ' does not exist on jQuery.' + pluginName);
-
-	}
-
-};
-
+AT.Targets = {};
+AT.Plugins = {};
 
 /**
  * GUID generator
  * Script from: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
  */
-ArcherTarget.prototype.GUID = function () {
+ArcherTarget.GUID = function () {
 
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
@@ -383,7 +324,7 @@ ArcherTarget.prototype.GUID = function () {
 /**
  * Simple check for requestAnimationFrame and cancelAnimationFrame.
  */
-ArcherTarget.prototype.RAF = function () {
+function RAF() {
 
     /*
      * requestAnimationFrame - browser check
@@ -427,9 +368,15 @@ ArcherTarget.prototype.RAF = function () {
 
     }
 
-};
+}
 
-ArcherTarget.prototype.bindArrowEvents = function () {
+function addEventListenerList(list, event, fn) {
+    for (var i = 0, len = list.length; i < len; i++) {
+        list[i].addEventListener(event, fn, false);
+    }
+}
+
+AT.prototype.bindArrowEvents =  function () {
 
 	var self = this,
 		arrowTmp = {},
@@ -437,8 +384,8 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		arrowTarget,
 		curPageX,
 		curPageY,
-		offsetLeft = this.$container.offset().left,
-		offsetTop = this.$container.offset().top,
+		offsetLeft = ArcherTarget.offset(self.container).left,
+		offsetTop = ArcherTarget.offset(self.container).top,
 		pointerHeight = 0,
 		move,
 		onMouseMove,
@@ -502,8 +449,8 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 		window.requestAnimationFrame(move);
 
-		arrowTmp.$el.trigger('arrowMove.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowMove.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 	};
 
@@ -522,10 +469,12 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 	onMouseDown = function (e) {
 
+		var element = e.target;
+
 		if (!self.arrowMoving) {
 
 			var parentNode = this.parentNode,
-				thisClass = $(this).attr('class'),
+				thisClass = element.className.baseVal,
 				id;
 
 			arrowsetTmp.id = parseInt(parentNode.id.substr(parentNode.id.indexOf('_') + 1), 10);
@@ -544,7 +493,6 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 			arrowTmp = arrowsetTmp.data.data[id];
 			arrowTmp.el = this;
-			arrowTmp.$el = $(this);
 			arrowTmp.id = id;
 		}
 
@@ -564,21 +512,15 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 				self.setTargetStyle('arrow', { active: arrowTarget });
 
-				self.$container[0].style.cursor = 'move';
+				self.container.style.cursor = 'move';
 
 			}
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
 
-			arrowTmp.$el
-				.css({
-					opacity: arrowsetTmp.data.style.selected.opacity
-				})
-				.trigger(
-					'arrowSelect.archerTarget',
-					[arrowsetTmp.id, arrowTmp.id, self.arrowList]
-				);
-
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 			if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
@@ -610,11 +552,10 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		} else if (e.type === 'mouseover' && !self.arrowMoving) {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.hover.opacity;
 
-			arrowTmp.$el.css({
-				opacity: arrowsetTmp.data.style.hover.opacity
-			}).trigger('arrowOver.archerTarget', [arrowsetTmp.id, arrowTmp.id]);
-
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowOver.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -632,23 +573,21 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
 
-
 			if (arrowsetTmp.data.draggable instanceof Object) {
 
 				self.removeArrowPointer();
 
 				arrowTmp.el.setPosition({
-					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
+					x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
+					y:self.convertTo.pxY(arrowTmp.y, arrowTarget)
 				});
 
 			}
 
-			self.$container[0].style.cursor = 'default';
+			self.container.style.cursor = 'default';
 
-			$(self.$container).trigger('arrowDeselect.archerTarget',
-				[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
-
+			ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -661,10 +600,10 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 		if (!self.arrowMoving || !arrowsetTmp.data.draggable) {
 
 			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.initial.color);
+			arrowTmp.el.style.opacity = arrowsetTmp.data.style.initial.opacity;
 
-			arrowTmp.$el.css({
-				opacity: arrowsetTmp.data.style.initial.opacity
-			}).trigger('arrowOut.archerTarget', [arrowsetTmp.id, arrowTmp.id]);
+			ArcherTarget.fireEvent(arrowTmp.el, 'arrowOut.archerTarget',
+				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		}
 
@@ -672,17 +611,18 @@ ArcherTarget.prototype.bindArrowEvents = function () {
 
 	};
 
+	this.container.addEventListener('mousemove', onMouseMove);
+	this.container.addEventListener('mouseup', onMouseUp);
+	this.container.addEventListener('click', onMouseUp);
 
-	this.$container
-		.on('mousemove', onMouseMove)
-		.on('mouseup click', onMouseUp)
-		.find('.arrowSetCanvas')
-		.on('mouseout', 'circle', onMouseOut)
-		.on('mousedown mouseover', 'circle', onMouseDown);
+	var c = this.container.querySelectorAll('.arrowSetCanvas circle');
+	addEventListenerList(c, 'mouseout', onMouseOut);
+	addEventListenerList(c, 'mousedown', onMouseDown);
+	addEventListenerList(c, 'mouseover', onMouseDown);
 
 };
 
-ArcherTarget.prototype.bindArrowTouchEvents = function () {
+AT.prototype.bindArrowTouchEvents = function () {
 
 	var self = this,
 		arrowTmp = {},
@@ -690,8 +630,8 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 		arrowTarget,
 		curPageX,
 		curPageY,
-		offsetLeft = this.$container.offset().left,
-		offsetTop = this.$container.offset().top,
+		offsetLeft,
+		offsetTop,
 		pointerHeight = 0,
 		touch,
 		move,
@@ -741,7 +681,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 				arrowTmp.target = arrowTarget = tmpTarget;
 
-				self.setTargetStyle('arrow', { active: arrowTarget });
+				self.setTargetStyle('arrow', {active: arrowTarget});
 
 			}
 		}
@@ -753,8 +693,8 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 		window.requestAnimationFrame(move);
 
-		arrowTmp.$el.trigger('arrowMove.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowMove.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 	};
 
@@ -764,7 +704,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 			return false;
 		}
 
-		touch = e.originalEvent.touches[0];
+		touch = e.touches[0];
 
 		curPageX = touch.pageX - offsetLeft;
 		curPageY = touch.pageY - offsetTop;
@@ -775,10 +715,15 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 	onTouchStart = function (e) {
 
+		var element = e.target;
+
 		if (!self.arrowMoving) {
 
-			var parentNode = this.parentNode,
-				thisClass = $(this).attr('class'),
+			offsetLeft = ArcherTarget.offset(self.container).left;
+			offsetTop = ArcherTarget.offset(self.container).top;
+
+			var parentNode = element.parentNode,
+				thisClass = element.className.baseVal,
 				id;
 
 			arrowsetTmp.id = parseInt(parentNode.id.substr(parentNode.id.indexOf('_') + 1), 10);
@@ -798,20 +743,14 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 			}
 
 			arrowTmp = arrowsetTmp.data.data[id];
-			arrowTmp.el = this;
-			arrowTmp.$el = $(this);
+			arrowTmp.el = element;
 			arrowTmp.id = id;
 
 		}
 
 		DEVMODE && console.log('archerTarget :: touchstart on arrow ', arrowTmp);
 
-		if (!e.originalEvent && arguments[1]) {
-			e.originalEvent = arguments[1].originalEvent;
-		}
-
-
-		touch = e.originalEvent.touches[0];
+		touch = e.touches[0];
 
 		curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
 		curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
@@ -824,24 +763,21 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 			self.setTargetStyle('arrow', { active: arrowTarget });
 
-			self.$container[0].style.cursor = 'move';
+			self.container.style.cursor = 'move';
 
 		}
 
 		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
+		arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
 
-		arrowTmp.$el
-			.css({
-				opacity: arrowsetTmp.data.style.selected.opacity
-			})
-			.trigger('arrowSelect.archerTarget', [arrowsetTmp.id, arrowTmp.id, self.arrowList]);
-
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
 			self.createArrowPointer({
-				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y:self.convertTo.pxY(arrowTmp.y, arrowTarget),
 				drag: arrowsetTmp.data.draggable,
 				color: arrowsetTmp.data.style.selected.color,
 				arrowRadius: arrowsetTmp.data.radius
@@ -857,7 +793,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 		}
 
 
-		if (e.originalEvent.touches.length === 1 && arrowsetTmp.data.draggable) {
+		if (e.touches.length === 1 && arrowsetTmp.data.draggable) {
 
 			window.cancelAnimationFrame(move);
 			/*
@@ -899,38 +835,36 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 		}
 
-		self.$container[0].style.cursor = 'default';
+		self.container.style.cursor = 'default';
 
-		self.$container.trigger('arrowDeselect.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		return false;
 
 	};
 
+	self.container.addEventListener('touchmove', onTouchMove);
+	self.container.addEventListener('touchend', onTouchEnd);
 
-	this.$container
-		.on('touchmove', onTouchMove)
-		.on('touchend', onTouchEnd)
-		.find('.arrowSetCanvas')
-			.on('touchstart', 'circle', onTouchStart);
-
+	addEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
+		'touchstart', onTouchStart);
 
 };
 
-ArcherTarget.prototype.bindContainerEvents =  function () {
+AT.prototype.bindContainerEvents = function () {
 
 	var self = this,
 		hasMoved = false;
 
-	if (this.draggable) {
+	if (this.options.draggable) {
 
 		var oldPageX,
 			oldPageY,
 			curPageX,
 			curPageY,
 			mouseDown = false,
-			svg = this.$container.find('svg')[0],
+			svg = this.container.getElementsByTagName('svg')[0],
 			move,
 			onMouseMove,
 			onMouseDown,
@@ -951,8 +885,7 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 
 			window.requestAnimationFrame(move);
 
-			self.$container.trigger('targetMove.archerTarget', []);
-
+			ArcherTarget.fireEvent(self.container, 'targetMove.archerTarget');
 
 		};
 
@@ -996,20 +929,24 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 		};
 
 
-		this.$container
-			.on('mousemove', 'svg', onMouseMove)
-			.on('mousedown', 'svg', onMouseDown)
-			.on('mouseup', onMouseUp);
+		var s = this.container.querySelectorAll('svg .targetCanvas');
+		addEventListenerList(s, 'mousemove', onMouseMove);
+		addEventListenerList(s, 'mousedown', onMouseDown);
+		addEventListenerList(s, 'mouseup', onMouseUp);
 
 	}
 
-	this.$container.on('mousedown click', function (e) {
+	var touchFunction = function (e) {
 
-		if (!hasMoved && !$(e.target).hasClass('archerTarget-zoomin') &&
-			!$(e.target).hasClass('archerTarget-zoomout')) {
+		var className = typeof e.target.className.baseVal !== undefined ?
+			e.target.className.baseVal : e.target.className,
+			element = e.target;
 
-			var x = e.pageX - $(this).offset().left,
-				y = e.pageY - $(this).offset().top,
+		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
+			className.match(/archerTarget-zoomout/g) === null) {
+
+			var x = e.pageX - ArcherTarget.offset(self.container).left,
+				y = e.pageY - ArcherTarget.offset(self.container).top,
 				tapTarget = self.checkClosestTarget(0, {
 					x: x,
 					y: y
@@ -1028,8 +965,8 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 					 * Target coordinates + clicked target
 					 */
 					{
-						x: self.convertTo.pcX(x, tapTarget),
-						y: self.convertTo.pcY(y, tapTarget),
+						x:self.convertTo.pcX(x, tapTarget),
+						y:self.convertTo.pcY(y, tapTarget),
 						target: tapTarget
 					}
 				];
@@ -1037,23 +974,27 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 
 			if (e.type === 'mousedown') {
 
-				self.$container.trigger('containerMousedown.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerMousedown.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
 
 			} else {
 
-				self.$container.trigger('containerTap.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerTap.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
 
 			}
 
 		}
 
-	});
+	};
 
+	self.container.addEventListener(self.container, 'mousedown');
+	self.container.addEventListener(self.container, 'click');
 
 
 };
 
-ArcherTarget.prototype.bindContainerTouchEvents =  function () {
+AT.prototype.bindContainerTouchEvents = function () {
 
 	var self = this,
 		hasMoved = false,
@@ -1066,7 +1007,7 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 			curPageX,
 			curPageY,
 			mouseDown = false,
-			svg = this.$container.find('svg')[0],
+			svg = this.container.getElementsByTagName('svg')[0],
 			move,
 			onTouchMove,
 			onTouchStart,
@@ -1088,17 +1029,17 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 			window.requestAnimationFrame(move);
 
-			self.$container.trigger('targetMove.archerTarget', []);
+			ArcherTarget.fireEvent(self.container, 'targetMove.archerTarget');
 
 		};
 
 		onTouchMove = function (e) {
 
-			if (!mouseDown) {
+			if (!mouseDown || self.arrowMoving) {
 				return;
 			}
 
-			touch = e.originalEvent.touches[0];
+			touch = e.touches[0];
 
 			curPageX = touch.pageX;
 			curPageY = touch.pageY;
@@ -1107,7 +1048,11 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 		onTouchStart = function (e) {
 
-			touch = e.originalEvent.touches[0];
+			if (self.arrowMoving) {
+				return;
+			}
+
+			touch = e.touches[0];
 
 			oldPageX = touch.pageX - self.transX * self.scale;
 			oldPageY = touch.pageY - self.transY * self.scale;
@@ -1129,31 +1074,42 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 		onTouchEnd = function () {
 
+			if (self.arrowMoving) {
+				return;
+			}
+
 			mouseDown = hasMoved = false;
 
 			svg.style.cursor = 'default';
 
 		};
 
-
-		this.$container
-			.on('touchmove', 'svg, .targetCanvas', onTouchMove)
-			.on('touchstart', 'svg, .targetCanvas', onTouchStart)
-			.on('touchend', 'svg, .targetCanvas', onTouchEnd);
+		var t = self.container.querySelectorAll('svg .targetCanvas');
+		addEventListenerList(t, 'touchmove', onTouchMove);
+		addEventListenerList(t, 'touchstart', onTouchStart);
+		addEventListenerList(t, 'touchend', onTouchEnd);
 
 	}
 
-	this.$container.on('touchstart touchend', function (e) {
+	var touchFunction = function (e) {
 
-		if (!hasMoved && !$(e.target).hasClass('archerTarget-zoomin') &&
-			!$(e.target).hasClass('archerTarget-zoomout')) {
+		if (self.arrowMoving) {
+			return;
+		}
+
+		var className = typeof e.target.className.baseVal !== undefined ?
+		e.target.className.baseVal : e.target.className,
+			element = e.target;
+
+		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
+			className.match(/archerTarget-zoomout/g) === null) {
 
 			var x,
 				y,
 				tapTarget,
 				eventObject,
-				offsetLeft = $(this).offset().left,
-				offsetTop = $(this).offset().top;
+				offsetLeft = ArcherTarget.offset(self.container).left,
+				offsetTop = ArcherTarget.offset(self.container).top;
 
 			if (e.type === 'touchstart') {
 
@@ -1190,8 +1146,8 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 				 * Target coordinates + clicked target
 				 */
 				{
-					x: self.convertTo.pcX(x, tapTarget),
-					y: self.convertTo.pcY(y, tapTarget),
+					x:self.convertTo.pcX(x, tapTarget),
+					y:self.convertTo.pcY(y, tapTarget),
 					target: tapTarget
 				},
 				e
@@ -1199,127 +1155,117 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 			if (e.type === 'touchstart') {
 
-				self.$container.trigger('containerMousedown.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerMousedown.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			} else {
 
-				self.$container.trigger('containerTap.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerTap.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			}
 
 		}
 
-	});
+	};
 
-
+	self.container.addEventListener('touchstart', touchFunction);
+	self.container.addEventListener('touchend', touchFunction);
 
 };
 
-ArcherTarget.prototype.bindTargetEvents = function () {
+AT.prototype.bindTargetEvents = function () {
 
 	var self = this;
 
-	$(self.targetList).each(function (index, domEle) {
+	function bindTarget(index, domEle) {
 
-		domEle.$el.parent().on('mouseenter', function () {
+		var p = domEle.el;
 
-			if (self.arrowMoving) {
-				return false;
-			}
+		// There's a problem with mouseover and mouseout.
 
-			domEle.$el.css({
+		//p.addEventListener('mouseover', function () {
 
-				opacity: domEle.style.hover.opacity
+		//	if (self.arrowMoving) {
+		//		return false;
+		//	}
 
-			}).trigger('targetOver.archerTarget', [index]);
+		//	domEle.el.style.opacity = domEle.style.hover.opacity;
 
-			return false;
+		//	ArcherTarget.fireEvent(domEle.el, 'targetOver.archerTarget', {index: index});
 
-		}).on('mouseleave', function () {
+		//	return false;
 
-			if (self.arrowMoving) {
-				return false;
-			}
+		//});
 
-			domEle.$el.css({
+		//p.addEventListener('mouseout', function () {
 
-				opacity: domEle.style.initial.opacity
+		//	if (self.arrowMoving) {
+		//		return false;
+		//	}
 
-			}).trigger('targetOut.archerTarget', [index]);
+		//	domEle.el.style.opacity = domEle.style.initial.opacity;
 
-			return false;
+		//	ArcherTarget.fireEvent(domEle.el, 'targetOut.archerTarget', {index: index});
 
-		}).on('click', function () {
+		//	return false;
 
-			domEle.$el.trigger('targetClick.archerTarget', [index]);
+		//});
+
+		p.addEventListener('click', function () {
+
+			ArcherTarget.fireEvent(domEle.el, 'targetClick.archerTarget', {index: index});
 
 		});
 
-	});
+	}
+
+	for (var i = 0; i < self.targetList.length; i++) {
+		bindTarget(i, self.targetList[i]);
+	}
 
 };
 
-ArcherTarget.prototype.bindTargetTouchEvents = function () {
+AT.prototype.bindTargetTouchEvents = function () {
 
 	var self = this;
 
-	$(this.target).each(function (index, domEle) {
+	function bindTarget(index, domEle) {
 
-		domEle.$el.on('mouseover', function () {
+		domEle.el.parentNode.addEventListener('touchend', function () {
 
-			if (self.arrowMoving) {
-				return false;
-			}
-
-			domEle.$el.css({
-
-				opacity: domEle.style.hover.opacity
-
-			}).trigger('targetOver.archerTarget', [index]);
-
-			return false;
-
-		}).on('mouseout', function () {
-
-			if (self.arrowMoving) {
-				return false;
-			}
-
-			domEle.$el.css({
-
-				opacity: domEle.style.initial.opacity
-
-			}).trigger('targetOut.archerTarget', [index]);
-
-			return false;
-
-		}).on('click', function () {
-
-			domEle.$el.trigger('targetClick.archerTarget', [index]);
+			ArcherTarget.fireEvent(domEle.el, 'targetClick.archerTarget', {index: index});
 
 		});
 
-	});
+	}
+
+	for (var i = 0; i < self.targetList.length; i++) {
+		bindTarget(i, self.targetList[i]);
+	}
 
 };
 
-ArcherTarget.prototype.bindZoomEvents = function () {
+AT.prototype.bindZoomEvents = function () {
 
 	var self = this,
-		newZoom = 0;
+		newZoom = 0,
+		c = this.container;
 
-	this.$container.on('click', '.archerTarget-zoomin', function () {
+	c.querySelector('.archerTarget-zoomin').addEventListener('click', function () {
 
-		if (self.scale <= self.maxScale) {
-			newZoom = self.scale + self.scaleStep;
+		if (self.scale <= self.options.maxScale) {
+			newZoom = self.scale + self.options.scaleStep;
 		}
 
 		self.setZoom(newZoom);
 
-	}).on('click', '.archerTarget-zoomout', function () {
+	});
 
-		if (self.scale >= self.minScale + self.scaleStep) {
-			newZoom = self.scale - self.scaleStep;
+	c.querySelector('.archerTarget-zoomout').addEventListener('click', function () {
+
+		if (self.scale >= self.options.minScale + self.options.scaleStep) {
+			newZoom = self.scale - self.options.scaleStep;
 		}
 
 		self.setZoom(newZoom);
@@ -1328,12 +1274,12 @@ ArcherTarget.prototype.bindZoomEvents = function () {
 
 };
 
-ArcherTarget.prototype.calculateRing =  function (config) {
+AT.prototype.calculateRing = function (config) {
 
 	var self = this,
 		i,
 		target = self.targetList[config.target],
-		currentTarget = ArcherTarget.Targets[target.name],
+		currentTarget = AT.Targets[target.name],
 		distanceToCenter = {
 			x: 0,
 			y: 0,
@@ -1342,7 +1288,7 @@ ArcherTarget.prototype.calculateRing =  function (config) {
 		targetTmp = {
 			x: (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale,
 			y: (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale,
-			radius: self.convertTo.canvasX(target.diameter) / 2 * self.scale,
+			radius:self.convertTo.canvasX(target.diameter) / 2 * self.scale,
 			numberRings: currentTarget.numberRings
 		},
 		diameter;
@@ -1371,7 +1317,7 @@ ArcherTarget.prototype.calculateRing =  function (config) {
 	for (i = targetTmp.numberRings - 1; i >= 0; i--) {
 
 		diameter = self.convertTo.canvasX(currentTarget.diameters[i], target.diameter) /
-					2 * self.scale + 1;
+			2 * self.scale + 1;
 
 		if (distanceToCenter.diagonal <= diameter) {
 
@@ -1382,14 +1328,13 @@ ArcherTarget.prototype.calculateRing =  function (config) {
 
 };
 
-ArcherTarget.prototype.checkClosestTarget = function (currentTarget, config) {
+AT.prototype.checkClosestTarget = function (currentTarget, config) {
 
 	var self = this,
 		i,
 		curCenterX,
 		curCenterY,
 		curRadius,
-		convert = self.convertTo,
 		targetLength = self.targetList.length,
 		target;
 
@@ -1397,9 +1342,9 @@ ArcherTarget.prototype.checkClosestTarget = function (currentTarget, config) {
 
 		target = self.targetList[i];
 
-		curCenterX = (convert.canvasX(target.center[0]) + self.transX) * self.scale;
-		curCenterY = (convert.canvasY(target.center[1]) + self.transY) * self.scale;
-		curRadius  = convert.canvasX(target.diameter) / 2  * self.scale;
+		curCenterX = (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale;
+		curCenterY = (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale;
+		curRadius  = self.convertTo.canvasX(target.diameter) / 2  * self.scale;
 
 		if (config.x > curCenterX - curRadius &&
 			config.x < curCenterX + curRadius &&
@@ -1423,7 +1368,7 @@ ArcherTarget.prototype.checkClosestTarget = function (currentTarget, config) {
  * @param  {Object} config.tolerance Tolerance in percent.
  * @return {Boolean}
  */
-ArcherTarget.prototype.checkOnTarget = function (arrow, config) {
+AT.prototype.checkOnTarget = function (arrow, config) {
 
 	/*
 	 * Check if there is more than one target.
@@ -1465,13 +1410,13 @@ ArcherTarget.prototype.checkOnTarget = function (arrow, config) {
  * @param  {Object} config.drag.width  Width of the pointer
  * @param  {Object} config.drag.height Height of the pointer
  */
-ArcherTarget.prototype.createArrowPointer = function (config) {
+AT.prototype.createArrowPointer = function (config) {
 
 	var self = this;
 
 	self.dragMark = {};
 
-	self.dragMark.el = self.canvas.createGroup(false, { id: self.$containerId + 'ArrowDrag' });
+	self.dragMark.el = self.canvas.createGroup({ id: self.$containerId + 'ArrowDrag' });
 
 
 	self.dragMark.rect = self.canvas.createRect({
@@ -1496,9 +1441,10 @@ ArcherTarget.prototype.createArrowPointer = function (config) {
 	self.dragMark.el.appendChild(self.dragMark.circle);
 
 	self.canvas.canvas.appendChild(self.dragMark.el);
+
 };
 
-ArcherTarget.prototype.createArrows =  function (arrows) {
+AT.prototype.createArrows = function (arrows) {
 
 	if (!arrows) { arrows = []; }
 
@@ -1516,39 +1462,29 @@ ArcherTarget.prototype.createArrows =  function (arrows) {
 
 
 	self.arrowGroup = self.canvas.createGroup(
-		false,
 		{
-			id: self.$containerId + 'ArrowGroup'
+			id: self.containerId + 'ArrowGroup'
 		}
 	);
-
-	self.canvas.canvas.appendChild(self.arrowGroup);
-
 
 	for (i = 0; i < arrowLength; i++) {
 
 		arrows[i] = arrow instanceof Array ? { data: arrows[i]} : arrows[i];
 
-		arrows[i] = $.extend(true, {}, self.options.arrowDefaults, arrows[i]);
-
+		arrows[i] = ArcherTarget.extend(true, {}, self.options.arrowDefaults, arrows[i]);
 
 		arrow = arrows[i];
 
-
 		if (arrow.draggable instanceof Object) {
-			arrow.draggable = $.extend(true, {}, dragObjectDefaults, arrow.draggable);
+			arrow.draggable = ArcherTarget.extend(true, {}, dragObjectDefaults, arrow.draggable);
 		}
 
-
 		arrow.el = self.canvas.createGroup(
-			false,
 			{
-				id: self.$containerId + 'ArrowSet_' + i,
+				id: self.containerId + 'ArrowSet_' + i,
 				eleClass: 'arrowSetCanvas'
 			}
 		);
-		arrow.$el = $(arrow.el);
-
 
 		dataLength = arrow.data.length;
 
@@ -1580,13 +1516,10 @@ ArcherTarget.prototype.createArrows =  function (arrows) {
 				stroke: arrow.style.initial.stroke,
 				eleClass: j + arrowClass
 			});
-			arrowData.$el = $(arrowData.el);
 
-			arrowData.$el.css({
-				opacity: arrow.style.initial.opacity
-			});
+			arrowData.el.style.opacity = arrow.style.initial.opacity;
 
-			arrow.$el.append(arrowData.el);
+			arrow.el.appendChild(arrowData.el);
 
 		}
 
@@ -1594,13 +1527,15 @@ ArcherTarget.prototype.createArrows =  function (arrows) {
 
 	}
 
+	self.canvas.canvas.appendChild(self.arrowGroup);
+
 	DEVMODE && console.log('archerTarget :: created arrowset(s) ', arrows);
 
 	return arrows;
 
 };
 
-ArcherTarget.prototype.createTarget = function (targets) {
+AT.prototype.createTarget = function (targets) {
 
 	var self = this,
 		i, j,
@@ -1609,49 +1544,46 @@ ArcherTarget.prototype.createTarget = function (targets) {
 
 	targets = targets || [];
 
+
 	for (i = 0; i < targets.length; i++) {
 
-		targets[i] = $.extend(true, {}, this.options.targetDefaults, targets[i]);
+		targets[i] = ArcherTarget.extend(true, {}, this.options.targetDefaults, targets[i]);
 
 		target = targets[i];
 
 		target.originalCenter = target.center;
 
 		target.el = this.canvas.createGroup(
-			false,
 			{
-				id: self.$containerId + 'Target_' + i,
+				id: self.containerId + 'Target_' + i,
 				eleClass: 'targetCanvas'
 			}
 		);
-		target.$el = $(target.el);
 
 		target.rings = [];
 
-		for (j = 0; j < ArcherTarget.Targets[target.name].numberRings; j++) {
+		for (j = 0; j < AT.Targets[target.name].numberRings; j++) {
 
 			target.rings[j] = {};
 
-			targetDiameter = ArcherTarget.Targets[target.name].diameters[j];
+			targetDiameter = AT.Targets[target.name].diameters[j];
 
 			target.rings[j].el = this.canvas.createCircle({
-				x: this.convertTo.canvasX(target.center[0]),
-				y: this.convertTo.canvasY(target.center[1]),
-				radius:this.convertTo.canvasX(targetDiameter, target.diameter) / 2,
-				fill: ArcherTarget.Targets[target.name].colors[j],
-				stroke: ArcherTarget.Targets[target.name].strokeColors[j],
+				x: self.convertTo.canvasX(target.center[0]),
+				y: self.convertTo.canvasY(target.center[1]),
+				radius: self.convertTo.canvasX(targetDiameter, target.diameter) / 2,
+				fill: AT.Targets[target.name].colors[j],
+				stroke: AT.Targets[target.name].strokeColors[j],
 				eleClass: j
 			});
 
-			target.$el.append(target.rings[j].el);
+			target.el.appendChild(target.rings[j].el);
 
 		}
 
+		target.el.style.opacity = target.style.initial.opacity;
 		this.targetGroup.appendChild(target.el);
 
-		target.$el.css({
-			opacity: target.style.initial.opacity
-		});
 
 	}
 
@@ -1661,19 +1593,143 @@ ArcherTarget.prototype.createTarget = function (targets) {
 
 };
 
-ArcherTarget.prototype.getArrows = function () {
+/**
+ * Merges objects; originally from jQuery
+ * This is a modified version of the code
+ */
+ArcherTarget.extend = function () {
+
+	var src,
+		copyIsArray,
+		copy,
+		name,
+		options,
+		clone,
+		target = arguments[0] || {},
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	}
+
+	// Handle case when target is a string or something (possible in deep copy)
+	if (typeof target !== 'object' && isFunction(target)) {
+		target = {};
+	}
+
+	if (length === i) {
+		target = this;
+		--i;
+	}
+
+	for (; i < length; i++) {
+		// Only deal with non-null/undefined values
+		if ((options = arguments[i]) !== null) {
+			// Extend the base object
+			for (name in options) {
+				if (options.hasOwnProperty(name)) {
+					src = target[name];
+					copy = options[name];
+
+					// Prevent never-ending loop
+					if ( target === copy ) {
+						continue;
+					}
+
+					// Recurse if we're merging plain objects or arrays
+					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+
+						if (copyIsArray) {
+							copyIsArray = false;
+							clone = src && isArray(src) ? src : [];
+
+						} else {
+							clone = src && isPlainObject(src) ? src : {};
+						}
+
+						// Never move original objects, clone them
+						target[name] = ArcherTarget.extend( deep, clone, copy );
+
+					// Don't bring in undefined values
+					} else if (copy !== undefined) {
+						target[name] = copy;
+					}
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+
+};
+
+ArcherTarget.fireEvent = function (target, name, params) {
+
+	var evt = document.createEvent('Event');
+
+	evt.initEvent(name, true, true); //true for can bubble, true for cancelable
+
+	if (params) {
+		for (var param in params) {
+			if (params.hasOwnProperty(param)) {
+				evt[param] = params[param];
+			}
+		}
+	}
+
+	target.dispatchEvent(evt);
+
+};
+
+ArcherTarget.prototype.get = AT.prototype.get = function (method) {
+
+	var at = _ATinstance[this._id],
+		methods;
+
+	methods = {
+		arrows: function () {
+			return at.getArrows();
+		}
+	};
+
+	if (method && methods[method]) {
+
+		if (arguments[1]) {
+			return methods[method].apply(null, Array.prototype.slice.call(arguments, 1));
+		}
+
+		return methods[method]();
+
+	} else {
+
+		DEVMODE && console.error('ArcherTarget :: get method "' + method + '"" not found!');
+
+	}
+
+};
+
+AT.prototype.getArrows = function () {
 
 	return this.arrowList;
 
 };
 
-ArcherTarget.prototype.getRing = function (arrow) {
+AT.prototype.getRing = function (arrow) {
+
+	var self = this;
 
 	if (arrow) {
 
-		return this.calculateRing({
-			x: this.convertTo.pxX(arrow.x, arrow.target),
-			y: this.convertTo.pxY(arrow.y, arrow.target),
+		return self.calculateRing({
+			x:self.convertTo.pxX(arrow.x, arrow.target),
+			y:self.convertTo.pxY(arrow.y, arrow.target),
 			target: arrow.target
 		});
 
@@ -1689,9 +1745,9 @@ ArcherTarget.prototype.getRing = function (arrow) {
 
 				data = this.arrow[i].data[j];
 
-				data.ring = this.calculateRing({
-					x: this.convertTo.pxX(data.x, data.target),
-					y: this.convertTo.pxY(data.y, data.target),
+				data.ring = self.calculateRing({
+					x:self.convertTo.pxX(data.x, data.target),
+					y:self.convertTo.pxY(data.y, data.target),
 					target: data.target
 				});
 
@@ -1705,23 +1761,46 @@ ArcherTarget.prototype.getRing = function (arrow) {
 
 };
 
+AT.prototype.getSize = function () {
+
+	var s = window.getComputedStyle(this.container, null);
+
+	this.width = s.width;
+
+	this.height = s.height || this.width;
+
+	if (this.width.indexOf('px') >= 0) {
+		var w = this.width;
+		this.width = w.substr(0, w.length - 2);
+	}
+
+	if (this.height.indexOf('px') >= 0) {
+		var h = this.height;
+		this.height = h.substr(0, h.length - 2);
+	}
+
+	DEVMODE && console.log('ArcherTarget :: getSize :: width: ' +
+		this.width + '; height: ' + this.height);
+
+};
+
 /**
  * Returns the target parameters (rings, colors, etc.)
  *
  * @param  {String} targetName Name of the target
  * @return {Object}            Object containing the parameters of the target
  */
-ArcherTarget.prototype.getTargetParams = function (targetName) {
+function getTargetParams(targetName) {
 
-	return ArcherTarget.Targets[targetName];
+	return AT.Targets[targetName];
 
-};
+}
 
 /**
  * Returns a object containing the parameters of the SVG transform attribute
  * @return {Object} Transform object
  */
-ArcherTarget.prototype.getTransform = function () {
+AT.prototype.getTransform = function () {
 
 	return {
 		x: this.transX,
@@ -1731,249 +1810,278 @@ ArcherTarget.prototype.getTransform = function () {
 
 };
 
-ArcherTarget.prototype.init = function () {
-
-    DEVMODE && console.log('archerTarget :: initializing jQuery.archerTarget :: init');
+AT.prototype.init = function () {
 
 	var self = this;
 
-    /*
-     * Add class #archerTargetContainer' to the container and give it some style.
-     */
-    self.$container.addClass('archerTargetContainer').css({
-        position: 'relative',
-        overflow: 'hidden'
-    });
-    /*
-     * Only a shorter reference
-     */
-    self.transX = self.options.transX;
-    self.transY = self.options.transY;
-    self.scale = self.options.scale;
-    self.pluginList = self.options.plugins;
-    /*
-     * Merge styles (initial, hover,...)
-     */
-    self.mergeStyles();
-    /*
-     * Set the backgroundcolor
-     */
-    self.setBackgroundColor(self.options.backgroundColor);
-    /*
-     * Initialize the converter
-     */
-    self.initConverter();
-    /*
-     * Check for requestAnimationFrame() support or use a hack
-     */
-    self.RAF();
-    /*
-     * Set size variables (width and height)
-     */
-    self.setSize();
-    /*
-     * Create a new canvas (SVG element)
-     */
-    self.canvas = new VectorCanvas(self.width, self.height);
-    /*
-     * Append the canvas to the container
-     */
-    self.$container.append(self.canvas.canvas);
-    /*
-     * Create the target group
-     */
-    self.targetGroup = self.canvas.createGroup(
-        true,
-        {
-            id: self.$containerId + 'TargetGroup'
-        }
-    );
-    /*
-     * Append it to the canvas.
-     */
-    self.canvas.canvas.appendChild(self.targetGroup);
-    /*
-     * Create the target array
-     */
-    self.targetList = self.createTarget(
-        self.options.target instanceof Array ? self.options.target : [{ name: self.options.target }]
-    );
+	DEVMODE && console.log('archerTarget :: initializing archerTarget :: init');
 
-    this.setGap();
+	/*
+	 * Add class 'archerTargetContainer' to the container and give it some style.
+	 */
+	self.container.className += 'archerTargetContainer';
+	self.container.style.overflow = 'hidden';
+	self.container.style.position = 'relative';
 
-    /*
-     * Create the arrowset array
-     */
-    this.arrowList = this.createArrows(self.options.arrows);
+	/*
+	 * Only a shorter reference
+	 */
+	self.transX = self.options.transX;
+	self.transY = self.options.transY;
+	self.scale = self.options.scale;
+	self.pluginList = self.options.plugins;
+	/*
+	 * Merge styles (initial, hover,...)
+	 */
+	self.mergeStyles();
+	/*
+	 * Set the backgroundcolor
+	 */
+	self.setBackgroundColor(self.options.backgroundColor);
+	/*
+	 * Initialize the converter
+	 */
+	self.initConverter();
+	/*
+	 * Check for requestAnimationFrame() support or use a hack
+	 */
+	RAF();
+	/*
+	 * Get size variables (width and height)
+	 */
+	self.getSize();
+	/*
+	 * Create a new canvas (SVG element)
+	 */
+	self.canvas = new VectorCanvas(self.width, self.height);
+	/*
+	 * Append the canvas to the container
+	 */
+	self.container.appendChild(self.canvas.canvas);
+	/*
+	 * Create the target group
+	 */
+	self.targetGroup = self.canvas.createGroup(
+		{ id: self.containerId + 'TargetGroup' },
+		true
+	);
+	/*
+	 * Append it to the canvas.
+	 */
+	self.canvas.canvas.appendChild(self.targetGroup);
+	/*
+	 * Create the target array
+	 */
+	self.targetList = self.createTarget(
+		self.options.target instanceof Array ? self.options.target : [{ name: self.options.target }]
+	);
 
-    /*
-     * Depending on the device the user is using, bind all intern events.
-     */
-    if (self.isTouch()) {
+	self.setGap();
 
-        DEVMODE && console.log('archerTarget :: using a touch device');
+	/*
+	 * Create the arrowset array
+	 */
+	this.arrowList = self.createArrows(self.options.arrows);
 
-        this.bindContainerTouchEvents();
-        this.bindArrowTouchEvents();
-        this.bindTargetTouchEvents();
+	/*
+	 * Depending on the device the user is using, bind all intern events.
+	 */
+	if (self.isTouch()) {
 
-    } else {
+		DEVMODE && console.log('archerTarget :: using a touch device');
 
-        DEVMODE && console.log('archerTarget :: using a non-touch device');
+		self.bindContainerTouchEvents();
+		self.bindArrowTouchEvents();
+		self.bindTargetTouchEvents();
 
-        this.bindContainerEvents();
-        this.bindArrowEvents();
-        this.bindTargetEvents();
+	} else {
 
-    }
+		DEVMODE && console.log('archerTarget :: using a non-touch device');
 
-    /*
-     * Add the scale buttons if required.
-     */
-    if (this.scalable) {
-        $('<div/>').addClass('archerTarget-zoomin').text('+').appendTo(self.$container);
-        $('<div/>').addClass('archerTarget-zoomout').html('&#x2212;').appendTo(self.$container);
-        /*
-         * And bind scale events
-         */
-        this.bindZoomEvents();
-    }
+		self.bindContainerEvents();
+		self.bindArrowEvents();
+		self.bindTargetEvents();
 
+	}
 
-    /* Apply possible zoom */
-    this.setTransform();
+	/*
+	 * Add the scale buttons if required.
+	 */
+	if (self.options.scalable) {
 
-    /*
-     * Initialize the plugins
-     */
-    self.initPlugins();
+		var zoomIn = document.createElement('div'),
+			zoomOut = document.createElement('div');
 
-};
+		zoomIn.className = 'archerTarget-zoomin';
+		zoomOut.className = 'archerTarget-zoomout';
 
-ArcherTarget.prototype.initConverter = function ()  {
-
-    var self = this,
-        converterCacheCanvas = {
-            x: {},
-            y: {}
-        };
-
-    self.convertTo = {
-
-        pcX: function (arg, targetID) {
-
-            if (!targetID) { targetID = 0; }
-
-            return (arg / self.scale - self.gap[targetID].left - self.transX) /
-                self.convertTo.canvasX(self.targetList[targetID].diameter) * 100;
-
-        },
-
-        pcY: function (arg, targetID) {
-
-            if (!targetID) { targetID = 0; }
-
-            // Attention: converting the target diameter using the x-axe;
-            // otherwise an error will occur
-            return (arg / self.scale - self.gap[targetID].top - self.transY) /
-                self.convertTo.canvasX(self.targetList[targetID].diameter) * 100;
-
-        },
-
-        pxX: function (arg, targetID) {
-
-            if (!targetID) { targetID = 0; }
-
-            return ((self.convertTo.canvasX(self.targetList[targetID].diameter) / 100) *
-                arg + self.gap[targetID].left + self.transX) * self.scale;
-
-        },
-
-        pxY: function (arg, targetID) {
-
-            if (!targetID) { targetID = 0; }
-
-            // Attention: converting the target diameter using the x-axe;
-            // otherwise an error will occur
-            return ((self.convertTo.canvasX(self.targetList[targetID].diameter) / 100) *
-                arg + self.gap[targetID].top + self.transY) * self.scale;
-
-        },
-
-        canvasX: function (arg, targetDiameter) {
-
-            if (!targetDiameter) { targetDiameter = 100; }
-
-            if (!converterCacheCanvas.x[targetDiameter]) {
-                converterCacheCanvas.x[targetDiameter] = {};
-            }
-
-            var tmpCache = converterCacheCanvas.x[targetDiameter];
-
-            if (!tmpCache[arg]) {
-
-                tmpCache[arg] = self.width / 100 * targetDiameter / 100 * arg;
-
-            }
-
-            return tmpCache[arg];
-
-        },
-
-        canvasY: function (arg, targetDiameter) {
-
-            if (!targetDiameter) { targetDiameter = 100; }
+		zoomIn.innerHTML = self.options.zoomInButton;
+		zoomOut.innerHTML = self.options.zoomOutButton;
 
 
-            if (!converterCacheCanvas.y[targetDiameter]) {
-                converterCacheCanvas.y[targetDiameter] = {};
-            }
+		self.container.appendChild(zoomIn);
+		self.container.appendChild(zoomOut);
+		/*
+		 * And bind scale events
+		 */
+		self.bindZoomEvents();
+	}
 
-            var tmpCache = converterCacheCanvas.y[targetDiameter];
 
-            if (!tmpCache[arg]) {
+	/* Apply possible zoom */
+	self.setTransform();
 
-                tmpCache[arg] = self.height / 100 * targetDiameter / 100 * arg;
-
-            }
-
-            return tmpCache[arg];
-
-        }
-
-    };
+	/*
+	 * Initialize the plugins
+	 */
+	self.initPlugins();
 
 };
 
-ArcherTarget.prototype.initPlugins = function () {
+AT.prototype.initConverter = function ()  {
+
+	var self = this,
+		converterCacheCanvas = {
+			x: {},
+			y: {}
+		};
+
+	self.convertTo = {
+
+		pcX: function (arg, targetID) {
+
+			if (!targetID) { targetID = 0; }
+
+			return (arg / self.scale - self.gap[targetID].left - self.transX) /
+				self.convertTo.canvasX(self.targetList[targetID].diameter) * 100;
+
+		},
+
+		pcY: function (arg, targetID) {
+
+			if (!targetID) { targetID = 0; }
+
+			// Attention: converting the target diameter using the x-axe;
+			// otherwise an error will occur
+			return (arg / self.scale - self.gap[targetID].top - self.transY) /
+				self.convertTo.canvasX(self.targetList[targetID].diameter) * 100;
+
+		},
+
+		pxX: function (arg, targetID) {
+
+			if (!targetID) { targetID = 0; }
+
+			return ((self.convertTo.canvasX(self.targetList[targetID].diameter) / 100) *
+				arg + self.gap[targetID].left + self.transX) * self.scale;
+
+		},
+
+		pxY: function (arg, targetID) {
+
+			if (!targetID) { targetID = 0; }
+
+			// Attention: converting the target diameter using the x-axe;
+			// otherwise an error will occur
+			return ((self.convertTo.canvasX(self.targetList[targetID].diameter) / 100) *
+				arg + self.gap[targetID].top + self.transY) * self.scale;
+
+		},
+
+		canvasX: function (arg, targetDiameter) {
+
+			if (!targetDiameter) { targetDiameter = 100; }
+			if (!converterCacheCanvas.x[targetDiameter]) {
+				converterCacheCanvas.x[targetDiameter] = {};
+			}
+
+			var tmpCache = converterCacheCanvas.x[targetDiameter];
+
+
+			if (!tmpCache[arg]) {
+
+				tmpCache[arg] = self.width / 100 * targetDiameter / 100 * arg;
+
+			}
+
+			return tmpCache[arg];
+
+		},
+
+		canvasY: function (arg, targetDiameter) {
+
+			if (!targetDiameter) { targetDiameter = 100; }
+
+
+			if (!converterCacheCanvas.y[targetDiameter]) {
+				converterCacheCanvas.y[targetDiameter] = {};
+			}
+
+			var tmpCache = converterCacheCanvas.y[targetDiameter];
+
+			if (!tmpCache[arg]) {
+
+				tmpCache[arg] = self.height / 100 * targetDiameter / 100 * arg;
+
+			}
+
+			return tmpCache[arg];
+
+		}
+
+	};
+
+};
+
+AT.prototype.initPlugins = function () {
 
     var plugin;
 
     for (plugin in this.pluginList) {
 
-        if (this.pluginList.hasOwnProperty(plugin) && ArcherTarget.Plugins[plugin]) {
+        if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
 
-            ArcherTarget.Plugins[plugin].initialize(this, this.pluginList[plugin]);
+            AT.Plugins[plugin].initialize(this, this.pluginList[plugin]);
 
         }
 
     }
 };
 
-ArcherTarget.prototype.isTouch = function () {
+AT.prototype.isTouch = function () {
+
+	var self = this;
+
+	if (self.options.isTouch !== null) {
+		return self.options.isTouch;
+	}
 
 	return (
 		('ontouchstart' in window) ||
-		(window.DocumentTouch && document instanceof DocumentTouch) ||
-		this.options.touch === true
+		(window.DocumentTouch && document instanceof DocumentTouch) || false
 	);
 
 };
 
-ArcherTarget.prototype.mergeStyles = function () {
+function isFunction(functionToCheck) {
+	return functionToCheck &&
+		Object.prototype.toString.call(functionToCheck) === '[object Function]';
+}
+function isArray(arrayToCheck) {
+	return arrayToCheck && Object.prototype.toString.call(arrayToCheck) === '[object Array]';
+}
+function isObject(objectToCheck) {
+	return objectToCheck && Object.prototype.toString.call(objectToCheck) === '[object Object]';
+}
+function isPlainObject(objectToCheck) {
+	return !(objectToCheck instanceof Array) && (typeof objectToCheck !== 'number') &&
+		(typeof objectToCheck !== 'string') && (typeof objectToCheck !== 'boolean');
+}
+
+AT.prototype.mergeStyles = function () {
 
 	var self = this,
-		options = self.options,
+		options = this.options,
 		style;
 
     /*
@@ -1981,7 +2089,8 @@ ArcherTarget.prototype.mergeStyles = function () {
      */
     for (style in options.targetDefaults.style) {
         if (options.targetDefaults.style.hasOwnProperty(style)) {
-            options.targetDefaults.style[style] = $.extend(
+            self.options.targetDefaults.style[style] = ArcherTarget.extend(
+                true,
                 {},
                 options.targetDefaults.style.initial,
                 options.targetDefaults.style[style]
@@ -1993,7 +2102,8 @@ ArcherTarget.prototype.mergeStyles = function () {
      */
     for (style in options.arrowDefaults.style) {
         if (options.arrowDefaults.style.hasOwnProperty(style)) {
-            options.arrowDefaults.style[style] = $.extend(
+            self.options.arrowDefaults.style[style] = ArcherTarget.extend(
+                true,
                 {},
                 options.arrowDefaults.style.initial,
                 options.arrowDefaults.style[style]
@@ -2003,17 +2113,69 @@ ArcherTarget.prototype.mergeStyles = function () {
 
 };
 
+/*
+ * Get offset of an element. This is from Zepto.js (modified)
+ */
+ArcherTarget.offset = function(element){
+
+	if (element.length === 0) {
+		return null;
+	}
+
+	var obj = element.getBoundingClientRect();
+
+	return {
+		left: obj.left + window.pageXOffset,
+		top: obj.top + window.pageYOffset,
+		width: Math.round(obj.width),
+		height: Math.round(obj.height)
+	};
+
+};
+
 /**
  * Removes the arrow-pointer from the DOM
  */
-ArcherTarget.prototype.removeArrowPointer = function () {
+AT.prototype.removeArrowPointer = function () {
 
 	this.canvas.canvas.removeChild(this.dragMark.el);
 
 };
 
+ArcherTarget.prototype.set = AT.prototype.set = function (method) {
+
+	var at = _ATinstance[this._id],
+
+	methods = {
+		arrowActive: function (arrow) {
+			at.setArrowActive(arrow);
+		},
+		arrowOptions: function (arrowset) {
+			at.setArrowOptions(arrowset);
+		},
+		transform: function (x, y, scale) {
+			at.setTransform(x, y, scale);
+		}
+	};
+
+	if (method && methods[method]) {
+
+		if (arguments[1]) {
+			return methods[method].apply(null, Array.prototype.slice.call(arguments, 1));
+		}
+
+		return methods[method]();
+
+	} else {
+
+		DEVMODE && console.error('ArcherTarget :: set method "' + method + '"" not found!');
+
+	}
+
+};
+
 /**
- * Sets arrows or arrowsets active or inactive.
+ * Set arrows or arrowsets active or inactive.
  *
  * @param {Object}  arrow
  * @param {Integer} arrow.arrowsetID ID of the arrowset
@@ -2021,10 +2183,9 @@ ArcherTarget.prototype.removeArrowPointer = function () {
  * @param {Boolean} [arrow.active]   Active state of the arrow(set).
  *                                   If not given, we'll use the options from the arrows.
  */
-ArcherTarget.prototype.setArrowActive = function (arrow) {
+AT.prototype.setArrowActive = function (arrow) {
 
 	var self = this,
-		i,
 		/**
 		 * Sets an arrow active or inactive
 		 *
@@ -2062,6 +2223,8 @@ ArcherTarget.prototype.setArrowActive = function (arrow) {
 		 * @param {Boolean} active
 		 */
 		setArrowset = function (arrowSetID, active) {
+
+			var i;
 
 			/*
 			 * If no active state is given, we'll use the saved value.
@@ -2101,7 +2264,6 @@ ArcherTarget.prototype.setArrowActive = function (arrow) {
 
 };
 
-
 /**
  * Merges the given options with the arrowset options (e.g. 'draggable', 'style').
  *
@@ -2109,11 +2271,21 @@ ArcherTarget.prototype.setArrowActive = function (arrow) {
  * @param {Integer} arrowset.arrowsetID  ID of the arrowset
  * @param {Object}  [arrowset.options]   Options to merge
  */
-ArcherTarget.prototype.setArrowOptions = function (arrowset) {
+AT.prototype.setArrowOptions = function (arrowset) {
 
 	var self = this,
 		field,
-		methodName;
+		methodName,
+		options;
+
+	options = {
+		active: function (method) {
+			self[method]({
+				arrowsetID: arrowset.arrowsetID,
+				active: arrowset.options.active
+			});
+		}
+	};
 
 
 	for (field in arrowset.options) {
@@ -2122,28 +2294,10 @@ ArcherTarget.prototype.setArrowOptions = function (arrowset) {
 
 			methodName = 'setArrow' + field.charAt(0).toUpperCase() + field.substr(1);
 
-			if (arrowset.options[field] !== self.arrowList[arrowset.arrowsetID][field]) {
+			if (arrowset.options[field] !== self.arrowList[arrowset.arrowsetID][field] &&
+				options[field]) {
 
-				/*
-				 * TODO: Add more cases than just 'active'
-				 */
-				switch (field) {
-
-					case 'active':
-
-						self[methodName]({
-							arrowsetID: arrowset.arrowsetID,
-							active: arrowset.options[field]
-						});
-
-						break;
-
-					default:
-
-						break;
-
-				}
-
+				options[field](methodName);
 
 			}
 
@@ -2151,12 +2305,11 @@ ArcherTarget.prototype.setArrowOptions = function (arrowset) {
 
 	}
 
-	$.extend(true, self.arrowList[arrowset.arrowsetID], arrowset.options);
+	ArcherTarget.extend(true, self.arrowList[arrowset.arrowsetID], arrowset.options);
 
 };
 
-
-ArcherTarget.prototype.setArrowPointer = function (config) {
+AT.prototype.setArrowPointer = function (config) {
 
 	this.dragMark.rect.setPosition({
 		x: config.x - config.drag.width / 2,
@@ -2182,7 +2335,7 @@ ArcherTarget.prototype.setArrowPointer = function (config) {
  * @param {Integer|Array} [arrow.arrowID]   ID of the arrow. If given, the arrow.arrowsetID
  *                                          has to be an integer and not an array
  */
- ArcherTarget.prototype.setArrowPosition = function (arrow) {
+AT.prototype.setArrowPosition = function (arrow) {
 
 	var i,
 		j,
@@ -2210,7 +2363,7 @@ ArcherTarget.prototype.setArrowPointer = function (config) {
 
 	if (typeof(arrow) === 'undefined') {
 
-		DEVMODE > 8 && console.log('archerTarget :: setArrowPosition :: positioning all arrows');
+		DEVMODE && console.log('archerTarget :: setArrowPosition :: positioning all arrows');
 
 		/*
 		 * Set the position of all arrows
@@ -2230,7 +2383,7 @@ ArcherTarget.prototype.setArrowPointer = function (config) {
 		/*
 		 * Merge default and given config
 		 */
-		arrow = $.extend({}, defaultConfig, arrow);
+		arrow = ArcherTarget.extend(true, {}, defaultConfig, arrow);
 
 
 		/*
@@ -2292,14 +2445,14 @@ ArcherTarget.prototype.setArrowPointer = function (config) {
  * @param {Object}        arrow
  * @param {Integer|Array} arrow.arrowsetID ID of the arrowset or an array containing
  *                                         the ID's of the the arrowsets
- * @param {Integer|Array} [arrow.arrowID] ID of the arrow. If given, the arrow.arrowsetID
- *                                        has to be an integer and not an array
- * @param {Object|Array} arrow.style Style of the arrow(s) or arrowset(s). Construction
- *                                   should look like defaultParams.style.initial.
- *                                   If arrow.style is an array, the order has to be
- *                                   the same as arrow.arrowsetID or arrow.arrowID.
+ * @param {Integer|Array} [arrow.arrowID]  ID of the arrow. If given, the arrow.arrowsetID
+ *                                         has to be an integer and not an array
+ * @param {Object|Array}  arrow.style      Style of the arrow(s) or arrowset(s). Construction
+ *                                         should look like defaultParams.style.initial.
+ *                                         If arrow.style is an array, the order has to be
+ *                                         the same as arrow.arrowsetID or arrow.arrowID.
  */
-ArcherTarget.prototype.setArrowStyle = function (arrow) {
+AT.prototype.setArrowStyle = function (arrow) {
 
 	var self = this,
 		i,
@@ -2331,9 +2484,7 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 					fill: style.color
 				});
 
-				arrowObj.$el.css({
-					opacity: style.opacity
-				});
+				arrowObj.el.opacity = style.opacity;
 
 			}
 
@@ -2359,16 +2510,14 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 				fill: style.color
 			});
 
-			arrowObj.$el.css({
-				opacity: style.opacity
-			});
+			arrowObj.el.opacity = style.opacity;
 
 		};
 
 	/*
 	 * Merge default and given config
 	 */
-	arrow = $.extend({}, defaultConfig, arrow);
+	arrow = ArcherTarget.extend(true, {}, defaultConfig, arrow);
 
 	/*
 	 * Check if arrow.arrowsetID is an array. If true we have to set the style all arrowsets
@@ -2439,88 +2588,73 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 
 };
 
+AT.prototype.setBackgroundColor = function (color) {
 
-ArcherTarget.prototype.setBackgroundColor = function (color) {
+	this.backgroundColor = this.container.style.backgroundColor = color;
 
-	this.backgroundColor = color;
-
-	this.$container.css({
-		backgroundColor: color
-	});
+	DEVMODE && console.log('ArcherTarget :: new backgroundcolor :: ' + color);
 
 };
 
-ArcherTarget.prototype.setGap = function () {
+AT.prototype.setGap = function () {
 
-	var i,
+	var self = this,
+		i,
 		target;
 
-	this.gap = [];
+	self.gap = [];
 
-	for (i = 0; i < this.targetList.length; i++) {
+	for (i = 0; i < self.targetList.length; i++) {
 
-		target = this.targetList[i];
+		target = self.targetList[i];
 
-		this.gap[i] = {
-
+		self.gap[i] = {
 			// Attention: converting the target radius using the x-axe;
 			// otherwise an error will occur
-			top: this.convertTo.canvasY(target.center[1]) -
-				this.convertTo.canvasX(target.diameter / 2),
+			top: self.convertTo.canvasY(target.center[1]) -
+				self.convertTo.canvasX(target.diameter / 2),
 
-			left: this.convertTo.canvasX(target.center[0] -
+			left: self.convertTo.canvasX(target.center[0] -
 					(target.diameter / 2))
 		};
 
 	}
 };
 
-
-ArcherTarget.prototype.setSize = function () {
-
-	this.width = this.$container.width();
-
-	this.height = this.$container.height() || this.$container.width();
-
-};
-
-ArcherTarget.prototype.setTargetStyle = function (state, config) {
+AT.prototype.setTargetStyle = function (state, config) {
 
 	var i,
-		targets = this.targetList;
+		targets = this.targetList,
+		states;
 
-	switch (state) {
+	states = {
+		initial: function () {
+			for (i = 0; i < targets.length; i++) {
 
-	case 'initial':
+				targets[i].el.style.opacity = targets[i].style.initial.opacity;
 
-		for (i = 0; i < targets.length; i++) {
+			}
+		},
+		arrow: function () {
+			var arrowState;
 
-			targets[i].$el.css({ opacity: targets[i].style.initial.opacity });
+			for (i = 0; i < targets.length; i++) {
 
+				arrowState = (i === config.active) ? 'arrowOn' : 'arrowOff';
+
+				targets[i].el.style.opacity = targets[i].style[arrowState].opacity;
+
+			}
 		}
+	};
 
-		break;
-
-
-	case 'arrow':
-
-		var arrowState;
-
-		for (i = 0; i < targets.length; i++) {
-
-			arrowState = (i === config.active) ? 'arrowOn' : 'arrowOff';
-
-			targets[i].$el.css({ opacity: targets[i].style[arrowState].opacity });
-
-		}
-
-		break;
-
+	if (states[state]) {
+		states[state]();
 	}
+
 };
 
-
-ArcherTarget.prototype.setTransform = function (x, y, scale) {
+AT.prototype.setTransform = function (x, y, scale) {
 
 	if (!x && x !== 0) { x = this.transX; } else { this.transX = x; }
 	if (!y && y !== 0) { y = this.transY; } else { this.transY = y; }
@@ -2532,194 +2666,104 @@ ArcherTarget.prototype.setTransform = function (x, y, scale) {
 
 };
 
-ArcherTarget.prototype.setZoom = function (newZoom) {
+AT.prototype.setZoom = function (newScale) {
 
-	this.$container.trigger('zoom.archerTarget', [newZoom, this.scale]);
+	ArcherTarget.fireEvent(this.container, 'zoom.archerTarget',
+		{newScale:newScale, oldScale: this.scale});
 
-	this.scale = newZoom;
+	this.scale = newScale;
 
 	this.setTransform();
 
-	this.clearConverterCache();
-
 };
-
-/*
- * adopted from jVectorMap version 0.2.3
- * (https://github.com/bjornd/jvectormap | http://jvectormap.com/)
- *
- * Copyright 2011-2012, Kirill Lebedev
- * licensed under the terms of MIT license
- *
- * modified version
- */
 
 var VectorCanvas = function (width, height) {
 
-	this.mode = window.SVGAngle ? 'svg' : 'vml';
-
-	if (this.mode === 'svg') {
-		this.createSvgNode = function (nodeName) {
-			return document.createElementNS(this.svgns, nodeName);
-		};
-	} else {
-		try {
-			if (!document.namespaces.rvml) {
-				document.namespaces.add('rvml', 'urn:schemas-microsoft-com:vml');
-			}
-			this.createVmlNode = function (tagName) {
-				return document.createElement('<rvml:' + tagName + ' class="rvml">');
-			};
-		} catch (e) {
-			this.createVmlNode = function (tagName) {
-				return document.createElement('<' + tagName +
-					' xmlns="urn:schemas-microsoft.com:vml" class="rvml">');
-			};
-		}
-		document.createStyleSheet().addRule('.rvml', 'behavior:url(#default#VML)');
+	if (!window.SVGAngle) {
+		alert('No SVG supported!');
 	}
 
-	if (this.mode === 'svg') {
-		this.canvas = this.createSvgNode('svg');
-	} else {
-		this.canvas = this.createVmlNode('group');
-		this.canvas.style.position = 'absolute';
-	}
+	this.createSvgNode = function (nodeName) {
+		return document.createElementNS('http://www.w3.org/2000/svg', nodeName);
+	};
+
+	this.canvas = this.createSvgNode('svg');
 
 	this.setSize(width, height);
+
 };
 
 VectorCanvas.prototype = {
-	svgns: 'http://www.w3.org/2000/svg',
-	mode: 'svg',
+
 	width: 0,
 	height: 0,
 	canvas: null,
 
 	setSize: function (width, height) {
-		var i, l,
-			paths;
 
-		if (this.mode === 'svg') {
-			this.canvas.setAttribute('width', width);
-			this.canvas.setAttribute('height', height);
-		} else {
-			this.canvas.style.width = width + 'px';
-			this.canvas.style.height = height + 'px';
-			this.canvas.coordsize = width + ' ' + height;
-			this.canvas.coordorigin = '0 0';
-			if (this.rootGroup) {
-				paths = this.rootGroup.getElementsByTagName('shape');
-				for (i = 0, l = paths.length; i < l; i++) {
-					paths[i].coordsize = width + ' ' + height;
-					paths[i].style.width = width + 'px';
-					paths[i].style.height = height + 'px';
-				}
-				this.rootGroup.coordsize = width + ' ' + height;
-				this.rootGroup.style.width = width + 'px';
-				this.rootGroup.style.height = height + 'px';
-			}
-		}
+		this.canvas.setAttribute('width', width);
+		this.canvas.setAttribute('height', height);
+
 		this.width = width;
 		this.height = height;
+
 	},
 
 	createCircle: function (config) {
 
-		var node;
+		var node = this.createSvgNode('circle');
 
-		if (this.mode === 'svg') {
+		node.setAttribute('cx', config.x);
+		node.setAttribute('cy', config.y);
+		node.setAttribute('r', config.radius);
+		node.setAttribute('fill', config.fill);
+		node.setAttribute('stroke', config.stroke);
+		node.setAttribute('class', config.eleClass);
 
-			node = this.createSvgNode('circle');
-			node.setAttribute('cx', config.x);
-			node.setAttribute('cy', config.y);
-			node.setAttribute('r', config.radius);
-			node.setAttribute('fill', config.fill);
-			node.setAttribute('stroke', config.stroke);
-			node.setAttribute('class', config.eleClass);
-			node.setPosition = function (point) {
-				node.setAttribute('cx', point.x);
-				node.setAttribute('cy', point.y);
-			};
-			node.setStyle = function (style) {
-				node.setAttribute('r', style.radius);
-				node.setAttribute('fill', style.fill);
-				node.setAttribute('stroke', style.stroke);
-			};
+		node.setPosition = function (point) {
+			node.setAttribute('cx', point.x);
+			node.setAttribute('cy', point.y);
+		};
 
-		} else {
-
-			node = this.createVmlNode('oval');
-			node.style.width = config.radius * 2 + 'px';
-			node.style.height = config.radius * 2 + 'px';
-			node.style.left = config.x - config.radius + 'px';
-			node.style.top = config.y - config.radius  + 'px';
-			node.fillcolor = config.fill;
-			node.classList.add(config.eleClass);
-			node.stroke = true;
-			node.strokecolor = config.stroke;
-			node.setPosition = function (point) {
-				node.style.left = point.x - config.radius + 'px';
-				node.style.top = point.y - config.radius + 'px';
-			};
-			node.setStyle = function (style) {
-				node.style.width = style.radius * 2 + 'px';
-				node.style.height = style.radius * 2 + 'px';
-				node.fillcolor = style.fill;
-				node.stroke = true;
-				node.strokecolor = style.stroke;
-			};
-		}
+		node.setStyle = function (style) {
+			node.setAttribute('r', style.radius);
+			node.setAttribute('fill', style.fill);
+			node.setAttribute('stroke', style.stroke);
+		};
 
 		return node;
 	},
 
 	createRect: function (config) {
-		var node;
-		if (this.mode === 'svg') {
-			node = this.createSvgNode('rect');
-			node.setAttribute('x', config.x);
-			node.setAttribute('y', config.y);
-			node.setAttribute('width', config.width);
-			node.setAttribute('height', config.height);
-			node.setAttribute('fill', config.fill);
-			node.setPosition = function (point) {
-				node.setAttribute('x', point.x);
-				node.setAttribute('y', point.y);
-			};
-		} else {
-			node = this.createVmlNode('rect');
-			node.style.width = config.width + 'px';
-			node.style.height = config.width + 'px';
-			node.style.left = config.x + 'px';
-			node.style.top = config.y + 'px';
-			node.fillcolor = config.fill;
-			node.setPosition = function (point) {
-				node.style.left = point.x + 'px';
-				node.style.top = point.y + 'px';
-			};
-		}
+
+		var node = this.createSvgNode('rect');
+		node.setAttribute('x', config.x);
+		node.setAttribute('y', config.y);
+		node.setAttribute('width', config.width);
+		node.setAttribute('height', config.height);
+		node.setAttribute('fill', config.fill);
+		node.setPosition = function (point) {
+			node.setAttribute('x', point.x);
+			node.setAttribute('y', point.y);
+		};
+
 		return node;
+
 	},
 
-	createGroup: function (isRoot, config) {
-		var node;
-		config = config || {};
-		if (this.mode === 'svg') {
+	createGroup: function (groupConfig, isRoot) {
+
+		var config = groupConfig || {},
 			node = this.createSvgNode('g');
-			if (config.id) { node.id = config.id; }
-			if (config.eleClass) { node.setAttribute('class', config.eleClass); }
-		} else {
-			node = this.createVmlNode('group');
-			node.style.width = this.width + 'px';
-			node.style.height = this.height + 'px';
-			node.style.left = '0px';
-			node.style.top = '0px';
-			node.coordorigin = '0 0';
-			if (config.id) { node.id = config.id; }
-			if (config.eleClass) { node.classList.add(config.eleClass); }
-			node.coordsize = this.width + ' ' + this.height;
+
+		if (config.id) {
+			node.id = config.id;
 		}
+
+		if (config.eleClass) {
+			node.setAttribute('class', config.eleClass);
+		}
+
 		if (isRoot) {
 			this.rootGroup = node;
 		}
@@ -2729,17 +2773,13 @@ VectorCanvas.prototype = {
 	},
 
 	applyTransformParams: function (scale, transX, transY) {
-		if (this.mode === 'svg') {
-			this.rootGroup.setAttribute(
-				'transform', 'scale(' + scale + ') translate(' + transX + ', ' + transY + ')'
-			);
-		} else {
-			this.rootGroup.coordorigin = (this.width - transX - this.width / 100) +
-				',' + (this.height - transY - this.height / 100);
-			this.rootGroup.coordsize = this.width / scale + ',' + this.height / scale;
-		}
+
+		this.rootGroup.setAttribute(
+			'transform', 'scale(' + scale + ') translate(' + transX + ', ' + transY + ')'
+		);
+
 	}
 };
 
 
-}(window, document, (window.jQuery || window.Zepto)));
+}(window, document));

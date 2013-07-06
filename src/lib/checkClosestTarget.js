@@ -1,11 +1,10 @@
-ArcherTarget.prototype.checkClosestTarget = function (currentTarget, config) {
+AT.prototype.checkClosestTarget = function (currentTarget, config) {
 
 	var self = this,
 		i,
 		curCenterX,
 		curCenterY,
 		curRadius,
-		convert = self.convertTo,
 		targetLength = self.targetList.length,
 		target;
 
@@ -13,9 +12,9 @@ ArcherTarget.prototype.checkClosestTarget = function (currentTarget, config) {
 
 		target = self.targetList[i];
 
-		curCenterX = (convert.canvasX(target.center[0]) + self.transX) * self.scale;
-		curCenterY = (convert.canvasY(target.center[1]) + self.transY) * self.scale;
-		curRadius  = convert.canvasX(target.diameter) / 2  * self.scale;
+		curCenterX = (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale;
+		curCenterY = (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale;
+		curRadius  = self.convertTo.canvasX(target.diameter) / 2  * self.scale;
 
 		if (config.x > curCenterX - curRadius &&
 			config.x < curCenterX + curRadius &&

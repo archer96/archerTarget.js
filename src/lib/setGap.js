@@ -1,25 +1,24 @@
-ArcherTarget.prototype.setGap = function () {
+AT.prototype.setGap = function () {
 
-	var i,
+	var self = this,
+		i,
 		target;
 
-	this.gap = [];
+	self.gap = [];
 
-	for (i = 0; i < this.targetList.length; i++) {
+	for (i = 0; i < self.targetList.length; i++) {
 
-		target = this.targetList[i];
+		target = self.targetList[i];
 
-		this.gap[i] = {
-
+		self.gap[i] = {
 			// Attention: converting the target radius using the x-axe;
 			// otherwise an error will occur
-			top: this.convertTo.canvasY(target.center[1]) -
-				this.convertTo.canvasX(target.diameter / 2),
+			top: self.convertTo.canvasY(target.center[1]) -
+				self.convertTo.canvasX(target.diameter / 2),
 
-			left: this.convertTo.canvasX(target.center[0] -
+			left: self.convertTo.canvasX(target.center[0] -
 					(target.diameter / 2))
 		};
 
 	}
 };
-

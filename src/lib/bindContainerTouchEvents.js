@@ -1,4 +1,4 @@
-ArcherTarget.prototype.bindContainerTouchEvents =  function () {
+AT.prototype.bindContainerTouchEvents = function () {
 
 	var self = this,
 		hasMoved = false,
@@ -11,7 +11,7 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 			curPageX,
 			curPageY,
 			mouseDown = false,
-			svg = this.$container.find('svg')[0],
+			svg = this.container.getElementsByTagName('svg')[0],
 			move,
 			onTouchMove,
 			onTouchStart,
@@ -33,17 +33,17 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 			window.requestAnimationFrame(move);
 
-			self.$container.trigger('targetMove.archerTarget', []);
+			ArcherTarget.fireEvent(self.container, 'targetMove.archerTarget');
 
 		};
 
 		onTouchMove = function (e) {
 
-			if (!mouseDown) {
+			if (!mouseDown || self.arrowMoving) {
 				return;
 			}
 
-			touch = e.originalEvent.touches[0];
+			touch = e.touches[0];
 
 			curPageX = touch.pageX;
 			curPageY = touch.pageY;
@@ -52,7 +52,11 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 		onTouchStart = function (e) {
 
-			touch = e.originalEvent.touches[0];
+			if (self.arrowMoving) {
+				return;
+			}
+
+			touch = e.touches[0];
 
 			oldPageX = touch.pageX - self.transX * self.scale;
 			oldPageY = touch.pageY - self.transY * self.scale;
@@ -74,31 +78,42 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 		onTouchEnd = function () {
 
+			if (self.arrowMoving) {
+				return;
+			}
+
 			mouseDown = hasMoved = false;
 
 			svg.style.cursor = 'default';
 
 		};
 
-
-		this.$container
-			.on('touchmove', 'svg, .targetCanvas', onTouchMove)
-			.on('touchstart', 'svg, .targetCanvas', onTouchStart)
-			.on('touchend', 'svg, .targetCanvas', onTouchEnd);
+		var t = self.container.querySelectorAll('svg .targetCanvas');
+		addEventListenerList(t, 'touchmove', onTouchMove);
+		addEventListenerList(t, 'touchstart', onTouchStart);
+		addEventListenerList(t, 'touchend', onTouchEnd);
 
 	}
 
-	this.$container.on('touchstart touchend', function (e) {
+	var touchFunction = function (e) {
 
-		if (!hasMoved && !$(e.target).hasClass('archerTarget-zoomin') &&
-			!$(e.target).hasClass('archerTarget-zoomout')) {
+		if (self.arrowMoving) {
+			return;
+		}
+
+		var className = typeof e.target.className.baseVal !== undefined ?
+		e.target.className.baseVal : e.target.className,
+			element = e.target;
+
+		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
+			className.match(/archerTarget-zoomout/g) === null) {
 
 			var x,
 				y,
 				tapTarget,
 				eventObject,
-				offsetLeft = $(this).offset().left,
-				offsetTop = $(this).offset().top;
+				offsetLeft = ArcherTarget.offset(self.container).left,
+				offsetTop = ArcherTarget.offset(self.container).top;
 
 			if (e.type === 'touchstart') {
 
@@ -135,8 +150,8 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 				 * Target coordinates + clicked target
 				 */
 				{
-					x: self.convertTo.pcX(x, tapTarget),
-					y: self.convertTo.pcY(y, tapTarget),
+					x:self.convertTo.pcX(x, tapTarget),
+					y:self.convertTo.pcY(y, tapTarget),
 					target: tapTarget
 				},
 				e
@@ -144,18 +159,21 @@ ArcherTarget.prototype.bindContainerTouchEvents =  function () {
 
 			if (e.type === 'touchstart') {
 
-				self.$container.trigger('containerMousedown.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerMousedown.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			} else {
 
-				self.$container.trigger('containerTap.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerTap.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			}
 
 		}
 
-	});
+	};
 
-
+	self.container.addEventListener('touchstart', touchFunction);
+	self.container.addEventListener('touchend', touchFunction);
 
 };

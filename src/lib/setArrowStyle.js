@@ -4,14 +4,14 @@
  * @param {Object}        arrow
  * @param {Integer|Array} arrow.arrowsetID ID of the arrowset or an array containing
  *                                         the ID's of the the arrowsets
- * @param {Integer|Array} [arrow.arrowID] ID of the arrow. If given, the arrow.arrowsetID
- *                                        has to be an integer and not an array
- * @param {Object|Array} arrow.style Style of the arrow(s) or arrowset(s). Construction
- *                                   should look like defaultParams.style.initial.
- *                                   If arrow.style is an array, the order has to be
- *                                   the same as arrow.arrowsetID or arrow.arrowID.
+ * @param {Integer|Array} [arrow.arrowID]  ID of the arrow. If given, the arrow.arrowsetID
+ *                                         has to be an integer and not an array
+ * @param {Object|Array}  arrow.style      Style of the arrow(s) or arrowset(s). Construction
+ *                                         should look like defaultParams.style.initial.
+ *                                         If arrow.style is an array, the order has to be
+ *                                         the same as arrow.arrowsetID or arrow.arrowID.
  */
-ArcherTarget.prototype.setArrowStyle = function (arrow) {
+AT.prototype.setArrowStyle = function (arrow) {
 
 	var self = this,
 		i,
@@ -43,9 +43,7 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 					fill: style.color
 				});
 
-				arrowObj.$el.css({
-					opacity: style.opacity
-				});
+				arrowObj.el.opacity = style.opacity;
 
 			}
 
@@ -71,16 +69,14 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 				fill: style.color
 			});
 
-			arrowObj.$el.css({
-				opacity: style.opacity
-			});
+			arrowObj.el.opacity = style.opacity;
 
 		};
 
 	/*
 	 * Merge default and given config
 	 */
-	arrow = $.extend({}, defaultConfig, arrow);
+	arrow = ArcherTarget.extend(true, {}, defaultConfig, arrow);
 
 	/*
 	 * Check if arrow.arrowsetID is an array. If true we have to set the style all arrowsets
@@ -150,4 +146,3 @@ ArcherTarget.prototype.setArrowStyle = function (arrow) {
 	}
 
 };
-

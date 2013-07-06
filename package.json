@@ -1,9 +1,9 @@
 {
-  "name": "jquery.archerTarget",
-  "title": "jQuery ArcherTarget",
+  "name": "archerTarget",
+  "title": "archerTarget.js",
   "description": "jQuery plugin for archers.",
-  "version": "0.3.0pre",
-  "homepage": "http://archertarget.andremeyering.de",
+  "version": "0.3.1",
+  "homepage": "https://github.com/archer96/archerTarget.js",
   "author": {
     "name": "Andre Meyering",
     "email": "info@andremeyering.de",
@@ -11,29 +11,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/archer96/jQuery.archerTarget"
+    "url": "git://github.com/archer96/archerTarget.js"
   },
   "bugs": {
-    "url": "https://github.com/archer96/jQuery.archerTarget/issues"
+    "url": "https://github.com/archer96/archerTarget.js/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/archer96/jQuery.archerTarget/blob/master/LICENSE-MIT"
+      "url": "https://github.com/archer96/archerTarget.js/blob/master/LICENSE-MIT"
     }
   ],
   "engines": {
     "node": ">= 0.6.0"
   },
   "devDependencies": {
-    "grunt": "~0.4",
-    "grunt-compare-size": "0.3.1",
-    "grunt-git-authors": "1.0.0",
-    "grunt-contrib-watch": "0.2.0rc7",
-    "grunt-contrib-concat": "~0.1.2rc6",
-    "grunt-contrib-qunit": "~0.1.1",
-    "grunt-contrib-jshint": "~0.1.1rc6",
-    "grunt-contrib-uglify": "~0.1.1rc6"
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-jshint": "~0.6.0"
   },
-  "keywords": ["archery", "target"]
+  "keywords": [
+    "archery",
+    "target"
+  ]
 }

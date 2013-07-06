@@ -9,13 +9,13 @@
  * @param  {Object} config.drag.width  Width of the pointer
  * @param  {Object} config.drag.height Height of the pointer
  */
-ArcherTarget.prototype.createArrowPointer = function (config) {
+AT.prototype.createArrowPointer = function (config) {
 
 	var self = this;
 
 	self.dragMark = {};
 
-	self.dragMark.el = self.canvas.createGroup(false, { id: self.$containerId + 'ArrowDrag' });
+	self.dragMark.el = self.canvas.createGroup({ id: self.$containerId + 'ArrowDrag' });
 
 
 	self.dragMark.rect = self.canvas.createRect({
@@ -40,4 +40,5 @@ ArcherTarget.prototype.createArrowPointer = function (config) {
 	self.dragMark.el.appendChild(self.dragMark.circle);
 
 	self.canvas.canvas.appendChild(self.dragMark.el);
+
 };

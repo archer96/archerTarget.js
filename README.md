@@ -1,45 +1,38 @@
-# jQuery.archerTarget
+# archerTarget.js
 
-jQuery and Zepto plugin for archers.
+Script to create archery targets.
 
 ##License
-jQuery.archerTarget is licensed unter the of MIT license (see LICENSE-MIT).
+archerTarget.js is licensed under the of MIT license (see LICENSE-MIT).
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/archer96/jQuery.archerTarget/master/dist/jquery.archerTarget.min.js
-[max]: https://raw.github.com/archer96/jQuery.archerTarget/master/dist/jquery.archerTarget.js
+[min]: https://raw.github.com/archer96/archerTarget.js/master/dist/archerTarget.min.js
+[max]: https://raw.github.com/archer96/archerTarget.js/master/dist/archerTarget.js
 
 In your web page:
 
 ```html
-<script src="jquery.js"></script>
-<!--
-    We support Zepto, too!
-    <script src="jquery.js"></script>
--->
-<script src="dist/jquery.archerTarget.min.js"></script>
-<script src="dist/targets/jquery.archerTarget.targets.min.js"></script>
-<script>
-(function($) {
-    $('#myTarget').archerTarget();
-}(window.jQuery || window.Zepto));
-</script>
+<script src="dist/archerTarget.min.js"></script>
+<script src="dist/targets/archerTarget.targets.min.js"></script>
+<script>new ArcherTarget(document.getElementById('myTarget'));</script>
 ```
 ## Build
 requires latest grunt:
 `npm install grunt@master`
-More information in the [CONTRIBUTING](https://github.com/archer96/jQuery.archerTarget/master/CONTRIBUTING.md) file.
+
+More information in the [CONTRIBUTING](https://github.com/archer96/archerTarget.js/master/CONTRIBUTING.md) file.
 
 ## Documentation
 _(Coming soon)_
 
 ## Examples
 Example are available in the `example` directory.
-Please note that jQuery.archerTargets requires the latest Zepto or jQuery version.
 
 ## Release History ##
+
+ - 2013/07/06 - v0.3.1 - Rewritten. New name: archerTarget.js. Doesn't use jQuery or Zepto anymore. Some other bugfixes.
 
  - 2013/01/31 - v0.3pre - Rewritten. jQuery.archerTarget now uses nodejs and grunt. Some other bugfixes.
 

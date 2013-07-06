@@ -2,8 +2,7 @@ if (typeof window.DEVMODE === 'undefined') {
 	window.DEVMODE = 0;
 }
 
-var
-	/**
+var /**
 	 * Plugin name
 	 * @type {String}
 	 */
@@ -153,6 +152,16 @@ var
 		 */
 		scalable: true,
 		/**
+		 * zoom in button
+		 * @type {String}
+		 */
+		zoomInButton: '+',
+		/**
+		 * zoom out button
+		 * @type {String}
+		 */
+		zoomOutButton: '&#x2212;',
+		/**
 		 * Transition on the x-axe (usefull for positioning;
 		 * see plugin 'appZoom' for example)
 		 * @type {Number}
@@ -173,14 +182,19 @@ var
 		 * Plugins to use.
 		 * @type {Object}
 		 */
-		plugins: {}
+		plugins: {},
+		/**
+		 * true, if using touch device. If don't given by user, archerTarget.js will check
+		 * for touch support.
+		 * @type {Boolean}
+		 */
+		isTouch: null
 	},
 	/**
 	 * All events supported by jQuery.archerTarget
 	 * @type {Object}
 	 */
 	apiEvents = {
-
 		onTargetOver: 'targetOver',
 		onTargetOut: 'targetOut',
 		onTargetMove: 'targetMove',
@@ -217,40 +231,63 @@ var
 			scale: 1,
 			transform: 1
 		}
-	};
+	},
+	_ATinstance = {};
 
 
+window.ArcherTarget = function (element, options) {
+
+	if (typeof this === 'undefined') {
+		throw new Error('"this" is undefined. use "new ArcherTarget(...)"' +
+			'and NOT "ArcherTarget(...)"');
+	}
+
+	var self = this;
+
+	if (!element.id) {
+		element.id = ArcherTarget.GUID();
+	}
+
+	self._id = element.id;
+
+	_ATinstance[self._id] = new AT(element, options);
+
+	return self;
+
+};
+
+ArcherTarget.addTarget = function (name, options) {
+	AT.Targets[name] = options;
+	DEVMODE && console.log('archerTarget :: added target :: ' + name);
+};
+
+ArcherTarget.addPlugin = function (name, options) {
+	AT.Plugins[name] = options;
+	DEVMODE && console.log('archerTarget :: added plugin :: ' + name);
+};
 
 /**
  * @constructor
  */
-var ArcherTarget = function (element, options) {
-
-	DEVMODE && console.log('archerTarget :: initializing jQuery.archerTarget :: constructor');
+var AT = function (element, options) {
 
 	var self = this;
 
-	/*
-	 * jQuery has an extend method that merges the
-	 * contents of two or more objects, storing the
-	 * result in the first object. The first object
-	 * is generally empty because we don't want to alter
-	 * the default options for future instances of the plugin
-	 */
-	this.options = options = $.extend(true, {}, defaults, options) ;
+	self._name = pluginName;
+	self._defaults = defaults;
+	self._id = element.id;
 
-	this._defaults = defaults;
-	this._name = pluginName;
+	self.options = ArcherTarget.extend(true, {}, defaults, options);
 
-	self.$container = $(element);
-	self.$containerId = element.id ? element.id : self.GUID();
+	self.container = element;
+	self.containerId = self._id;
 
 	/*
 	 * Bind every event with the given function
 	 */
 	for (var event in apiEvents) {
 		if (apiEvents.hasOwnProperty(event) && options[event]) {
-			$(element).on(apiEvents[event] + '.archerTarget', options[event]);
+			element.addEventListener(apiEvents[event] + '.archerTarget', options[event], false);
 		}
 	}
 
@@ -258,80 +295,5 @@ var ArcherTarget = function (element, options) {
 
 };
 
-
-ArcherTarget.Targets = {};
-ArcherTarget.Plugins = {};
-
-$.fn.archerTarget = function (method) {
-
-	var args = arguments;
-
-	/*
-	 * Check if we only want to add a target or plugin
-	 */
-	if (method === 'addTarget') {
-		// arguments[1] = target name
-		// arguments[2] = target options/arguments
-		ArcherTarget.Targets[arguments[1]] = arguments[2];
-
-		DEVMODE && console.log('archerTarget :: added target ' + arguments[1]);
-
-		return $(this);
-
-	} else if (method === 'addPlugin') {
-		// arguments[1] = plugin name
-		// arguments[2] = plugin options/arguments
-		ArcherTarget.Plugins[arguments[1]] = arguments[2];
-
-		DEVMODE && console.log('archerTarget :: added plugin ' + arguments[1]);
-
-		return $(this);
-	/*
-	 * Check if we want to set or get something.
-	 */
-	} else if ((method === 'set' || method === 'get')) {
-
-		var methodName;
-
-		if (!apiParams[method][args[1]]) {
-			$.error('Method ' +  method + args[1] + ' does not exist on jQuery.' + pluginName);
-		}
-
-		// Example: ring -> Ring -> get + Ring -> getRing
-		methodName = method + args[1].charAt(0).toUpperCase() + args[1].substr(1);
-
-		// Note that arguments is not an Array, but we want to call the .slice()
-		// method on it. We do this with .call().
-		return $(this).data('plugin_' + pluginName)[methodName].apply(
-			$(this).data('plugin_' + pluginName), Array.prototype.slice.call(args, 2));
-
-	/*
-	 * Otherwise initialize jQuery.archerTarget (only if either options or nothing is given).
-	 */
-	} else if (typeof method === 'object' || ! method) {
-
-		/*
-		 * Go through each passed element.
-		 */
-		return this.each(function () {
-
-			if (!$(this).data('plugin_' + pluginName)) {
-
-				$(this).data(
-					'plugin_' + pluginName,
-					new ArcherTarget(this, method)
-				);
-
-			}
-
-
-		});
-
-	} else {
-
-		$.error('Method ' +  method + ' does not exist on jQuery.' + pluginName);
-
-	}
-
-};
-
+AT.Targets = {};
+AT.Plugins = {};

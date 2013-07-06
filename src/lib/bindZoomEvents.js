@@ -1,20 +1,23 @@
-ArcherTarget.prototype.bindZoomEvents = function () {
+AT.prototype.bindZoomEvents = function () {
 
 	var self = this,
-		newZoom = 0;
+		newZoom = 0,
+		c = this.container;
 
-	this.$container.on('click', '.archerTarget-zoomin', function () {
+	c.querySelector('.archerTarget-zoomin').addEventListener('click', function () {
 
-		if (self.scale <= self.maxScale) {
-			newZoom = self.scale + self.scaleStep;
+		if (self.scale <= self.options.maxScale) {
+			newZoom = self.scale + self.options.scaleStep;
 		}
 
 		self.setZoom(newZoom);
 
-	}).on('click', '.archerTarget-zoomout', function () {
+	});
 
-		if (self.scale >= self.minScale + self.scaleStep) {
-			newZoom = self.scale - self.scaleStep;
+	c.querySelector('.archerTarget-zoomout').addEventListener('click', function () {
+
+		if (self.scale >= self.options.minScale + self.options.scaleStep) {
+			newZoom = self.scale - self.options.scaleStep;
 		}
 
 		self.setZoom(newZoom);

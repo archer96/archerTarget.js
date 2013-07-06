@@ -1,16 +1,16 @@
-ArcherTarget.prototype.bindContainerEvents =  function () {
+AT.prototype.bindContainerEvents = function () {
 
 	var self = this,
 		hasMoved = false;
 
-	if (this.draggable) {
+	if (this.options.draggable) {
 
 		var oldPageX,
 			oldPageY,
 			curPageX,
 			curPageY,
 			mouseDown = false,
-			svg = this.$container.find('svg')[0],
+			svg = this.container.getElementsByTagName('svg')[0],
 			move,
 			onMouseMove,
 			onMouseDown,
@@ -31,8 +31,7 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 
 			window.requestAnimationFrame(move);
 
-			self.$container.trigger('targetMove.archerTarget', []);
-
+			ArcherTarget.fireEvent(self.container, 'targetMove.archerTarget');
 
 		};
 
@@ -76,20 +75,24 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 		};
 
 
-		this.$container
-			.on('mousemove', 'svg', onMouseMove)
-			.on('mousedown', 'svg', onMouseDown)
-			.on('mouseup', onMouseUp);
+		var s = this.container.querySelectorAll('svg .targetCanvas');
+		addEventListenerList(s, 'mousemove', onMouseMove);
+		addEventListenerList(s, 'mousedown', onMouseDown);
+		addEventListenerList(s, 'mouseup', onMouseUp);
 
 	}
 
-	this.$container.on('mousedown click', function (e) {
+	var touchFunction = function (e) {
 
-		if (!hasMoved && !$(e.target).hasClass('archerTarget-zoomin') &&
-			!$(e.target).hasClass('archerTarget-zoomout')) {
+		var className = typeof e.target.className.baseVal !== undefined ?
+			e.target.className.baseVal : e.target.className,
+			element = e.target;
 
-			var x = e.pageX - $(this).offset().left,
-				y = e.pageY - $(this).offset().top,
+		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
+			className.match(/archerTarget-zoomout/g) === null) {
+
+			var x = e.pageX - ArcherTarget.offset(self.container).left,
+				y = e.pageY - ArcherTarget.offset(self.container).top,
 				tapTarget = self.checkClosestTarget(0, {
 					x: x,
 					y: y
@@ -108,8 +111,8 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 					 * Target coordinates + clicked target
 					 */
 					{
-						x: self.convertTo.pcX(x, tapTarget),
-						y: self.convertTo.pcY(y, tapTarget),
+						x:self.convertTo.pcX(x, tapTarget),
+						y:self.convertTo.pcY(y, tapTarget),
 						target: tapTarget
 					}
 				];
@@ -117,18 +120,22 @@ ArcherTarget.prototype.bindContainerEvents =  function () {
 
 			if (e.type === 'mousedown') {
 
-				self.$container.trigger('containerMousedown.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerMousedown.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
 
 			} else {
 
-				self.$container.trigger('containerTap.archerTarget', eventObject);
+				ArcherTarget.fireEvent(self.container, 'containerTap.archerTarget',
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
 
 			}
 
 		}
 
-	});
+	};
 
+	self.container.addEventListener(self.container, 'mousedown');
+	self.container.addEventListener(self.container, 'click');
 
 
 };

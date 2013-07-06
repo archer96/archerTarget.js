@@ -1,4 +1,4 @@
-ArcherTarget.prototype.bindArrowTouchEvents = function () {
+AT.prototype.bindArrowTouchEvents = function () {
 
 	var self = this,
 		arrowTmp = {},
@@ -6,8 +6,8 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 		arrowTarget,
 		curPageX,
 		curPageY,
-		offsetLeft = this.$container.offset().left,
-		offsetTop = this.$container.offset().top,
+		offsetLeft,
+		offsetTop,
 		pointerHeight = 0,
 		touch,
 		move,
@@ -57,7 +57,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 				arrowTmp.target = arrowTarget = tmpTarget;
 
-				self.setTargetStyle('arrow', { active: arrowTarget });
+				self.setTargetStyle('arrow', {active: arrowTarget});
 
 			}
 		}
@@ -69,8 +69,8 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 		window.requestAnimationFrame(move);
 
-		arrowTmp.$el.trigger('arrowMove.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowMove.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 	};
 
@@ -80,7 +80,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 			return false;
 		}
 
-		touch = e.originalEvent.touches[0];
+		touch = e.touches[0];
 
 		curPageX = touch.pageX - offsetLeft;
 		curPageY = touch.pageY - offsetTop;
@@ -91,10 +91,15 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 	onTouchStart = function (e) {
 
+		var element = e.target;
+
 		if (!self.arrowMoving) {
 
-			var parentNode = this.parentNode,
-				thisClass = $(this).attr('class'),
+			offsetLeft = ArcherTarget.offset(self.container).left;
+			offsetTop = ArcherTarget.offset(self.container).top;
+
+			var parentNode = element.parentNode,
+				thisClass = element.className.baseVal,
 				id;
 
 			arrowsetTmp.id = parseInt(parentNode.id.substr(parentNode.id.indexOf('_') + 1), 10);
@@ -114,20 +119,14 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 			}
 
 			arrowTmp = arrowsetTmp.data.data[id];
-			arrowTmp.el = this;
-			arrowTmp.$el = $(this);
+			arrowTmp.el = element;
 			arrowTmp.id = id;
 
 		}
 
 		DEVMODE && console.log('archerTarget :: touchstart on arrow ', arrowTmp);
 
-		if (!e.originalEvent && arguments[1]) {
-			e.originalEvent = arguments[1].originalEvent;
-		}
-
-
-		touch = e.originalEvent.touches[0];
+		touch = e.touches[0];
 
 		curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
 		curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
@@ -140,24 +139,21 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 			self.setTargetStyle('arrow', { active: arrowTarget });
 
-			self.$container[0].style.cursor = 'move';
+			self.container.style.cursor = 'move';
 
 		}
 
 		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
+		arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
 
-		arrowTmp.$el
-			.css({
-				opacity: arrowsetTmp.data.style.selected.opacity
-			})
-			.trigger('arrowSelect.archerTarget', [arrowsetTmp.id, arrowTmp.id, self.arrowList]);
-
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
 			self.createArrowPointer({
-				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y:self.convertTo.pxY(arrowTmp.y, arrowTarget),
 				drag: arrowsetTmp.data.draggable,
 				color: arrowsetTmp.data.style.selected.color,
 				arrowRadius: arrowsetTmp.data.radius
@@ -173,7 +169,7 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 		}
 
 
-		if (e.originalEvent.touches.length === 1 && arrowsetTmp.data.draggable) {
+		if (e.touches.length === 1 && arrowsetTmp.data.draggable) {
 
 			window.cancelAnimationFrame(move);
 			/*
@@ -215,21 +211,19 @@ ArcherTarget.prototype.bindArrowTouchEvents = function () {
 
 		}
 
-		self.$container[0].style.cursor = 'default';
+		self.container.style.cursor = 'default';
 
-		self.$container.trigger('arrowDeselect.archerTarget',
-			[arrowsetTmp.id, arrowTmp.id, self.arrowList]);
+		ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		return false;
 
 	};
 
+	self.container.addEventListener('touchmove', onTouchMove);
+	self.container.addEventListener('touchend', onTouchEnd);
 
-	this.$container
-		.on('touchmove', onTouchMove)
-		.on('touchend', onTouchEnd)
-		.find('.arrowSetCanvas')
-			.on('touchstart', 'circle', onTouchStart);
-
+	addEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
+		'touchstart', onTouchStart);
 
 };

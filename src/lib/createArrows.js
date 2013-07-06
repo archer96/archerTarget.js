@@ -1,4 +1,4 @@
-ArcherTarget.prototype.createArrows =  function (arrows) {
+AT.prototype.createArrows = function (arrows) {
 
 	if (!arrows) { arrows = []; }
 
@@ -16,39 +16,29 @@ ArcherTarget.prototype.createArrows =  function (arrows) {
 
 
 	self.arrowGroup = self.canvas.createGroup(
-		false,
 		{
-			id: self.$containerId + 'ArrowGroup'
+			id: self.containerId + 'ArrowGroup'
 		}
 	);
-
-	self.canvas.canvas.appendChild(self.arrowGroup);
-
 
 	for (i = 0; i < arrowLength; i++) {
 
 		arrows[i] = arrow instanceof Array ? { data: arrows[i]} : arrows[i];
 
-		arrows[i] = $.extend(true, {}, self.options.arrowDefaults, arrows[i]);
-
+		arrows[i] = ArcherTarget.extend(true, {}, self.options.arrowDefaults, arrows[i]);
 
 		arrow = arrows[i];
 
-
 		if (arrow.draggable instanceof Object) {
-			arrow.draggable = $.extend(true, {}, dragObjectDefaults, arrow.draggable);
+			arrow.draggable = ArcherTarget.extend(true, {}, dragObjectDefaults, arrow.draggable);
 		}
 
-
 		arrow.el = self.canvas.createGroup(
-			false,
 			{
-				id: self.$containerId + 'ArrowSet_' + i,
+				id: self.containerId + 'ArrowSet_' + i,
 				eleClass: 'arrowSetCanvas'
 			}
 		);
-		arrow.$el = $(arrow.el);
-
 
 		dataLength = arrow.data.length;
 
@@ -80,19 +70,18 @@ ArcherTarget.prototype.createArrows =  function (arrows) {
 				stroke: arrow.style.initial.stroke,
 				eleClass: j + arrowClass
 			});
-			arrowData.$el = $(arrowData.el);
 
-			arrowData.$el.css({
-				opacity: arrow.style.initial.opacity
-			});
+			arrowData.el.style.opacity = arrow.style.initial.opacity;
 
-			arrow.$el.append(arrowData.el);
+			arrow.el.appendChild(arrowData.el);
 
 		}
 
 		self.arrowGroup.appendChild(arrow.el);
 
 	}
+
+	self.canvas.canvas.appendChild(self.arrowGroup);
 
 	DEVMODE && console.log('archerTarget :: created arrowset(s) ', arrows);
 
