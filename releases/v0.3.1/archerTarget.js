@@ -578,8 +578,8 @@ AT.prototype.bindArrowEvents =  function () {
 				self.removeArrowPointer();
 
 				arrowTmp.el.setPosition({
-					x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y:self.convertTo.pxY(arrowTmp.y, arrowTarget)
+					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+					y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
 				});
 
 			}
@@ -776,8 +776,8 @@ AT.prototype.bindArrowTouchEvents = function () {
 		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
 			self.createArrowPointer({
-				x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y:self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
 				drag: arrowsetTmp.data.draggable,
 				color: arrowsetTmp.data.style.selected.color,
 				arrowRadius: arrowsetTmp.data.radius
@@ -965,8 +965,8 @@ AT.prototype.bindContainerEvents = function () {
 					 * Target coordinates + clicked target
 					 */
 					{
-						x:self.convertTo.pcX(x, tapTarget),
-						y:self.convertTo.pcY(y, tapTarget),
+						x: self.convertTo.pcX(x, tapTarget),
+						y: self.convertTo.pcY(y, tapTarget),
 						target: tapTarget
 					}
 				];
@@ -1146,8 +1146,8 @@ AT.prototype.bindContainerTouchEvents = function () {
 				 * Target coordinates + clicked target
 				 */
 				{
-					x:self.convertTo.pcX(x, tapTarget),
-					y:self.convertTo.pcY(y, tapTarget),
+					x: self.convertTo.pcX(x, tapTarget),
+					y: self.convertTo.pcY(y, tapTarget),
 					target: tapTarget
 				},
 				e
@@ -1288,7 +1288,7 @@ AT.prototype.calculateRing = function (config) {
 		targetTmp = {
 			x: (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale,
 			y: (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale,
-			radius:self.convertTo.canvasX(target.diameter) / 2 * self.scale,
+			radius: self.convertTo.canvasX(target.diameter) / 2 * self.scale,
 			numberRings: currentTarget.numberRings
 		},
 		diameter;
@@ -1728,8 +1728,8 @@ AT.prototype.getRing = function (arrow) {
 	if (arrow) {
 
 		return self.calculateRing({
-			x:self.convertTo.pxX(arrow.x, arrow.target),
-			y:self.convertTo.pxY(arrow.y, arrow.target),
+			x: self.convertTo.pxX(arrow.x, arrow.target),
+			y: self.convertTo.pxY(arrow.y, arrow.target),
 			target: arrow.target
 		});
 
@@ -1746,8 +1746,8 @@ AT.prototype.getRing = function (arrow) {
 				data = this.arrow[i].data[j];
 
 				data.ring = self.calculateRing({
-					x:self.convertTo.pxX(data.x, data.target),
-					y:self.convertTo.pxY(data.y, data.target),
+					x: self.convertTo.pxX(data.x, data.target),
+					y: self.convertTo.pxY(data.y, data.target),
 					target: data.target
 				});
 

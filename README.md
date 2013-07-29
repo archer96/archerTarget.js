@@ -19,8 +19,8 @@ In your web page:
 <script>new ArcherTarget(document.getElementById('myTarget'));</script>
 ```
 ## Build
-requires latest grunt:
-`npm install grunt@master`
+requires grunt >=4.0:
+`npm install grunt`
 
 More information in the [CONTRIBUTING](https://github.com/archer96/archerTarget.js/master/CONTRIBUTING.md) file.
 
@@ -31,6 +31,8 @@ _(Coming soon)_
 Example are available in the `example` directory.
 
 ## Release History ##
+
+- 2013/07/06 - v0.3.2 - added some functions in `isType.js` to check whether an object is an element or a node object. This fixes a bug with `setArrowOptions`.
 
  - 2013/07/06 - v0.3.1 - Rewritten. New name: archerTarget.js. Doesn't use jQuery or Zepto anymore. Some other bugfixes.
 

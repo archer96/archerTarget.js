@@ -2,7 +2,7 @@
   "name": "archerTarget",
   "title": "archerTarget.js",
   "description": "jQuery plugin for archers.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/archer96/archerTarget.js",
   "author": {
     "name": "Andre Meyering",

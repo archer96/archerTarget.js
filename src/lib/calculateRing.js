@@ -12,7 +12,7 @@ AT.prototype.calculateRing = function (config) {
 		targetTmp = {
 			x: (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale,
 			y: (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale,
-			radius:self.convertTo.canvasX(target.diameter) / 2 * self.scale,
+			radius: self.convertTo.canvasX(target.diameter) / 2 * self.scale,
 			numberRings: currentTarget.numberRings
 		},
 		diameter;

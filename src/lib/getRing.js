@@ -5,8 +5,8 @@ AT.prototype.getRing = function (arrow) {
 	if (arrow) {
 
 		return self.calculateRing({
-			x:self.convertTo.pxX(arrow.x, arrow.target),
-			y:self.convertTo.pxY(arrow.y, arrow.target),
+			x: self.convertTo.pxX(arrow.x, arrow.target),
+			y: self.convertTo.pxY(arrow.y, arrow.target),
 			target: arrow.target
 		});
 
@@ -23,8 +23,8 @@ AT.prototype.getRing = function (arrow) {
 				data = this.arrow[i].data[j];
 
 				data.ring = self.calculateRing({
-					x:self.convertTo.pxX(data.x, data.target),
-					y:self.convertTo.pxY(data.y, data.target),
+					x: self.convertTo.pxX(data.x, data.target),
+					y: self.convertTo.pxY(data.y, data.target),
 					target: data.target
 				});
 

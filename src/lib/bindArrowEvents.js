@@ -200,8 +200,8 @@ AT.prototype.bindArrowEvents =  function () {
 				self.removeArrowPointer();
 
 				arrowTmp.el.setPosition({
-					x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y:self.convertTo.pxY(arrowTmp.y, arrowTarget)
+					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+					y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
 				});
 
 			}

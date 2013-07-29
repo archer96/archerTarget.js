@@ -150,8 +150,8 @@ AT.prototype.bindContainerTouchEvents = function () {
 				 * Target coordinates + clicked target
 				 */
 				{
-					x:self.convertTo.pcX(x, tapTarget),
-					y:self.convertTo.pcY(y, tapTarget),
+					x: self.convertTo.pcX(x, tapTarget),
+					y: self.convertTo.pcY(y, tapTarget),
 					target: tapTarget
 				},
 				e

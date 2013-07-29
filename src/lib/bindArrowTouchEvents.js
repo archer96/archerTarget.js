@@ -152,8 +152,8 @@ AT.prototype.bindArrowTouchEvents = function () {
 		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
 			self.createArrowPointer({
-				x:self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y:self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
 				drag: arrowsetTmp.data.draggable,
 				color: arrowsetTmp.data.style.selected.color,
 				arrowRadius: arrowsetTmp.data.radius
