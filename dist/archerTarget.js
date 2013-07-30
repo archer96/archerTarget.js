@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - v0.3.2 - 2013-07-29
+ * archerTarget.js - v0.3.2 - 2013-07-30
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
@@ -988,8 +988,8 @@ AT.prototype.bindContainerEvents = function () {
 
 	};
 
-	self.container.addEventListener(self.container, 'mousedown');
-	self.container.addEventListener(self.container, 'click');
+	self.container.addEventListener('mousedown', touchFunction);
+	self.container.addEventListener('click', touchFunction);
 
 
 };

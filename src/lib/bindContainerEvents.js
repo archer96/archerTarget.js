@@ -134,8 +134,8 @@ AT.prototype.bindContainerEvents = function () {
 
 	};
 
-	self.container.addEventListener(self.container, 'mousedown');
-	self.container.addEventListener(self.container, 'click');
+	self.container.addEventListener('mousedown', touchFunction);
+	self.container.addEventListener('click', touchFunction);
 
 
 };
