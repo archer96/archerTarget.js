@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - v0.3.2 - 2013-07-30
+ * archerTarget.js - v0.3.3 - 2013-07-30
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
@@ -259,6 +259,18 @@ window.ArcherTarget = function (element, options) {
 	}
 
 	self._id = element.id;
+
+	/*
+	 * We have to unbind all event listeners if the element
+	 * has already been used.
+	 */
+	if (_ATinstance[self._id]) {
+
+		var newElement = element.cloneNode(true);
+		element.parentNode.replaceChild(newElement, element);
+
+		element = document.getElementById(self._id);
+	}
 
 	_ATinstance[self._id] = new AT(element, options);
 

@@ -32,7 +32,9 @@ Example are available in the `example` directory.
 
 ## Release History ##
 
- - 2013/07/30 - v0.3.3 - fixed container mouse events
+ - 2013/07/30 - v0.3.3
+   - fixed container mouse events
+   - fixed bug where events are fired twice if the element was used before for a target
 
  - 2013/07/29 - v0.3.2 - added some functions in `isType.js` to check whether an object is an element or a node object. This fixes a bug with `setArrowOptions`.
 

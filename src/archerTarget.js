@@ -250,6 +250,18 @@ window.ArcherTarget = function (element, options) {
 
 	self._id = element.id;
 
+	/*
+	 * We have to unbind all event listeners if the element
+	 * has already been used.
+	 */
+	if (_ATinstance[self._id]) {
+
+		var newElement = element.cloneNode(true);
+		element.parentNode.replaceChild(newElement, element);
+
+		element = document.getElementById(self._id);
+	}
+
 	_ATinstance[self._id] = new AT(element, options);
 
 	return self;
