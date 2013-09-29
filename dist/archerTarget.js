@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - v0.3.3 - 2013-07-30
+ * archerTarget.js - v0.3.4 - 2013-09-29
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
@@ -266,10 +266,13 @@ window.ArcherTarget = function (element, options) {
 	 */
 	if (_ATinstance[self._id]) {
 
-		var newElement = element.cloneNode(true);
-		element.parentNode.replaceChild(newElement, element);
+		for (var event in apiEvents) {
+			if (apiEvents.hasOwnProperty(event) && _ATinstance[self._id].options[event]) {
+				element.removeEventListener(apiEvents[event] + '.archerTarget',
+					_ATinstance[self._id].options[event], false);
+			}
+		}
 
-		element = document.getElementById(self._id);
 	}
 
 	_ATinstance[self._id] = new AT(element, options);
@@ -309,7 +312,8 @@ var AT = function (element, options) {
 	 */
 	for (var event in apiEvents) {
 		if (apiEvents.hasOwnProperty(event) && options[event]) {
-			element.addEventListener(apiEvents[event] + '.archerTarget', options[event], false);
+			element.addEventListener(apiEvents[event] +
+				'.archerTarget', options[event], false);
 		}
 	}
 
@@ -1831,7 +1835,7 @@ AT.prototype.init = function () {
 	/*
 	 * Add class 'archerTargetContainer' to the container and give it some style.
 	 */
-	self.container.className += 'archerTargetContainer';
+	self.container.className += ' archerTargetContainer';
 	self.container.style.overflow = 'hidden';
 	self.container.style.position = 'relative';
 
@@ -2109,7 +2113,7 @@ function isObject(objectToCheck) {
 function isPlainObject(objectToCheck) {
 	return !(objectToCheck instanceof Array) && (typeof objectToCheck !== 'number') &&
 		(typeof objectToCheck !== 'string') && (typeof objectToCheck !== 'boolean') &&
-		!isNode(objectToCheck) && !isElement(objectToCheck);
+		!isNode(objectToCheck) && !isElement(objectToCheck) && !isFunction(objectToCheck);
 }
 
 AT.prototype.mergeStyles = function () {

@@ -7,7 +7,7 @@ AT.prototype.init = function () {
 	/*
 	 * Add class 'archerTargetContainer' to the container and give it some style.
 	 */
-	self.container.className += 'archerTargetContainer';
+	self.container.className += ' archerTargetContainer';
 	self.container.style.overflow = 'hidden';
 	self.container.style.position = 'relative';
 

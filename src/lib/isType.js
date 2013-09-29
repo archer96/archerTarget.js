@@ -32,5 +32,5 @@ function isObject(objectToCheck) {
 function isPlainObject(objectToCheck) {
 	return !(objectToCheck instanceof Array) && (typeof objectToCheck !== 'number') &&
 		(typeof objectToCheck !== 'string') && (typeof objectToCheck !== 'boolean') &&
-		!isNode(objectToCheck) && !isElement(objectToCheck);
+		!isNode(objectToCheck) && !isElement(objectToCheck) && !isFunction(objectToCheck);
 }

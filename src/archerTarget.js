@@ -256,10 +256,13 @@ window.ArcherTarget = function (element, options) {
 	 */
 	if (_ATinstance[self._id]) {
 
-		var newElement = element.cloneNode(true);
-		element.parentNode.replaceChild(newElement, element);
+		for (var event in apiEvents) {
+			if (apiEvents.hasOwnProperty(event) && _ATinstance[self._id].options[event]) {
+				element.removeEventListener(apiEvents[event] + '.archerTarget',
+					_ATinstance[self._id].options[event], false);
+			}
+		}
 
-		element = document.getElementById(self._id);
 	}
 
 	_ATinstance[self._id] = new AT(element, options);
@@ -299,7 +302,8 @@ var AT = function (element, options) {
 	 */
 	for (var event in apiEvents) {
 		if (apiEvents.hasOwnProperty(event) && options[event]) {
-			element.addEventListener(apiEvents[event] + '.archerTarget', options[event], false);
+			element.addEventListener(apiEvents[event] +
+				'.archerTarget', options[event], false);
 		}
 	}
 

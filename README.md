@@ -32,6 +32,8 @@ Example are available in the `example` directory.
 
 ## Release History ##
 
+ - 2013/09/29 - v0.3.4 - fixed event unbinding: when reinitializing ArcherTarget.js on an element, we now unbind the events without cloning an replacing the element.
+
  - 2013/07/30 - v0.3.3
    - fixed container mouse events
    - fixed bug where events are fired twice if the element was used before for a target
