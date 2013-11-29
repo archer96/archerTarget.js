@@ -93,6 +93,12 @@ AT.prototype.bindContainerTouchEvents = function () {
 		addEventListenerList(t, 'touchstart', onTouchStart);
 		addEventListenerList(t, 'touchend', onTouchEnd);
 
+		self.eventListeners.push(function () {
+			removeEventListenerList(t, 'touchmove', onTouchMove);
+			removeEventListenerList(t, 'touchstart', onTouchStart);
+			removeEventListenerList(t, 'touchend', onTouchEnd);
+		});
+
 	}
 
 	var touchFunction = function (e) {
@@ -175,5 +181,10 @@ AT.prototype.bindContainerTouchEvents = function () {
 
 	self.container.addEventListener('touchstart', touchFunction);
 	self.container.addEventListener('touchend', touchFunction);
+
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('touchstart', touchFunction);
+		self.container.removeEventListener('touchend', touchFunction);
+	});
 
 };

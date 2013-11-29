@@ -32,6 +32,8 @@ Example are available in the `example` directory.
 
 ## Release History ##
 
+ - 2013/11/29 - v0.3.5 - added possibility of removing event listeners (helpful for reinitializing)
+
  - 2013/09/29 - v0.3.4 - fixed event unbinding: when reinitializing ArcherTarget.js on an element, we now unbind the events without cloning an replacing the element.
 
  - 2013/07/30 - v0.3.3

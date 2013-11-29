@@ -297,6 +297,8 @@ var AT = function (element, options) {
 	self.container = element;
 	self.containerId = self._id;
 
+	self.eventListeners = [];
+
 	/*
 	 * Bind every event with the given function
 	 */
@@ -313,3 +315,22 @@ var AT = function (element, options) {
 
 AT.Targets = {};
 AT.Plugins = {};
+
+ArcherTarget.prototype.removeEventListeners = function () {
+
+	var at = _ATinstance[this._id];
+
+	try {
+
+		for (var i = 0; i < at.eventListeners.length; i++) {
+			at.eventListeners[i]();
+		}
+		at.eventListeners = [];
+
+	} catch (e) {
+
+		console.error('ArcherTarget.js ::', e);
+
+	}
+
+};

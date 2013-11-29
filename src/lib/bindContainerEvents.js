@@ -80,6 +80,12 @@ AT.prototype.bindContainerEvents = function () {
 		addEventListenerList(s, 'mousedown', onMouseDown);
 		addEventListenerList(s, 'mouseup', onMouseUp);
 
+		self.eventListeners.push(function () {
+			removeEventListenerList(s, 'mousemove', onMouseMove);
+			removeEventListenerList(s, 'mousedown', onMouseDown);
+			removeEventListenerList(s, 'mouseup', onMouseUp);
+		});
+
 	}
 
 	var touchFunction = function (e) {
@@ -137,5 +143,9 @@ AT.prototype.bindContainerEvents = function () {
 	self.container.addEventListener('mousedown', touchFunction);
 	self.container.addEventListener('click', touchFunction);
 
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('mousedown', touchFunction);
+		self.container.removeEventListener('click', touchFunction);
+	});
 
 };

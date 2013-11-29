@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - v0.3.4 - 2013-09-29
+ * archerTarget.js - v0.3.5 - 2013-11-29
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2013 Andre Meyering;
  * Licensed MIT
@@ -307,6 +307,8 @@ var AT = function (element, options) {
 	self.container = element;
 	self.containerId = self._id;
 
+	self.eventListeners = [];
+
 	/*
 	 * Bind every event with the given function
 	 */
@@ -323,6 +325,25 @@ var AT = function (element, options) {
 
 AT.Targets = {};
 AT.Plugins = {};
+
+ArcherTarget.prototype.removeEventListeners = function () {
+
+	var at = _ATinstance[this._id];
+
+	try {
+
+		for (var i = 0; i < at.eventListeners.length; i++) {
+			at.eventListeners[i]();
+		}
+		at.eventListeners = [];
+
+	} catch (e) {
+
+		console.error('ArcherTarget.js ::', e);
+
+	}
+
+};
 
 /**
  * GUID generator
@@ -636,6 +657,17 @@ AT.prototype.bindArrowEvents =  function () {
 	addEventListenerList(c, 'mousedown', onMouseDown);
 	addEventListenerList(c, 'mouseover', onMouseDown);
 
+
+	self.eventListeners.push(function () {
+		this.container.removeEventListener('mousemove', onMouseMove);
+		this.container.removeEventListener('mouseup', onMouseUp);
+		this.container.removeEventListener('click', onMouseUp);
+
+		removeEventListenerList(c, 'mouseout', onMouseOut);
+		removeEventListenerList(c, 'mousedown', onMouseDown);
+		removeEventListenerList(c, 'mouseover', onMouseDown);
+	});
+
 };
 
 AT.prototype.bindArrowTouchEvents = function () {
@@ -768,9 +800,13 @@ AT.prototype.bindArrowTouchEvents = function () {
 
 		touch = e.touches[0];
 
-		curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
-		curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
-
+		if (touch.noOffset) {
+			curPageX = touch.pageX || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+			curPageY = touch.pageY || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+		} else {
+			curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+			curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+		}
 
 		self.arrowMoving = true;
 
@@ -866,6 +902,13 @@ AT.prototype.bindArrowTouchEvents = function () {
 	addEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
 		'touchstart', onTouchStart);
 
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('touchstart', onTouchMove);
+		self.container.removeEventListener('touchend', onTouchEnd);
+		removeEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
+		'touchstart', onTouchStart);
+	});
+
 };
 
 AT.prototype.bindContainerEvents = function () {
@@ -950,6 +993,12 @@ AT.prototype.bindContainerEvents = function () {
 		addEventListenerList(s, 'mousedown', onMouseDown);
 		addEventListenerList(s, 'mouseup', onMouseUp);
 
+		self.eventListeners.push(function () {
+			removeEventListenerList(s, 'mousemove', onMouseMove);
+			removeEventListenerList(s, 'mousedown', onMouseDown);
+			removeEventListenerList(s, 'mouseup', onMouseUp);
+		});
+
 	}
 
 	var touchFunction = function (e) {
@@ -1007,6 +1056,10 @@ AT.prototype.bindContainerEvents = function () {
 	self.container.addEventListener('mousedown', touchFunction);
 	self.container.addEventListener('click', touchFunction);
 
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('mousedown', touchFunction);
+		self.container.removeEventListener('click', touchFunction);
+	});
 
 };
 
@@ -1105,6 +1158,12 @@ AT.prototype.bindContainerTouchEvents = function () {
 		addEventListenerList(t, 'touchstart', onTouchStart);
 		addEventListenerList(t, 'touchend', onTouchEnd);
 
+		self.eventListeners.push(function () {
+			removeEventListenerList(t, 'touchmove', onTouchMove);
+			removeEventListenerList(t, 'touchstart', onTouchStart);
+			removeEventListenerList(t, 'touchend', onTouchEnd);
+		});
+
 	}
 
 	var touchFunction = function (e) {
@@ -1188,6 +1247,11 @@ AT.prototype.bindContainerTouchEvents = function () {
 	self.container.addEventListener('touchstart', touchFunction);
 	self.container.addEventListener('touchend', touchFunction);
 
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('touchstart', touchFunction);
+		self.container.removeEventListener('touchend', touchFunction);
+	});
+
 };
 
 AT.prototype.bindTargetEvents = function () {
@@ -1248,10 +1312,16 @@ AT.prototype.bindTargetTouchEvents = function () {
 
 	function bindTarget(index, domEle) {
 
-		domEle.el.parentNode.addEventListener('touchend', function () {
+		var eventHandler = function () {
 
 			ArcherTarget.fireEvent(domEle.el, 'targetClick.archerTarget', {index: index});
 
+		};
+
+		domEle.el.parentNode.addEventListener('touchend', eventHandler);
+
+		self.eventListeners.push(function () {
+			domEle.el.parentNode.removeEventListener('touchend', eventHandler);
 		});
 
 	}
@@ -1268,24 +1338,26 @@ AT.prototype.bindZoomEvents = function () {
 		newZoom = 0,
 		c = this.container;
 
-	c.querySelector('.archerTarget-zoomin').addEventListener('click', function () {
-
+	function eventHandlerZoomIn () {
 		if (self.scale <= self.options.maxScale) {
 			newZoom = self.scale + self.options.scaleStep;
 		}
-
 		self.setZoom(newZoom);
+	}
 
-	});
-
-	c.querySelector('.archerTarget-zoomout').addEventListener('click', function () {
-
+	function eventHandlerZoomOut () {
 		if (self.scale >= self.options.minScale + self.options.scaleStep) {
 			newZoom = self.scale - self.options.scaleStep;
 		}
-
 		self.setZoom(newZoom);
+	}
 
+	c.querySelector('.archerTarget-zoomin').addEventListener('click', eventHandlerZoomIn);
+	c.querySelector('.archerTarget-zoomout').addEventListener('click', eventHandlerZoomOut);
+
+	self.eventListeners.push(function () {
+		c.querySelector('.archerTarget-zoomin').removeEventListener('click', eventHandlerZoomIn);
+		c.querySelector('.archerTarget-zoomout').removeEventListener('click', eventHandlerZoomOut);
 	});
 
 };
@@ -1712,6 +1784,9 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 	methods = {
 		arrows: function () {
 			return at.getArrows();
+		},
+		targetParams: function (targetName) {
+			return getTargetParams(targetName);
 		}
 	};
 
@@ -1806,11 +1881,12 @@ AT.prototype.getSize = function () {
  * @param  {String} targetName Name of the target
  * @return {Object}            Object containing the parameters of the target
  */
-function getTargetParams(targetName) {
 
-	return AT.Targets[targetName];
+var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 
-}
+	return AT.Targets[targetName] || {};
+
+};
 
 /**
  * Returns a object containing the parameters of the SVG transform attribute
@@ -2179,6 +2255,12 @@ AT.prototype.removeArrowPointer = function () {
 	this.canvas.canvas.removeChild(this.dragMark.el);
 
 };
+
+function removeEventListenerList(list, event, fn) {
+    for (var i = 0, len = list.length; i < len; i++) {
+        list[i].removeEventListener(event, fn, false);
+    }
+}
 
 ArcherTarget.prototype.set = AT.prototype.set = function (method) {
 

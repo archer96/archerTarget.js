@@ -128,9 +128,13 @@ AT.prototype.bindArrowTouchEvents = function () {
 
 		touch = e.touches[0];
 
-		curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
-		curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
-
+		if (touch.noOffset) {
+			curPageX = touch.pageX || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+			curPageY = touch.pageY || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+		} else {
+			curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+			curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+		}
 
 		self.arrowMoving = true;
 
@@ -225,5 +229,12 @@ AT.prototype.bindArrowTouchEvents = function () {
 
 	addEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
 		'touchstart', onTouchStart);
+
+	self.eventListeners.push(function () {
+		self.container.removeEventListener('touchstart', onTouchMove);
+		self.container.removeEventListener('touchend', onTouchEnd);
+		removeEventListenerList(self.container.querySelectorAll('.arrowSetCanvas circle'),
+		'touchstart', onTouchStart);
+	});
 
 };

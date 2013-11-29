@@ -242,4 +242,15 @@ AT.prototype.bindArrowEvents =  function () {
 	addEventListenerList(c, 'mousedown', onMouseDown);
 	addEventListenerList(c, 'mouseover', onMouseDown);
 
+
+	self.eventListeners.push(function () {
+		this.container.removeEventListener('mousemove', onMouseMove);
+		this.container.removeEventListener('mouseup', onMouseUp);
+		this.container.removeEventListener('click', onMouseUp);
+
+		removeEventListenerList(c, 'mouseout', onMouseOut);
+		removeEventListenerList(c, 'mousedown', onMouseDown);
+		removeEventListenerList(c, 'mouseover', onMouseDown);
+	});
+
 };

@@ -6,6 +6,9 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 	methods = {
 		arrows: function () {
 			return at.getArrows();
+		},
+		targetParams: function (targetName) {
+			return getTargetParams(targetName);
 		}
 	};
 

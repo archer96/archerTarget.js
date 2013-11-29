@@ -4,10 +4,16 @@ AT.prototype.bindTargetTouchEvents = function () {
 
 	function bindTarget(index, domEle) {
 
-		domEle.el.parentNode.addEventListener('touchend', function () {
+		var eventHandler = function () {
 
 			ArcherTarget.fireEvent(domEle.el, 'targetClick.archerTarget', {index: index});
 
+		};
+
+		domEle.el.parentNode.addEventListener('touchend', eventHandler);
+
+		self.eventListeners.push(function () {
+			domEle.el.parentNode.removeEventListener('touchend', eventHandler);
 		});
 
 	}
