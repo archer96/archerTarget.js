@@ -69,7 +69,7 @@ AT.prototype.setArrowStyle = function (arrow) {
 				fill: style.color
 			});
 
-			arrowObj.el.opacity = style.opacity;
+			arrowObj.el.style.opacity = style.opacity;
 
 		};
 

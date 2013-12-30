@@ -323,13 +323,13 @@ ArcherTarget.prototype.removeEventListeners = function () {
 	try {
 
 		for (var i = 0; i < at.eventListeners.length; i++) {
-			at.eventListeners[i]();
+			!!at.eventListeners && at.eventListeners[i]();
 		}
 		at.eventListeners = [];
 
 	} catch (e) {
 
-		console.error('ArcherTarget.js ::', e);
+		console.error('ArcherTarget.js :: removeEventListeners error ::', e);
 
 	}
 

@@ -9,6 +9,9 @@ ArcherTarget.prototype.set = AT.prototype.set = function (method) {
 		arrowOptions: function (arrowset) {
 			at.setArrowOptions(arrowset);
 		},
+		arrowStyle: function (arrowset) {
+			at.setArrowStyle(arrowset);
+		},
 		transform: function (x, y, scale) {
 			at.setTransform(x, y, scale);
 		}
