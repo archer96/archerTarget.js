@@ -212,7 +212,7 @@ var /**
 		onContainerMousedown: 'containerMousedown'
 	},
 	/**
-	 * All parameters supported by jQuery.archerTarget
+	 * All parameters supported by archerTarget.js
 	 * @type {Object}
 	 */
 	apiParams = {

@@ -12,6 +12,12 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 			},
 			targetParams: function (targetName) {
 				return getTargetParams(targetName);
+			},
+			transform: function () {
+				return at.getTransform();
+			},
+			ring: function (arrow) {
+				return at.getRing(arrow);
 			}
 		};
 
