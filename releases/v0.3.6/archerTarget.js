@@ -867,9 +867,9 @@ AT.prototype.bindContainerEvents = function () {
 			return;
 		}
 
-		var className = typeof e.target.className.baseVal !== undefined ?
+		var className = typeof e.target.className.baseVal !== 'undefined' ?
 				e.target.className.baseVal : e.target.className,
-				element = e.target;
+			element = e.target;
 
 		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
 			className.match(/archerTarget-zoomout/g) === null) {
@@ -1625,7 +1625,7 @@ AT.prototype.init = function () {
 	this.arrowList = self.createArrows(self.options.arrows);
 
 	self.bindArrowEvents();
-	self.bindTouchEvents();
+	self.bindContainerEvents();
 	self.bindTargetEvents();
 
 	/*

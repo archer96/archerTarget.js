@@ -73,7 +73,7 @@ AT.prototype.init = function () {
 	this.arrowList = self.createArrows(self.options.arrows);
 
 	self.bindArrowEvents();
-	self.bindTouchEvents();
+	self.bindContainerEvents();
 	self.bindTargetEvents();
 
 	/*
