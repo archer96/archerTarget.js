@@ -17,7 +17,7 @@ AT.prototype.createArrows = function (arrows) {
 
 	self.arrowGroup = self.canvas.createGroup(
 		{
-			id: self.containerId + 'ArrowGroup'
+			id: self._id + 'ArrowGroup'
 		}
 	);
 
@@ -35,7 +35,7 @@ AT.prototype.createArrows = function (arrows) {
 
 		arrow.el = self.canvas.createGroup(
 			{
-				id: self.containerId + 'ArrowSet_' + i,
+				id: self._id + 'ArrowSet_' + i,
 				eleClass: 'arrowSetCanvas'
 			}
 		);

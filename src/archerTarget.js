@@ -270,12 +270,20 @@ window.ArcherTarget = function (element, options) {
 	return self;
 
 };
-
+/**
+ * Adds a new target to AT
+ * @param {String} name    Name of new target
+ * @param {Object} options Options (colors,...) of new target
+ */
 ArcherTarget.addTarget = function (name, options) {
 	AT.Targets[name] = options;
 	DEVMODE && console.log('archerTarget :: added target :: ' + name);
 };
-
+/**
+ * Adds a plugin to AT
+ * @param {String} name    Name of new plugin
+ * @param {Object} options Plugin options
+ */
 ArcherTarget.addPlugin = function (name, options) {
 	AT.Plugins[name] = options;
 	DEVMODE && console.log('archerTarget :: added plugin :: ' + name);
@@ -287,18 +295,25 @@ ArcherTarget.addPlugin = function (name, options) {
 var AT = function (element, options) {
 
 	var self = this;
-
-	self._name = pluginName;
-	self._defaults = defaults;
+	/**
+	 * Container id
+	 * @type {String}
+	 */
 	self._id = element.id;
-
+	/**
+	 * Merged archerTarget.js options
+	 * @type {[type]}
+	 */
 	self.options = ArcherTarget.extend(true, {}, defaults, options);
-
+	/**
+	 * target element
+	 */
 	self.container = element;
-	self.containerId = self._id;
-
+	/**
+	 * Array of functions to remove all eventlisteners
+	 * @type {Array}
+	 */
 	self.eventListeners = [];
-
 	/*
 	 * Bind every event with the given function
 	 */
@@ -312,10 +327,19 @@ var AT = function (element, options) {
 	self.init();
 
 };
-
+/**
+ * Object containing all targets that are loaded
+ * @type {Object}
+ */
 AT.Targets = {};
+/**
+ * Object containing all plugins that are loaded
+ * @type {Object}
+ */
 AT.Plugins = {};
-
+/**
+ * Function to remove all eventlisteners of archerTarget.js
+ */
 ArcherTarget.prototype.removeEventListeners = function () {
 
 	var at = _ATinstance[this._id];

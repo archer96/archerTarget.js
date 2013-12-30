@@ -50,7 +50,7 @@ AT.prototype.init = function () {
 	 * Create the target group
 	 */
 	self.targetGroup = self.canvas.createGroup(
-		{ id: self.containerId + 'TargetGroup' },
+		{ id: self._id + 'TargetGroup' },
 		true
 	);
 	/*

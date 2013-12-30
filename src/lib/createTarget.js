@@ -18,7 +18,7 @@ AT.prototype.createTarget = function (targets) {
 
 		target.el = this.canvas.createGroup(
 			{
-				id: self.containerId + 'Target_' + i,
+				id: self._id + 'Target_' + i,
 				eleClass: 'targetCanvas'
 			}
 		);
