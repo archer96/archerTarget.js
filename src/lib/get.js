@@ -1,16 +1,19 @@
+/**
+ * Short function for other get functions
+ *
+ * @param {String} method Method name of what to get
+ */
 ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 
 	var at = _ATinstance[this._id],
-		methods;
-
-	methods = {
-		arrows: function () {
-			return at.getArrows();
-		},
-		targetParams: function (targetName) {
-			return getTargetParams(targetName);
-		}
-	};
+		methods = {
+			arrows: function () {
+				return at.getArrows();
+			},
+			targetParams: function (targetName) {
+				return getTargetParams(targetName);
+			}
+		};
 
 	if (method && methods[method]) {
 
@@ -27,11 +30,21 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 	}
 
 };
-
+/**
+ * Returns the list of current arrows.
+ *
+ * @return {Array} Array of arrowsets
+ */
 AT.prototype.getArrows = function () {
 	return this.arrowList;
 };
-
+/**
+ * Calculates the ring of an arrow when `arrow` is given or
+ * calculates the ring of all arrows.
+ *
+ * @param  {Object|Array}  arrow Arrow or an arrowset object
+ * @return {String|Object}       Ring of arrow or arrowset
+ */
 AT.prototype.getRing = function (arrow) {
 
 	var self = this;
@@ -71,7 +84,9 @@ AT.prototype.getRing = function (arrow) {
 	}
 
 };
-
+/**
+ * Gets container width and height
+ */
 AT.prototype.getSize = function () {
 
 	var s = window.getComputedStyle(this.container, null);
@@ -94,31 +109,24 @@ AT.prototype.getSize = function () {
 		this.width + '; height: ' + this.height);
 
 };
-
-
 /**
- * Returns a object containing the parameters of the SVG transform attribute
+ * Returns an object containing the parameters of the SVG transform attribute
+ *
  * @return {Object} Transform object
  */
 AT.prototype.getTransform = function () {
-
 	return {
 		x: this.transX,
 		y: this.transY,
 		scale: this.scale
 	};
-
 };
-
 /**
  * Returns the target parameters (rings, colors, etc.)
  *
  * @param  {String} targetName Name of the target
  * @return {Object}            Object containing the parameters of the target
  */
-
 var getTargetParams = ArcherTarget.getTarget = function (targetName) {
-
 	return AT.Targets[targetName] || {};
-
 };
