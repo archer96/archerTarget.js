@@ -1,4 +1,4 @@
-AT.prototype.bindArrowEvents =  function () {
+AT.prototype.bindArrowEvents = function () {
 
 	var self = this,
 		arrowTmp = {},
@@ -10,10 +10,11 @@ AT.prototype.bindArrowEvents =  function () {
 		offsetTop = ArcherTarget.offset(self.container).top,
 		pointerHeight = 0,
 		move,
-		onMouseMove,
-		onMouseDown,
-		onMouseUp,
-		onMouseOut;
+		onMove,
+		onStart,
+		onEnd,
+		onMouseOut,
+		isTouch = self.options.isTouch;
 
 	self.arrowMoving = false;
 
@@ -45,10 +46,8 @@ AT.prototype.bindArrowEvents =  function () {
 			target: arrowTarget
 		});
 
-
 		arrowTmp.x = self.convertTo.pcX(curPageX, arrowTarget);
 		arrowTmp.y = self.convertTo.pcY(curPageY - pointerHeight, arrowTarget);
-		arrowTmp.ring = arrowTmp.ring;
 
 
 		if (!self.checkOnTarget(arrowTmp)) {
@@ -59,11 +58,10 @@ AT.prototype.bindArrowEvents =  function () {
 
 				arrowTmp.target = arrowTarget = tmpTarget;
 
-				self.setTargetStyle('arrow', { active: arrowTarget });
+				self.setTargetStyle('arrow', {active: arrowTarget});
 
 			}
 		}
-
 
 		/* Save temp data to arrow array */
 		self.arrowList[arrowsetTmp.id] = arrowsetTmp.data;
@@ -76,9 +74,22 @@ AT.prototype.bindArrowEvents =  function () {
 
 	};
 
-	onMouseMove = function (e) {
+	onMove = function (e) {
 
-		if (self.arrowMoving) {
+		if (!self.arrowMoving) {
+
+			return false;
+
+		}
+
+		if (isTouch) {
+
+			var touch = e.touches[0];
+
+			curPageX = touch.pageX - offsetLeft;
+			curPageY = touch.pageY - offsetTop;
+
+		} else {
 
 			curPageX = e.pageX - offsetLeft;
 			curPageY = e.pageY - offsetTop;
@@ -89,18 +100,20 @@ AT.prototype.bindArrowEvents =  function () {
 
 	};
 
-	onMouseDown = function (e) {
+	onStart = function (e) {
 
 		var element = e.target;
 
 		if (!self.arrowMoving) {
 
-			var parentNode = this.parentNode,
+			var parentNode = element.parentNode,
 				thisClass = element.className.baseVal,
 				id;
 
 			arrowsetTmp.id = parseInt(parentNode.id.substr(parentNode.id.indexOf('_') + 1), 10);
+
 			arrowsetTmp.data = self.arrowList[arrowsetTmp.id];
+
 			arrowTarget = arrowsetTmp.data.target;
 
 			if (thisClass.indexOf(' ') === -1) {
@@ -114,11 +127,28 @@ AT.prototype.bindArrowEvents =  function () {
 			}
 
 			arrowTmp = arrowsetTmp.data.data[id];
-			arrowTmp.el = this;
+			arrowTmp.el = element;
 			arrowTmp.id = id;
+
 		}
 
-		if (e.type === 'mousedown') {
+		DEVMODE && console.log('archerTarget :: touchstart on arrow ', arrowTmp);
+
+		if (isTouch) {
+
+			var touch = e.touches[0];
+
+			if (touch.noOffset) {
+				curPageX = touch.pageX || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+				curPageY = touch.pageY || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+			} else {
+				curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x || 0,
+					arrowTarget);
+				curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y || 0,
+					arrowTarget);
+			}
+
+		} else if (e.type === 'mousedown') {
 
 			/*
 			 * Self triggered mousedown events don't have the pageX and pageY attribute,
@@ -126,49 +156,6 @@ AT.prototype.bindArrowEvents =  function () {
 			 */
 			curPageX = e.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
 			curPageY = e.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
-
-			self.arrowMoving = true;
-
-
-			if (arrowsetTmp.data.draggable) {
-
-				self.setTargetStyle('arrow', { active: arrowTarget });
-
-				self.container.style.cursor = 'move';
-
-			}
-
-			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
-			arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
-
-			ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
-				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
-
-			if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
-
-				self.createArrowPointer({
-					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
-					drag: arrowsetTmp.data.draggable,
-					color: arrowsetTmp.data.style.selected.color,
-					arrowRadius: arrowsetTmp.data.radius
-				});
-
-				pointerHeight = arrowsetTmp.data.draggable.height + arrowsetTmp.data.radius;
-
-
-			} else {
-
-				pointerHeight = 0;
-
-			}
-
-
-			window.cancelAnimationFrame(move);
-			/*
-			 * request a new animation frame
-			 */
-			window.requestAnimationFrame(move);
 
 
 		} else if (e.type === 'mouseover' && !self.arrowMoving) {
@@ -179,39 +166,98 @@ AT.prototype.bindArrowEvents =  function () {
 			ArcherTarget.fireEvent(arrowTmp.el, 'arrowOver.archerTarget',
 				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
+			return false;
+
+		} else {
+
+			return false;
+
+		}
+
+		self.arrowMoving = true;
+
+		if (arrowsetTmp.data.draggable) {
+
+			self.setTargetStyle('arrow', {active: arrowTarget});
+
+			// Changing style is not neccessary when using touch
+			if (!isTouch) {
+				self.container.style.cursor = 'move';
+			}
+
+		}
+
+		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.selected.color);
+		arrowTmp.el.style.opacity = arrowsetTmp.data.style.selected.opacity;
+
+		ArcherTarget.fireEvent(arrowTmp.el, 'arrowSelect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
+
+		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
+
+			self.createArrowPointer({
+				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				drag: arrowsetTmp.data.draggable,
+				color: arrowsetTmp.data.style.selected.color,
+				arrowRadius: arrowsetTmp.data.radius
+			});
+
+			pointerHeight = arrowsetTmp.data.draggable.height + arrowsetTmp.data.radius;
+
+
+		} else {
+
+			pointerHeight = 0;
+
+		}
+
+
+		if ((!isTouch || e.touches.length === 1) && arrowsetTmp.data.draggable) {
+
+			window.cancelAnimationFrame(move);
+			/*
+			 * request a new animation frame
+			 */
+			window.requestAnimationFrame(move);
+
 		}
 
 		return false;
 
 	};
 
-	onMouseUp = function () {
+	onEnd = function () {
 
-		if (self.arrowMoving) {
+		if (!self.arrowMoving) {
+			return false;
+		}
 
-			self.arrowMoving = false;
+		DEVMODE && console.log('archerTarget :: touchend on arrow ', arrowTmp);
 
-			self.setTargetStyle('initial');
+		self.arrowMoving = false;
 
-			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+		self.setTargetStyle('initial');
 
-			if (arrowsetTmp.data.draggable instanceof Object) {
+		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
 
-				self.removeArrowPointer();
+		if (arrowsetTmp.data.draggable instanceof Object) {
 
-				arrowTmp.el.setPosition({
-					x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-					y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
-				});
+			self.removeArrowPointer();
 
-			}
-
-			self.container.style.cursor = 'default';
-
-			ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
-				{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
+			arrowTmp.el.setPosition({
+				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
+			});
 
 		}
+
+		if (!isTouch) {
+			self.container.style.cursor = 'default';
+		}
+
+		ArcherTarget.fireEvent(self.container, 'arrowDeselect.archerTarget',
+			{arrowset: arrowsetTmp.id, arrow: arrowTmp.id, arrows: self.arrowList});
 
 		return false;
 
@@ -233,24 +279,30 @@ AT.prototype.bindArrowEvents =  function () {
 
 	};
 
-	this.container.addEventListener('mousemove', onMouseMove);
-	this.container.addEventListener('mouseup', onMouseUp);
-	this.container.addEventListener('click', onMouseUp);
+	self.container.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+	self.container.addEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
 
-	var c = this.container.querySelectorAll('.arrowSetCanvas circle');
-	addEventListenerList(c, 'mouseout', onMouseOut);
-	addEventListenerList(c, 'mousedown', onMouseDown);
-	addEventListenerList(c, 'mouseover', onMouseDown);
+	var c = self.container.querySelectorAll('.arrowSetCanvas circle');
 
+	addEventListenerList(c, isTouch ? 'touchstart' : 'mousedown', onStart);
+
+	if (!isTouch) {
+		addEventListenerList(c, 'mouseout', onMouseOut);
+		addEventListenerList(c, 'mouseover', onStart);
+	}
 
 	self.eventListeners.push(function () {
-		this.container.removeEventListener('mousemove', onMouseMove);
-		this.container.removeEventListener('mouseup', onMouseUp);
-		this.container.removeEventListener('click', onMouseUp);
 
-		removeEventListenerList(c, 'mouseout', onMouseOut);
-		removeEventListenerList(c, 'mousedown', onMouseDown);
-		removeEventListenerList(c, 'mouseover', onMouseDown);
+		self.container.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+		self.container.removeEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
+
+		removeEventListenerList(c, isTouch ? 'touchstart' : 'mousedown', onStart);
+
+		if (!isTouch) {
+			addEventListenerList(c, 'mouseout', onMouseOut);
+			addEventListenerList(c, 'mouseover', onStart);
+		}
+
 	});
 
 };

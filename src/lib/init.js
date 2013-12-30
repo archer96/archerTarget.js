@@ -4,6 +4,8 @@ AT.prototype.init = function () {
 
 	DEVMODE && console.log('archerTarget :: initializing archerTarget :: init');
 
+	self.isTouch();
+
 	/*
 	 * Add class 'archerTargetContainer' to the container and give it some style.
 	 */
@@ -65,21 +67,21 @@ AT.prototype.init = function () {
 	);
 
 	self.setGap();
-
 	/*
 	 * Create the arrowset array
 	 */
 	this.arrowList = self.createArrows(self.options.arrows);
 
+	self.bindArrowEvents();
+
 	/*
 	 * Depending on the device the user is using, bind all intern events.
 	 */
-	if (self.isTouch()) {
+	if (self.options.isTouch) {
 
 		DEVMODE && console.log('archerTarget :: using a touch device');
 
 		self.bindContainerTouchEvents();
-		self.bindArrowTouchEvents();
 		self.bindTargetTouchEvents();
 
 	} else {
@@ -87,7 +89,6 @@ AT.prototype.init = function () {
 		DEVMODE && console.log('archerTarget :: using a non-touch device');
 
 		self.bindContainerEvents();
-		self.bindArrowEvents();
 		self.bindTargetEvents();
 
 	}

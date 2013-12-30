@@ -6,9 +6,10 @@ AT.prototype.isTouch = function () {
 		return self.options.isTouch;
 	}
 
-	return (
-		('ontouchstart' in window) ||
-		(window.DocumentTouch && document instanceof DocumentTouch) || false
-	);
+	self.options.isTouch = ('ontouchstart' in window) ||
+		(window.DocumentTouch && document instanceof DocumentTouch) ||
+		false;
+
+	return self.options.isTouch;
 
 };
