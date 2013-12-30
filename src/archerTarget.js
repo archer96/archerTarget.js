@@ -195,8 +195,6 @@ var /**
 	 * @type {Object}
 	 */
 	apiEvents = {
-		onTargetOver: 'targetOver',
-		onTargetOut: 'targetOut',
 		onTargetMove: 'targetMove',
 		onTargetClick: 'targetClick',
 

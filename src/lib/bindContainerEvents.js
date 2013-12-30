@@ -1,7 +1,8 @@
 AT.prototype.bindContainerEvents = function () {
 
 	var self = this,
-		hasMoved = false;
+		hasMoved = false,
+		isTouch = self.options.isTouch;
 
 	if (this.options.draggable) {
 
@@ -12,9 +13,10 @@ AT.prototype.bindContainerEvents = function () {
 			mouseDown = false,
 			svg = this.container.getElementsByTagName('svg')[0],
 			move,
-			onMouseMove,
-			onMouseDown,
-			onMouseUp;
+			onMove,
+			onStart,
+			onEnd;
+
 
 		move = function () {
 
@@ -35,28 +37,47 @@ AT.prototype.bindContainerEvents = function () {
 
 		};
 
-		onMouseMove = function (e) {
+		onMove = function (e) {
 
-			if (!mouseDown) {
+			if (!mouseDown || self.arrowMoving) {
 				return;
 			}
 
-			curPageX = e.pageX;
-			curPageY = e.pageY;
+			if (isTouch) {
+
+				var touch = e.touches[0];
+
+				curPageX = touch.pageX;
+				curPageY = touch.pageY;
+
+			} else {
+
+				curPageX = e.pageX;
+				curPageY = e.pageY;
+
+			}
 
 		};
 
-		onMouseDown = function (e) {
+		onStart = function (e) {
 
-			oldPageX = e.pageX - self.transX * self.scale;
-			oldPageY = e.pageY - self.transY * self.scale;
-			curPageX = e.pageX;
-			curPageY = e.pageY;
+			if (self.arrowMoving) {
+				return;
+			}
+
+			var pointer = isTouch ? e.touches[0] : e;
+
+			oldPageX = pointer.pageX - self.transX * self.scale;
+			oldPageY = pointer.pageY - self.transY * self.scale;
+			curPageX = pointer.pageX;
+			curPageY = pointer.pageY;
 
 			mouseDown = true;
 			hasMoved  = false;
 
-			svg.style.cursor = 'move';
+			if (!isTouch) {
+				svg.style.cursor = 'move';
+			}
 
 			window.cancelAnimationFrame(move);
 			/*
@@ -66,73 +87,94 @@ AT.prototype.bindContainerEvents = function () {
 
 		};
 
-		onMouseUp = function () {
+		onEnd = function () {
+
+			if (self.arrowMoving) {
+				return;
+			}
 
 			mouseDown = hasMoved = false;
 
-			svg.style.cursor = 'default';
+			if (!isTouch) {
+				svg.style.cursor = 'default';
+			}
 
 		};
 
+		var t = self.container.querySelectorAll('svg .targetCanvas');
 
-		var s = this.container.querySelectorAll('svg .targetCanvas');
-		addEventListenerList(s, 'mousemove', onMouseMove);
-		addEventListenerList(s, 'mousedown', onMouseDown);
-		addEventListenerList(s, 'mouseup', onMouseUp);
+		addEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
+		addEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
+		addEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
 
 		self.eventListeners.push(function () {
-			removeEventListenerList(s, 'mousemove', onMouseMove);
-			removeEventListenerList(s, 'mousedown', onMouseDown);
-			removeEventListenerList(s, 'mouseup', onMouseUp);
+			removeEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
+			removeEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
+			removeEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
 		});
 
 	}
 
 	var touchFunction = function (e) {
 
+		if (self.arrowMoving) {
+			return;
+		}
+
 		var className = typeof e.target.className.baseVal !== undefined ?
-			e.target.className.baseVal : e.target.className,
-			element = e.target;
+				e.target.className.baseVal : e.target.className,
+				element = e.target;
 
 		if (!hasMoved && className.match(/archerTarget-zoomin/g) === null &&
 			className.match(/archerTarget-zoomout/g) === null) {
 
-			var x = e.pageX - ArcherTarget.offset(self.container).left,
-				y = e.pageY - ArcherTarget.offset(self.container).top,
-				tapTarget = self.checkClosestTarget(0, {
-					x: x,
-					y: y
-				}),
-				eventObject = [
-					/*
-					 * Container/Canvas coordinates in percent
-					 */
-					{
-						x: x / self.width * 100,
-						y: y / self.height * 100,
-						xPx: x,
-						yPx: y
-					},
-					/*
-					 * Target coordinates + clicked target
-					 */
-					{
-						x: self.convertTo.pcX(x, tapTarget),
-						y: self.convertTo.pcY(y, tapTarget),
-						target: tapTarget
-					}
-				];
+			var x,
+				y,
+				tapTarget,
+				eventObject,
+				offsetLeft = ArcherTarget.offset(self.container).left,
+				offsetTop = ArcherTarget.offset(self.container).top,
+				pointer = !isTouch ? e : (e.type === 'touchstart' ?
+						event.touches[0] : event.changedTouches[0]);
 
+			x = pointer.pageX - offsetLeft;
+			y = pointer.pageY - offsetTop;
 
-			if (e.type === 'mousedown') {
+			tapTarget = self.checkClosestTarget(0, {
+				x: x,
+				y: y
+			});
+
+			eventObject = [
+				/*
+				 * Container/Canvas coordinates in percent
+				 */
+				{
+					x: x / self.width * 100,
+					y: y / self.height * 100,
+					xPx: x,
+					yPx: y
+				},
+				/*
+				 * Target coordinates + clicked target
+				 */
+				{
+					x: self.convertTo.pcX(x, tapTarget),
+					y: self.convertTo.pcY(y, tapTarget),
+					target: tapTarget
+				},
+				e
+			];
+
+			if (e.type === 'touchstart' || e.type === 'mousedown') {
 
 				ArcherTarget.fireEvent(self.container, 'containerMousedown.archerTarget',
-					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			} else {
 
 				ArcherTarget.fireEvent(self.container, 'containerTap.archerTarget',
-					{canvasCoords:eventObject[0], targetCoords:eventObject[1]});
+					{canvasCoords:eventObject[0], targetCoords:eventObject[1], touches: e.touches});
 
 			}
 
@@ -140,12 +182,12 @@ AT.prototype.bindContainerEvents = function () {
 
 	};
 
-	self.container.addEventListener('mousedown', touchFunction);
-	self.container.addEventListener('click', touchFunction);
+	self.container.addEventListener(isTouch ? 'touchstart' : 'mousedown', touchFunction);
+	self.container.addEventListener(isTouch ? 'touchend' : 'click', touchFunction);
 
 	self.eventListeners.push(function () {
-		self.container.removeEventListener('mousedown', touchFunction);
-		self.container.removeEventListener('click', touchFunction);
+		self.container.removeEventListener(isTouch ? 'touchstart' : 'mousedown', touchFunction);
+		self.container.removeEventListener(isTouch ? 'touchend' : 'click', touchFunction);
 	});
 
 };

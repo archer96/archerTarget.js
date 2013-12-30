@@ -3,18 +3,18 @@ AT.prototype.bindArrowEvents = function () {
 	var self = this,
 		arrowTmp = {},
 		arrowsetTmp = {},
+		offsetLeft = ArcherTarget.offset(self.container).left,
+		offsetTop = ArcherTarget.offset(self.container).top,
+		isTouch = self.options.isTouch,
+		pointerHeight = 0,
 		arrowTarget,
 		curPageX,
 		curPageY,
-		offsetLeft = ArcherTarget.offset(self.container).left,
-		offsetTop = ArcherTarget.offset(self.container).top,
-		pointerHeight = 0,
 		move,
 		onMove,
 		onStart,
 		onEnd,
-		onMouseOut,
-		isTouch = self.options.isTouch;
+		onMouseOut;
 
 	self.arrowMoving = false;
 
