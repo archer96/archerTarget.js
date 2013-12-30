@@ -3,7 +3,13 @@ module.exports = function (grunt) {
 
 	'use strict';
 
-	// Project configuration.
+	// Load grunt tasks automatically
+	require('load-grunt-tasks')(grunt);
+
+	// Time how long tasks take. Can help when optimizing build times
+	require('time-grunt')(grunt);
+
+	// Define the configuration for all the tasks
 	grunt.initConfig({
 
 		pkg: grunt.file.readJSON('package.json'),
@@ -102,30 +108,17 @@ module.exports = function (grunt) {
 		},
 
 		jshint: {
-
-			dist: {
-				src: ['<%= concat.dist.dest %>'],
-				options: {
-					jshintrc: '.jshintrc'
-				}
+			options: {
+				jshintrc: '.jshintrc',
+				reporter: require('jshint-stylish')
 			},
-			targets: {
-				src: ['<%= concat.targets.dest %>'],
-				options: {
-					jshintrc: '.jshintrc'
-				}
-			},
-			plugins: {
-				src: ['src/plugins/*/*'],
-				options: {
-					jshintrc: '.jshintrc'
-				}
-			},
-			grunt: {
-				src: ['Gruntfile.js'],
-				options: {
-					jshintrc: '.jshintrc'
-				}
+			all: {
+				src: [
+					'<%= concat.dist.dest %>',
+					'<%= concat.targets.dest %>',
+					'src/plugins/*/*',
+					'Gruntfile.js'
+				]
 			}
 
 		},
@@ -136,13 +129,6 @@ module.exports = function (grunt) {
 		}
 
 	});
-
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-
-	grunt.registerTask('dev', ['concat:dist', 'jshint:dist']);
 
 	// Default task.
 	grunt.registerTask('default', ['concat', 'uglify', 'jshint']);

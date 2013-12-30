@@ -1,4 +1,5 @@
 {
+	"node": true,
 	"curly": true,
 	"eqeqeq": "off",
 	"forin": true,

@@ -22,6 +22,9 @@ In your web page:
 requires grunt >=4.0:
 `npm install grunt`
 
+then run:
+`grunt`
+
 More information in the [CONTRIBUTING](https://github.com/archer96/archerTarget.js/master/CONTRIBUTING.md) file.
 
 ## Documentation
