@@ -239,7 +239,11 @@ AT.prototype.bindArrowEvents = function () {
 
 		self.setTargetStyle('initial');
 
-		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+		if (!isTouch) {
+			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+		} else {
+			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.initial.color);
+		}
 
 		if (arrowsetTmp.data.draggable instanceof Object) {
 

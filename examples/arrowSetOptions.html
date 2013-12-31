@@ -16,74 +16,83 @@
 
 	<div id="target" style="width:350px; height:350px;"></div>
 
+	<button id="toggle">Toggle Arrowset</button>
+
 	<script>
 
-			var target = document.getElementById('target'),
-				arrowArray;
+		var target = document.getElementById('target'),
+			arrowArray,
+			isActive = true;
 
-			arrowArray = [
-				{
-					radius: 12,
-					style: {
-						initial: {
-							opacity: 0.8,
-							color: '#ff00ff',
-							stroke: false
-						},
-						hover: {
-							opacity: 1,
-							color: '#00ff00'
-						},
-						selected: {
-							opacity: 0.7,
-							color: '#00ffff'
-						}
+		arrowArray = [
+			{
+				radius: 12,
+				style: {
+					initial: {
+						opacity: 0.8,
+						color: '#ff00ff', //purple
+						stroke: false
 					},
-					data: [
-						{ x: 29, y: 70 },
-						{ x: 46, y: 32 },
-						{ x: 25, y: 65 }
-					]
+					hover: {
+						opacity: 1,
+						color: '#00ff00' //green
+					},
+					selected: {
+						opacity: 0.7,
+						color: '#00ffff' //cyan
+					}
 				},
-				{
-					radius: 8,
-					style: {
-						initial: {
-							opacity: 0.9,
-							color: '#0000ff',
-							stroke: false
-						},
-						hover: {
-							opacity: 1,
-							color: '#ff0000'
-						},
-						selected: {
-							opacity: 0.8,
-							color: '#ffff00'
-						}
+				data: [
+					{ x: 29, y: 70 },
+					{ x: 46, y: 32 },
+					{ x: 25, y: 65 }
+				]
+			},
+			{
+				radius: 8,
+				style: {
+					initial: {
+						opacity: 0.9,
+						color: '#0000ff', //blue
+						stroke: false
 					},
-					data: [
-						{ x: 57, y: 49 },
-						{ x: 80, y: 40 },
-						{ x: 28, y: 43 }
-					]
-				}
-			];
+					hover: {
+						opacity: 1,
+						color: '#ff0000' //red
+					},
+					selected: {
+						opacity: 0.8,
+						color: '#ffff00' //yellow
+					}
+				},
+				data: [
+					{ x: 57, y: 49 },
+					{ x: 80, y: 40 },
+					{ x: 28, y: 43 }
+				]
+			}
+		];
 
 
-			var archerTarget = new ArcherTarget(target, {
+		var archerTarget = new ArcherTarget(target, {
 
-				target: 'wa_x',
-				arrows: arrowArray
+			target: 'wa_x',
+			arrows: arrowArray
 
-			});
+		});
+
+		document.getElementById('toggle').addEventListener('click', function () {
+
+			isActive = !isActive;
 
 			archerTarget.set('arrowOptions', {
 				arrowsetID: 0,
 				options: {
-					active: false
+					active: isActive
 				}
 			});
+
+		}, false);
 
 	</script>
 

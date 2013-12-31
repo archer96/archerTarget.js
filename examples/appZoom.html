@@ -119,7 +119,7 @@
 					element.setAttribute('cy', containerCoordinates.yPx);
 
 					if (!touch) {
-						ArcherTarget.fireEvent(element, 'mousedown');
+						ArcherTarget.fireEvent(element, 'mousedown', {pageX: e.pageX, pageY: e.pageY});
 					} else {
 						ArcherTarget.fireEvent(element, 'touchstart', {touches:e.touches});
 					}
