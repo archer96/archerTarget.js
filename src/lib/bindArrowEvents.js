@@ -303,8 +303,8 @@ AT.prototype.bindArrowEvents = function () {
 		removeEventListenerList(c, isTouch ? 'touchstart' : 'mousedown', onStart);
 
 		if (!isTouch) {
-			addEventListenerList(c, 'mouseout', onMouseOut);
-			addEventListenerList(c, 'mouseover', onStart);
+			removeEventListenerList(c, 'mouseout', onMouseOut);
+			removeEventListenerList(c, 'mouseover', onStart);
 		}
 
 	});
