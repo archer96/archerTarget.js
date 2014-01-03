@@ -1,7 +1,7 @@
 /*!
- * archerTarget.js - v0.3.6 - 2013-12-30
+ * archerTarget.js - v0.3.6 - 2014-01-03
  * https://github.com/archer96/archerTarget.js
- * Copyright (c) 2013 Andre Meyering;
+ * Copyright (c) 2012 - 2014 Andre Meyering;
  * Licensed MIT
  */
 (function (window, document, undefined) {
@@ -100,7 +100,8 @@ var /**
 					 * Pass false or HEX-Code (e.g. #013356)
 					 * @type {Boolean|String}
 					 */
-					stroke: false
+					stroke: false,
+					strokeWidth: null
 				},
 				/**
 				 * Style, if the user hovers an arrow (not available on smartphones).
@@ -676,7 +677,11 @@ AT.prototype.bindArrowEvents = function () {
 
 		self.setTargetStyle('initial');
 
-		arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+		if (!isTouch) {
+			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.hover.color);
+		} else {
+			arrowTmp.el.setAttribute('fill', arrowsetTmp.data.style.initial.color);
+		}
 
 		if (arrowsetTmp.data.draggable instanceof Object) {
 
@@ -847,16 +852,20 @@ AT.prototype.bindContainerEvents = function () {
 
 		};
 
-		var t = self.container.querySelectorAll('svg .targetCanvas');
+		var t = self.canvas.rootGroup;
 
-		addEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
-		addEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
-		addEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+		// addEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
+		// addEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
+		// addEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+
+		t.addEventListener(isTouch ? 'touchstart' : 'mousedown', onStart);
+		t.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+		t.addEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
 
 		self.eventListeners.push(function () {
-			removeEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
-			removeEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
-			removeEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+			t.removeEventListener(isTouch ? 'touchstart' : 'mousedown', onStart);
+			t.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+			t.removeEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
 		});
 
 	}
@@ -1237,6 +1246,7 @@ AT.prototype.createArrows = function (arrows) {
 				radius: arrow.radius,
 				fill: arrow.style.initial.color,
 				stroke: arrow.style.initial.stroke,
+				strokeWidth: arrow.style.initial.strokeWidth,
 				eleClass: j + arrowClass
 			});
 
@@ -1297,6 +1307,8 @@ AT.prototype.createTarget = function (targets) {
 				radius: self.convertTo.canvasX(targetDiameter, target.diameter) / 2,
 				fill: AT.Targets[target.name].colors[j],
 				stroke: AT.Targets[target.name].strokeColors[j],
+				strokeWidth: AT.Targets[target.name].strokeWidths ?
+					AT.Targets[target.name].strokeWidths[j] : 1,
 				eleClass: j
 			});
 
@@ -1431,6 +1443,9 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 			},
 			ring: function (arrow) {
 				return at.getRing(arrow);
+			},
+			pluginData: function (pluginName) {
+				return at.getPluginData(pluginName);
 			}
 		};
 
@@ -1461,7 +1476,7 @@ AT.prototype.getArrows = function () {
  * Calculates the ring of an arrow when `arrow` is given or
  * calculates the ring of all arrows.
  *
- * @param  {Object|Array}  arrow Arrow or an arrowset object
+ * @param  {Object}        arrow Arrow object
  * @return {String|Object}       Ring of arrow or arrowset
  */
 AT.prototype.getRing = function (arrow) {
@@ -1482,11 +1497,11 @@ AT.prototype.getRing = function (arrow) {
 		var i, j,
 			data;
 
-		for (i = 0; i < this.arrow.length; i++) {
+		for (i = 0; i < self.arrowList.length; i++) {
 
-			for (j = 0; j < this.arrow[i].data.length; j++) {
+			for (j = 0; j < self.arrowList[i].data.length; j++) {
 
-				data = this.arrow[i].data[j];
+				data = self.arrowList[i].data[j];
 
 				data.ring = self.calculateRing({
 					x: self.convertTo.pxX(data.x, data.target),
@@ -1498,7 +1513,7 @@ AT.prototype.getRing = function (arrow) {
 
 		}
 
-		return this.arrow;
+		return self.arrowList;
 
 	}
 
@@ -1548,6 +1563,12 @@ AT.prototype.getTransform = function () {
  */
 var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 	return AT.Targets[targetName] || {};
+};
+
+AT.prototype.getPluginData = function (pluginName) {
+
+	return AT.Plugins[pluginName].getPluginData(this);
+
 };
 
 AT.prototype.init = function () {
@@ -2241,6 +2262,7 @@ AT.prototype.setArrowStyle = function (arrow) {
 
 				arrowObj.el.setStyle({
 					stroke: style.stroke,
+					strokeWidth: style.strokeWidth,
 					radius: style.radius,
 					fill: style.color
 				});
@@ -2267,6 +2289,7 @@ AT.prototype.setArrowStyle = function (arrow) {
 
 			arrowObj.el.setStyle({
 				stroke: style.stroke,
+				strokeWidth: style.strokeWidth,
 				radius: style.radius,
 				fill: style.color
 			});
@@ -2479,6 +2502,7 @@ VectorCanvas.prototype = {
 		node.setAttribute('r', config.radius);
 		node.setAttribute('fill', config.fill);
 		node.setAttribute('stroke', config.stroke);
+		node.setAttribute('stroke-width', config.strokeWidth);
 		node.setAttribute('class', config.eleClass);
 
 		node.setPosition = function (point) {
@@ -2490,6 +2514,7 @@ VectorCanvas.prototype = {
 			node.setAttribute('r', style.radius);
 			node.setAttribute('fill', style.fill);
 			node.setAttribute('stroke', style.stroke);
+			node.setAttribute('stroke-width', style.strokeWidth);
 		};
 
 		return node;

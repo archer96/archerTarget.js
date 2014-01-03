@@ -36,6 +36,7 @@
 		"DEVMODE",
 		"addEventListenerList",
 		"removeEventListenerList",
-		"DocumentTouch"
+		"DocumentTouch",
+		"_ATinstance"
 	]
 }

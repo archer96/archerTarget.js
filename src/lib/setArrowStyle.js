@@ -39,6 +39,7 @@ AT.prototype.setArrowStyle = function (arrow) {
 
 				arrowObj.el.setStyle({
 					stroke: style.stroke,
+					strokeWidth: style.strokeWidth,
 					radius: style.radius,
 					fill: style.color
 				});
@@ -65,6 +66,7 @@ AT.prototype.setArrowStyle = function (arrow) {
 
 			arrowObj.el.setStyle({
 				stroke: style.stroke,
+				strokeWidth: style.strokeWidth,
 				radius: style.radius,
 				fill: style.color
 			});

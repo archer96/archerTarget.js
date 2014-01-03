@@ -39,6 +39,7 @@ VectorCanvas.prototype = {
 		node.setAttribute('r', config.radius);
 		node.setAttribute('fill', config.fill);
 		node.setAttribute('stroke', config.stroke);
+		node.setAttribute('stroke-width', config.strokeWidth);
 		node.setAttribute('class', config.eleClass);
 
 		node.setPosition = function (point) {
@@ -50,6 +51,7 @@ VectorCanvas.prototype = {
 			node.setAttribute('r', style.radius);
 			node.setAttribute('fill', style.fill);
 			node.setAttribute('stroke', style.stroke);
+			node.setAttribute('stroke-width', style.strokeWidth);
 		};
 
 		return node;

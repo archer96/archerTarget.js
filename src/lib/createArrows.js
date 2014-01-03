@@ -68,6 +68,7 @@ AT.prototype.createArrows = function (arrows) {
 				radius: arrow.radius,
 				fill: arrow.style.initial.color,
 				stroke: arrow.style.initial.stroke,
+				strokeWidth: arrow.style.initial.strokeWidth,
 				eleClass: j + arrowClass
 			});
 

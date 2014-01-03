@@ -90,7 +90,8 @@ var /**
 					 * Pass false or HEX-Code (e.g. #013356)
 					 * @type {Boolean|String}
 					 */
-					stroke: false
+					stroke: false,
+					strokeWidth: null
 				},
 				/**
 				 * Style, if the user hovers an arrow (not available on smartphones).

@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<title>Default - Example - jQuery.archerTarget</title>
+
+	<link rel="stylesheet" href="../src/archerTarget.css">
+
+	<script src="../dist/archerTarget.js"></script>
+	<script src="../dist/targets/archerTarget.targets.js"></script>
+	<script src="../src/plugins/statistic/statistic.js"></script>
+
+</head>
+<body>
+
+	<div id="target" style="width:500px; height:500px;"></div>
+
+	<p>Average ring: <span id="average">?</span> &plusmn; <span id="standardDeviationRing">?</span></p>
+
+	<p>Average: X: <span id="averageX">?</span>% - Y: <span id="averageY">?</span>%</p>
+
+	<p>Standard Deviation: X: <span id="standardDeviationX">?</span>% - Y: <span id="standardDeviationY">?</span>%</p>
+
+	<script type="text/javascript">
+
+		var targetArray = [
+			{
+				name: 'wa_x',
+				center: [25, 26],
+				diameter: 44
+			},
+			{
+				name: 'wa_x',
+				center: [75, 26],
+				diameter: 44
+			},
+			{
+				name: 'wa_x',
+				center: [50, 73],
+				diameter: 44
+			}
+		];
+
+		var arrows = [
+			{
+				data: [ // data of the arrowset
+					{ x: 90, y: 5, target: 0 }, // one arrow
+					{ x: 49, y: 78, target: 0 },
+					{ x: 55, y: 75, target: 0 },
+					{ x: 47, y: 50, target: 0 },
+					{ x: 52, y: 41, target: 0 },
+					{ x: 60, y: 60, target: 0 },
+					{ x: 67, y: 30, target: 0 },
+					{ x: 72, y: 58, target: 0 },
+					{ x: 79, y: 44, target: 0 }
+				]
+			},
+			{
+				data: [
+					{ x: 47, y: 50, target: 1 },
+					{ x: 42, y: 60, target: 1 },
+					{ x: 70, y: 33, target: 1 },
+					{ x: 62, y: 72, target: 1 },
+					{ x: 50, y: 20, target: 1 },
+					{ x: 67, y: 29, target: 1 },
+					{ x: 55, y: 32, target: 1 },
+					{ x: 50, y: 20, target: 1 },
+					{ x: 50, y: 51, target: 1 }
+				]
+			},
+			{
+				data: [
+					{ x: 57, y: 42, target: 2 },
+					{ x: 32, y: 56, target: 2 },
+					{ x: 16, y: 68, target: 2 },
+					{ x: 19, y: 42, target: 2 },
+					{ x: 55, y: 75, target: 2 },
+					{ x: 47, y: 18, target: 2 },
+					{ x: 41, y: 37, target: 2 },
+					{ x: 58, y: 72, target: 2 },
+					{ x: 30, y: 38, target: 2 }
+				]
+			}
+		];
+
+		var arrowCopy = arrows.slice();
+
+		var at = new ArcherTarget(document.getElementById('target'), {
+
+			target: targetArray,
+
+			/*
+			 * Array contains arrowset objects
+			 */
+			arrows: arrowCopy,
+
+			arrowDefaults: {
+				draggable: false,
+				radius: 4,
+				style: {
+					initial: {
+						opacity: 1,
+						color: '#000000'
+					}
+				}
+			},
+
+			plugins: {
+				'statistic': {
+					arrows: arrows,
+					showCenterPoint: {
+						color: '#ff00ff',
+						stroke: '#0000ff',
+						strokeWidth: 1,
+						radius: 5
+					},
+					showTargetCenterPoint: {
+						color: '#00ffff',
+						stroke: '#000000',
+						strokeWidth: 1,
+						radius: 5
+					},
+					showStandardDeviation: {
+						color: 'rgba(0, 255, 0, .35)',
+						stroke: 'rgba(0, 255, 0, .6)',
+						strokeWidth: 3
+					},
+					showTargetStandardDeviation: {
+						color: 'rgba(255, 0, 255, .25)',
+						stroke: 'rgba(255, 0, 255, .6)',
+						strokeWidth: 3
+					}
+				}
+			}
+
+		});
+
+		console.log(at.get('pluginData', 'statistic'));
+
+		var pluginData = at.get('pluginData', 'statistic');
+
+		document.getElementById('average').innerHTML = Math.round(pluginData.average.ring * 100)/100;
+		document.getElementById('averageX').innerHTML = Math.round(pluginData.average.x * 100)/100;
+		document.getElementById('averageY').innerHTML = Math.round(pluginData.average.y * 100)/100;
+		document.getElementById('standardDeviationRing').innerHTML = Math.round(pluginData.standardDeviation.ring * 100)/100;
+		document.getElementById('standardDeviationX').innerHTML = Math.round(pluginData.standardDeviation.x * 100)/100;
+		document.getElementById('standardDeviationY').innerHTML = Math.round(pluginData.standardDeviation.y * 100)/100;
+
+	</script>
+
+</body>
+</html>
+

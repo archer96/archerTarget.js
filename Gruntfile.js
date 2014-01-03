@@ -22,7 +22,7 @@ module.exports = function (grunt) {
 					banner: '/*!\n * <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
 						'<%= grunt.template.today("yyyy-mm-dd") %>\n' +
 						'<%= pkg.homepage ? " * " + pkg.homepage + "\\n" : "" %>' +
-						' * Copyright (c) <%= grunt.template.today("yyyy") %>' +
+						' * Copyright (c) 2012 - <%= grunt.template.today("yyyy") %>' +
 						' <%= pkg.author.name %>;' +
 						'\n * Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %>\n */\n'
 				},
@@ -45,7 +45,7 @@ module.exports = function (grunt) {
 						' Targets - v<%= pkg.version %> - ' +
 						'<%= grunt.template.today("yyyy-mm-dd") %>\n' +
 						'<%= pkg.homepage ? " * " + pkg.homepage + "\\n" : "" %>' +
-						' * Copyright (c) <%= grunt.template.today("yyyy") %>' +
+						' * Copyright (c) 2012 - <%= grunt.template.today("yyyy") %>' +
 						' <%= pkg.author.name %>;' +
 						'\n * Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %>\n */\n'
 				},

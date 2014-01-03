@@ -37,6 +37,8 @@ AT.prototype.createTarget = function (targets) {
 				radius: self.convertTo.canvasX(targetDiameter, target.diameter) / 2,
 				fill: AT.Targets[target.name].colors[j],
 				stroke: AT.Targets[target.name].strokeColors[j],
+				strokeWidth: AT.Targets[target.name].strokeWidths ?
+					AT.Targets[target.name].strokeWidths[j] : 1,
 				eleClass: j
 			});
 

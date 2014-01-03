@@ -101,16 +101,20 @@ AT.prototype.bindContainerEvents = function () {
 
 		};
 
-		var t = self.container.querySelectorAll('svg .targetCanvas');
+		var t = self.canvas.rootGroup;
 
-		addEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
-		addEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
-		addEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+		// addEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
+		// addEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
+		// addEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+
+		t.addEventListener(isTouch ? 'touchstart' : 'mousedown', onStart);
+		t.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+		t.addEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
 
 		self.eventListeners.push(function () {
-			removeEventListenerList(t, isTouch ? 'touchmove' : 'mousemove', onMove);
-			removeEventListenerList(t, isTouch ? 'touchstart' : 'mousedown', onStart);
-			removeEventListenerList(t, isTouch ? 'touchend' : 'mouseup', onEnd);
+			t.removeEventListener(isTouch ? 'touchstart' : 'mousedown', onStart);
+			t.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+			t.removeEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
 		});
 
 	}

@@ -1,9 +1,9 @@
 /*
- * jQuery.archerTarget plugin "appZoom" - version 0.2 [2012-01-14]
+ * archerTarget.js plugin "appZoom" - version 0.2 [2013-12-31]
  * This plugin shows a scaleed target if an arrow is moving.
  * Created for use in smartphone applications.
  *
- * Copyright 2012, Andre Meyering
+ * Copyright 2012 - 2014, Andre Meyering
  * Licensed under the MIT license.
  */
 (function () {

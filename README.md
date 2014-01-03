@@ -35,7 +35,13 @@ Example are available in the `example` directory.
 
 ## Release History ##
 
-- 2014/12/30 - v0.3.6
+- 2014/01/03 - v0.3.7
+    - fix hover style with touch enabled
+    - add strokeWidth
+    - fix getRing() with no arguments
+    - add `statistic` plugin
+
+- 2013/12/30 - v0.3.6
     - merge touch and non touch files
     - merge get() files
     - remove some events

@@ -18,6 +18,9 @@ ArcherTarget.prototype.get = AT.prototype.get = function (method) {
 			},
 			ring: function (arrow) {
 				return at.getRing(arrow);
+			},
+			pluginData: function (pluginName) {
+				return at.getPluginData(pluginName);
 			}
 		};
 
@@ -48,7 +51,7 @@ AT.prototype.getArrows = function () {
  * Calculates the ring of an arrow when `arrow` is given or
  * calculates the ring of all arrows.
  *
- * @param  {Object|Array}  arrow Arrow or an arrowset object
+ * @param  {Object}        arrow Arrow object
  * @return {String|Object}       Ring of arrow or arrowset
  */
 AT.prototype.getRing = function (arrow) {
@@ -69,11 +72,11 @@ AT.prototype.getRing = function (arrow) {
 		var i, j,
 			data;
 
-		for (i = 0; i < this.arrow.length; i++) {
+		for (i = 0; i < self.arrowList.length; i++) {
 
-			for (j = 0; j < this.arrow[i].data.length; j++) {
+			for (j = 0; j < self.arrowList[i].data.length; j++) {
 
-				data = this.arrow[i].data[j];
+				data = self.arrowList[i].data[j];
 
 				data.ring = self.calculateRing({
 					x: self.convertTo.pxX(data.x, data.target),
@@ -85,7 +88,7 @@ AT.prototype.getRing = function (arrow) {
 
 		}
 
-		return this.arrow;
+		return self.arrowList;
 
 	}
 
@@ -135,4 +138,10 @@ AT.prototype.getTransform = function () {
  */
 var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 	return AT.Targets[targetName] || {};
+};
+
+AT.prototype.getPluginData = function (pluginName) {
+
+	return AT.Plugins[pluginName].getPluginData(this);
+
 };
