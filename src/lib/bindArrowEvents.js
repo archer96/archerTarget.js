@@ -104,6 +104,9 @@ AT.prototype.bindArrowEvents = function () {
 
 		var element = e.target;
 
+		offsetLeft = ArcherTarget.offset(self.container).left;
+		offsetTop = ArcherTarget.offset(self.container).top;
+
 		if (!self.arrowMoving) {
 
 			var parentNode = element.parentNode,

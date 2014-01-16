@@ -486,11 +486,11 @@
 				/*
 				 * references
 				 */
-				main             = self.mainTarget,
-				mainWidth        = main.width,
-				mainHeight       = main.height,
-				mainTransX       = main.transX,
-				mainTransY       = main.transY;
+				main       = self.mainTarget,
+				mainWidth  = main.width,
+				mainHeight = main.height,
+				mainTransX = main.transX,
+				mainTransY = main.transY;
 
 			/*
 			 * Check if the arrow is on the top/right/left/bottom, so we've to position the target.

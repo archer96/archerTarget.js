@@ -63,7 +63,7 @@ AT.prototype.getRing = function (arrow) {
 		return self.calculateRing({
 			x: self.convertTo.pxX(arrow.x, arrow.target),
 			y: self.convertTo.pxY(arrow.y, arrow.target),
-			target: arrow.target
+			target: arrow.target || 0
 		});
 
 

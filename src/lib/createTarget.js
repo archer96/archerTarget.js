@@ -38,7 +38,7 @@ AT.prototype.createTarget = function (targets) {
 				fill: AT.Targets[target.name].colors[j],
 				stroke: AT.Targets[target.name].strokeColors[j],
 				strokeWidth: AT.Targets[target.name].strokeWidths ?
-					AT.Targets[target.name].strokeWidths[j] : 1,
+					AT.Targets[target.name].strokeWidths[j] : 0.7,
 				eleClass: j
 			});
 

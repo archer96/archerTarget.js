@@ -60,6 +60,11 @@ AT.prototype.createArrows = function (arrows) {
 				arrowData.active = arrow.active;
 			}
 
+			if (!isFinite(arrowData.x) || !isFinite(arrowData.y)) {
+				arrowData.active = false;
+				arrowData.x = arrowData.y = 0;
+			}
+
 			arrowClass = arrowData.active ? '' : ' hidden';
 
 			arrowData.el = self.canvas.createCircle({
