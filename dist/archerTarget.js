@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - v0.3.8 - 2014-01-16
+ * archerTarget.js - v0.3.9 - 2014-01-24
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2012 - 2014 Andre Meyering;
  * Licensed MIT
@@ -1246,6 +1246,8 @@ AT.prototype.createArrows = function (arrows) {
 				arrowData.x = arrowData.y = 0;
 			}
 
+			arrowData.id = isFinite(arrowData.id) ? arrowData.id : j;
+
 			arrowClass = arrowData.active ? '' : ' hidden';
 
 			arrowData.el = self.canvas.createCircle({
@@ -1255,7 +1257,7 @@ AT.prototype.createArrows = function (arrows) {
 				fill: arrow.style.initial.color,
 				stroke: arrow.style.initial.stroke,
 				strokeWidth: arrow.style.initial.strokeWidth,
-				eleClass: j + arrowClass
+				eleClass: arrowData.id + arrowClass
 			});
 
 			arrowData.el.style.opacity = arrow.style.initial.opacity;
@@ -1575,7 +1577,7 @@ var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 
 AT.prototype.getPluginData = function (pluginName) {
 
-	return AT.Plugins[pluginName].getPluginData(this);
+	return this.activePlugins[pluginName].getPluginData(this);
 
 };
 
@@ -1787,17 +1789,20 @@ AT.prototype.initConverter = function ()  {
 
 AT.prototype.initPlugins = function () {
 
-    var plugin;
+	var plugin;
 
-    for (plugin in this.pluginList) {
+	this.activePlugins = {};
 
-        if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
+	for (plugin in this.pluginList) {
 
-            AT.Plugins[plugin].initialize(this, this.pluginList[plugin]);
+		if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
+			console.log(plugin);
+			this.activePlugins[plugin] =
+				AT.Plugins[plugin].init(this, this.pluginList[plugin]);
 
-        }
+		}
 
-    }
+	}
 };
 
 AT.prototype.isTouch = function () {
@@ -1998,9 +2003,18 @@ AT.prototype.setArrowActive = function (arrow) {
 
 			}
 
+			var arrowsetData = self.arrowList[arrowSetID].data,
+				elClass = active ? '' : ' hidden',
+				domEle;
 
-			var domEle = self.arrowList[arrowSetID].data[arrowID].el,
-				elClass = active ? '' : ' hidden';
+
+			for (var i = 0; i < arrowsetData.length; i++) {
+
+				if (arrowID === arrowsetData[i].id) {
+					domEle = arrowsetData[i].el;
+					break;
+				}
+			}
 
 			domEle.setAttribute('class', arrowID + elClass);
 

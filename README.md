@@ -35,6 +35,13 @@ Example are available in the `example` directory.
 
 ## Release History ##
 
+- 2014/01/24 - v0.4.0
+	- Change: now using arrow.id
+
+- 2014/01/19 - v0.3.9
+	- Change: many new features in plugin `statistic`
+	- Change: new way of using plugins
+
 - 2014/01/16 - v0.3.8
 	- Change: using tabs instead of spaces
 	- Fix: not giving error anymore when arrow x or y is NaN

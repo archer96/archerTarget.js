@@ -65,6 +65,8 @@ AT.prototype.createArrows = function (arrows) {
 				arrowData.x = arrowData.y = 0;
 			}
 
+			arrowData.id = isFinite(arrowData.id) ? arrowData.id : j;
+
 			arrowClass = arrowData.active ? '' : ' hidden';
 
 			arrowData.el = self.canvas.createCircle({
@@ -74,7 +76,7 @@ AT.prototype.createArrows = function (arrows) {
 				fill: arrow.style.initial.color,
 				stroke: arrow.style.initial.stroke,
 				strokeWidth: arrow.style.initial.strokeWidth,
-				eleClass: j + arrowClass
+				eleClass: arrowData.id + arrowClass
 			});
 
 			arrowData.el.style.opacity = arrow.style.initial.opacity;

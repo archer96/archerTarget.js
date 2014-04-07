@@ -1,14 +1,17 @@
 AT.prototype.initPlugins = function () {
 
-    var plugin;
+	var plugin;
 
-    for (plugin in this.pluginList) {
+	this.activePlugins = {};
 
-        if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
+	for (plugin in this.pluginList) {
 
-            AT.Plugins[plugin].initialize(this, this.pluginList[plugin]);
+		if (this.pluginList.hasOwnProperty(plugin) && AT.Plugins[plugin]) {
+			console.log(plugin);
+			this.activePlugins[plugin] =
+				AT.Plugins[plugin].init(this, this.pluginList[plugin]);
 
-        }
+		}
 
-    }
+	}
 };

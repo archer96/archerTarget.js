@@ -92,24 +92,28 @@
 			plugins: {
 				'statistic': {
 					arrows: arrows,
-					showCenterPoint: {
+					showCenterPoint: true,
+					centerPointOptions: {
 						color: '#ff00ff',
 						stroke: '#0000ff',
 						strokeWidth: 1,
 						radius: 5
 					},
-					showEndCenterPoint: {
+					showEndCenterPoint: true,
+					endCenterPointOptions: {
 						color: '#ff0000',
 						stroke: '#0000ff',
 						strokeWidth: 1,
 						radius: 5
 					},
-					showStandardDeviation: {
+					showStandardDeviation: true,
+					standardDeviationOptions: {
 						color: 'rgba(0, 255, 0, .35)',
 						stroke: 'rgba(0, 255, 0, .7)',
 						strokeWidth: 3
 					},
-					showEndStandardDeviation: {
+					showEndStandardDeviation: true,
+					endStandardDeviationOptions: {
 						color: 'rgba(255, 0, 0, .35)',
 						stroke: 'rgba(255, 0, 0, .7)',
 						strokeWidth: 3

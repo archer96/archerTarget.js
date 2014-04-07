@@ -303,7 +303,7 @@ var AT = function (element, options) {
 	 * Merged archerTarget.js options
 	 * @type {[type]}
 	 */
-	self.options = ArcherTarget.extend(true, {}, defaults, options);
+	self.options = options ? ArcherTarget.extend(true, {}, defaults, options) : defaults;
 	/**
 	 * target element
 	 */

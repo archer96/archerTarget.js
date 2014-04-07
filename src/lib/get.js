@@ -142,6 +142,6 @@ var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 
 AT.prototype.getPluginData = function (pluginName) {
 
-	return AT.Plugins[pluginName].getPluginData(this);
+	return this.activePlugins[pluginName].getPluginData(this);
 
 };

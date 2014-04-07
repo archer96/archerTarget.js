@@ -32,9 +32,18 @@ AT.prototype.setArrowActive = function (arrow) {
 
 			}
 
+			var arrowsetData = self.arrowList[arrowSetID].data,
+				elClass = active ? '' : ' hidden',
+				domEle;
 
-			var domEle = self.arrowList[arrowSetID].data[arrowID].el,
-				elClass = active ? '' : ' hidden';
+
+			for (var i = 0; i < arrowsetData.length; i++) {
+
+				if (arrowID === arrowsetData[i].id) {
+					domEle = arrowsetData[i].el;
+					break;
+				}
+			}
 
 			domEle.setAttribute('class', arrowID + elClass);
 
