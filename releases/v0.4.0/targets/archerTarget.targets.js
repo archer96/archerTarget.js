@@ -1,5 +1,5 @@
 /*!
- * archerTarget.js - Targets - v0.3.9 - 2014-01-24
+ * archerTarget.js - Targets - v0.4.0 - 2014-04-07
  * https://github.com/archer96/archerTarget.js
  * Copyright (c) 2012 - 2014 Andre Meyering;
  * Licensed MIT
