@@ -242,8 +242,10 @@
 				this.target.getRing(arrowsetData[j])) - average.ring, 2);
 			sumRing += curRing;
 
-			curX = (isFinite(arrowsetData[j].x) && arrowsetData[j].x != 0) ? Math.pow(arrowsetData[j].x - average.x, 2) : 0;
-			curY = (isFinite(arrowsetData[j].y) && arrowsetData[j].y != 0) ? Math.pow(arrowsetData[j].y - average.y, 2) : 0;
+			curX = (isFinite(arrowsetData[j].x) && arrowsetData[j].x !== 0) ?
+				Math.pow(arrowsetData[j].x - average.x, 2) : 0;
+			curY = (isFinite(arrowsetData[j].y) && arrowsetData[j].y !== 0) ?
+				Math.pow(arrowsetData[j].y - average.y, 2) : 0;
 
 			sumX += curX;
 			sumY += curY;
@@ -283,7 +285,6 @@
 					Math.sqrt(targets[i].sumRing / targets[i].countRing) : 0;
 			}
 		}
-		console.log(average.countXY,average.countRing)
 
 		return {
 			sumRing: sumRing,
