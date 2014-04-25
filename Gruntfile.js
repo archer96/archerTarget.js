@@ -31,7 +31,8 @@ module.exports = function (grunt) {
 					'src/intro.js',
 					'src/archerTarget.js',
 					'src/lib/*.js',
-					'src/outro.js'
+					'src/outro.js',
+					'src/RAF.js'
 				],
 
 				dest: 'dist/<%= pkg.name %>.js'
