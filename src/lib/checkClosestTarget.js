@@ -1,20 +1,21 @@
 AT.prototype.checkClosestTarget = function (currentTarget, config) {
 
 	var self = this,
-		i,
+		targetLength = self.targetList.length,
+		convertTo = self.convertTo,
 		curCenterX,
 		curCenterY,
 		curRadius,
-		targetLength = self.targetList.length,
-		target;
+		target,
+		i;
 
 	for (i = 0; i < targetLength; i++) {
 
 		target = self.targetList[i];
 
-		curCenterX = (self.convertTo.canvasX(target.center[0]) + self.transX) * self.scale;
-		curCenterY = (self.convertTo.canvasY(target.center[1]) + self.transY) * self.scale;
-		curRadius  = self.convertTo.canvasX(target.diameter) / 2  * self.scale;
+		curCenterX = (convertTo.canvasX(target.center[0]) + self.transX) * self.scale;
+		curCenterY = (convertTo.canvasY(target.center[1]) + self.transY) * self.scale;
+		curRadius  = convertTo.canvasX(target.diameter) / 2  * self.scale;
 
 		if (config.x > curCenterX - curRadius &&
 			config.x < curCenterX + curRadius &&

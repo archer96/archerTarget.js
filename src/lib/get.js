@@ -3,7 +3,7 @@
  *
  * @param {String} method Method name of what to get
  */
-ArcherTarget.prototype.get = AT.prototype.get = function (method) {
+ArcherTarget.prototype.get = function (method) {
 
 	var at = _ATinstance[this._id],
 		methods = {
@@ -98,19 +98,18 @@ AT.prototype.getRing = function (arrow) {
  */
 AT.prototype.getSize = function () {
 
-	var s = window.getComputedStyle(this.container, null);
+	var s = window.getComputedStyle(this.container, null),
+		w = this.width,
+		h = this.height;
 
-	this.width = s.width;
-
+	this.width  = s.width;
 	this.height = s.height || this.width;
 
 	if (this.width.indexOf('px') >= 0) {
-		var w = this.width;
 		this.width = w.substr(0, w.length - 2);
 	}
 
 	if (this.height.indexOf('px') >= 0) {
-		var h = this.height;
 		this.height = h.substr(0, h.length - 2);
 	}
 
@@ -141,7 +140,5 @@ var getTargetParams = ArcherTarget.getTarget = function (targetName) {
 };
 
 AT.prototype.getPluginData = function (pluginName) {
-
 	return this.activePlugins[pluginName].getPluginData(this);
-
 };

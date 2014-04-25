@@ -14,7 +14,7 @@ var /**
 	defaults = {
 		/**
 		 * Target name (target file has to be loaded after jquery.archertarget.js (!))
-		 * @type {String}
+		 * @type {String|Array}
 		 */
 		target: 'wa_x',
 		/**
@@ -40,10 +40,10 @@ var /**
 			}
 		},
 		/**
-		 * Arrowset object (default none)
-		 * @type {Object}
+		 * Arrowset array
+		 * @type {Array}
 		 */
-		arrows: {},
+		arrows: [],
 		/**
 		 * Default options for every arrowset
 		 * @type {Object}

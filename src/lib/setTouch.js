@@ -1,4 +1,4 @@
-AT.prototype.isTouch = function () {
+AT.prototype.setTouch = function () {
 
 	var self = this;
 
@@ -9,7 +9,5 @@ AT.prototype.isTouch = function () {
 	self.options.isTouch = ('ontouchstart' in window) ||
 		(window.DocumentTouch && document instanceof DocumentTouch) ||
 		false;
-
-	return self.options.isTouch;
 
 };

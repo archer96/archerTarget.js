@@ -1,4 +1,4 @@
-ArcherTarget.prototype.set = AT.prototype.set = function (method) {
+ArcherTarget.prototype.set = function (method) {
 
 	var at = _ATinstance[this._id],
 

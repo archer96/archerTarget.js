@@ -1,12 +1,13 @@
 AT.prototype.bindArrowEvents = function () {
 
-	var self = this,
-		arrowTmp = {},
-		arrowsetTmp = {},
-		offsetLeft = ArcherTarget.offset(self.container).left,
-		offsetTop = ArcherTarget.offset(self.container).top,
-		isTouch = self.options.isTouch,
+	var self          = this,
+		arrowTmp      = {},
+		arrowsetTmp   = {},
+		offsetLeft    = ArcherTarget.offset(self.container).left,
+		offsetTop     = ArcherTarget.offset(self.container).top,
+		isTouch       = self.options.isTouch,
 		pointerHeight = 0,
+		convertTo     = self.convertTo,
 		arrowTarget,
 		curPageX,
 		curPageY,
@@ -46,8 +47,8 @@ AT.prototype.bindArrowEvents = function () {
 			target: arrowTarget
 		});
 
-		arrowTmp.x = self.convertTo.pcX(curPageX, arrowTarget);
-		arrowTmp.y = self.convertTo.pcY(curPageY - pointerHeight, arrowTarget);
+		arrowTmp.x = convertTo.pcX(curPageX, arrowTarget);
+		arrowTmp.y = convertTo.pcY(curPageY - pointerHeight, arrowTarget);
 
 
 		if (!self.checkOnTarget(arrowTmp)) {
@@ -105,7 +106,7 @@ AT.prototype.bindArrowEvents = function () {
 		var element = e.target;
 
 		offsetLeft = ArcherTarget.offset(self.container).left;
-		offsetTop = ArcherTarget.offset(self.container).top;
+		offsetTop  = ArcherTarget.offset(self.container).top;
 
 		if (!self.arrowMoving) {
 
@@ -142,12 +143,12 @@ AT.prototype.bindArrowEvents = function () {
 			var touch = e.touches[0];
 
 			if (touch.noOffset) {
-				curPageX = touch.pageX || self.convertTo.pxX(arrowTmp.x || 0, arrowTarget);
-				curPageY = touch.pageY || self.convertTo.pxY(arrowTmp.y || 0, arrowTarget);
+				curPageX = touch.pageX || convertTo.pxX(arrowTmp.x || 0, arrowTarget);
+				curPageY = touch.pageY || convertTo.pxY(arrowTmp.y || 0, arrowTarget);
 			} else {
-				curPageX = touch.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x || 0,
+				curPageX = touch.pageX - offsetLeft || convertTo.pxX(arrowTmp.x || 0,
 					arrowTarget);
-				curPageY = touch.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y || 0,
+				curPageY = touch.pageY - offsetTop || convertTo.pxY(arrowTmp.y || 0,
 					arrowTarget);
 			}
 
@@ -157,8 +158,8 @@ AT.prototype.bindArrowEvents = function () {
 			 * Self triggered mousedown events don't have the pageX and pageY attribute,
 			 * so we use the old arrow-position.
 			 */
-			curPageX = e.pageX - offsetLeft || self.convertTo.pxX(arrowTmp.x, arrowTarget);
-			curPageY = e.pageY - offsetTop || self.convertTo.pxY(arrowTmp.y, arrowTarget);
+			curPageX = e.pageX - offsetLeft || convertTo.pxX(arrowTmp.x, arrowTarget);
+			curPageY = e.pageY - offsetTop || convertTo.pxY(arrowTmp.y, arrowTarget);
 
 
 		} else if (e.type === 'mouseover' && !self.arrowMoving) {
@@ -199,8 +200,8 @@ AT.prototype.bindArrowEvents = function () {
 		if (arrowsetTmp.data.draggable instanceof Object && arrowsetTmp.data.draggable) {
 
 			self.createArrowPointer({
-				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y: self.convertTo.pxY(arrowTmp.y, arrowTarget),
+				x: convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: convertTo.pxY(arrowTmp.y, arrowTarget),
 				drag: arrowsetTmp.data.draggable,
 				color: arrowsetTmp.data.style.selected.color,
 				arrowRadius: arrowsetTmp.data.radius
@@ -253,8 +254,8 @@ AT.prototype.bindArrowEvents = function () {
 			self.removeArrowPointer();
 
 			arrowTmp.el.setPosition({
-				x: self.convertTo.pxX(arrowTmp.x, arrowTarget),
-				y: self.convertTo.pxY(arrowTmp.y, arrowTarget)
+				x: convertTo.pxX(arrowTmp.x, arrowTarget),
+				y: convertTo.pxY(arrowTmp.y, arrowTarget)
 			});
 
 		}
@@ -287,26 +288,26 @@ AT.prototype.bindArrowEvents = function () {
 	};
 
 	self.container.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
-	self.container.addEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
+	self.container.addEventListener(isTouch ? 'touchend'  : 'mouseup',   onEnd);
 
 	var c = self.container.querySelectorAll('.arrowSetCanvas circle');
 
 	addEventListenerList(c, isTouch ? 'touchstart' : 'mousedown', onStart);
 
 	if (!isTouch) {
-		addEventListenerList(c, 'mouseout', onMouseOut);
+		addEventListenerList(c, 'mouseout',  onMouseOut);
 		addEventListenerList(c, 'mouseover', onStart);
 	}
 
 	self.eventListeners.push(function () {
 
 		self.container.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
-		self.container.removeEventListener(isTouch ? 'touchend' : 'mouseup', onEnd);
+		self.container.removeEventListener(isTouch ? 'touchend'  : 'mouseup',   onEnd);
 
 		removeEventListenerList(c, isTouch ? 'touchstart' : 'mousedown', onStart);
 
 		if (!isTouch) {
-			removeEventListenerList(c, 'mouseout', onMouseOut);
+			removeEventListenerList(c, 'mouseout',  onMouseOut);
 			removeEventListenerList(c, 'mouseover', onStart);
 		}
 

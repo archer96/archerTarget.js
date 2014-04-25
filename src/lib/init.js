@@ -4,21 +4,21 @@ AT.prototype.init = function () {
 
 	DEVMODE && console.log('archerTarget :: initializing archerTarget :: init');
 
-	self.isTouch();
+	self.setTouch();
 
 	/*
 	 * Add class 'archerTargetContainer' to the container and give it some style.
 	 */
-	self.container.className += ' archerTargetContainer';
+	self.container.className      += ' archerTargetContainer';
 	self.container.style.overflow = 'hidden';
 	self.container.style.position = 'relative';
 
 	/*
 	 * Only a shorter reference
 	 */
-	self.transX = self.options.transX;
-	self.transY = self.options.transY;
-	self.scale = self.options.scale;
+	self.transX     = self.options.transX;
+	self.transY     = self.options.transY;
+	self.scale      = self.options.scale;
 	self.pluginList = self.options.plugins;
 	/*
 	 * Merge styles (initial, hover,...)
@@ -32,10 +32,6 @@ AT.prototype.init = function () {
 	 * Initialize the converter
 	 */
 	self.initConverter();
-	/*
-	 * Check for requestAnimationFrame() support or use a hack
-	 */
-	RAF();
 	/*
 	 * Get size variables (width and height)
 	 */
@@ -81,13 +77,13 @@ AT.prototype.init = function () {
 	 */
 	if (self.options.scalable) {
 
-		var zoomIn = document.createElement('div'),
+		var zoomIn  = document.createElement('div'),
 			zoomOut = document.createElement('div');
 
-		zoomIn.className = 'archerTarget-zoomin';
+		zoomIn.className  = 'archerTarget-zoomin';
 		zoomOut.className = 'archerTarget-zoomout';
 
-		zoomIn.innerHTML = self.options.zoomInButton;
+		zoomIn.innerHTML  = self.options.zoomInButton;
 		zoomOut.innerHTML = self.options.zoomOutButton;
 
 		self.container.appendChild(zoomIn);
@@ -97,7 +93,6 @@ AT.prototype.init = function () {
 		 */
 		self.bindZoomEvents();
 	}
-
 
 	/* Apply possible zoom */
 	self.setTransform();

@@ -1,6 +1,3 @@
-/*
- * Get offset of an element. This is from Zepto.js (modified)
- */
 ArcherTarget.offset = function(element){
 
 	if (element.length === 0) {
